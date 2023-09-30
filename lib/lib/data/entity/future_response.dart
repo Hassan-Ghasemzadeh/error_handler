@@ -3,9 +3,9 @@ import 'package:equatable/equatable.dart';
 import 'error_catcher.dart';
 
 class FutureResponse<T> extends Equatable {
-  final T data;
+  final T? data;
 
-  final ErrorCatcher error;
+  final ErrorCatcher? error;
 
   const FutureResponse({required this.data, required this.error});
 
