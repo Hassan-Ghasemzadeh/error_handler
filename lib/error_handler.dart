@@ -1,7 +1,18 @@
 library error_handler;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+import 'package:error_handler/lib/domain/use_case/future_async.dart';
+import 'package:error_handler/lib/domain/use_case/init_local_error_handler.dart';
+
+import 'lib/data/entity/future_response.dart';
+
+class ErrorHandler<T> {
+  static Future<void> init() async {
+    final initialize = InitializeErrorHandlerUseCase();
+    await initialize.invoke();
+  }
+
+  Future<FutureResponse<T>> futureAsync(T Function() action) async {
+    final future = FutureAsyncUseCase<T>();
+    return future.invoke(action);
+  }
 }
