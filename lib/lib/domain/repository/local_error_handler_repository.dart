@@ -10,7 +10,7 @@ class LocalErrorHandlerRepositoryImplementation
 
   @override
   Future<FutureResponse<T>> futureAsync<T>(T Function() action) {
-    return source.futureAsync(action);
+    return source.futureAsync<T>(action);
   }
 
   @override

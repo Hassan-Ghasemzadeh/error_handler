@@ -5,13 +5,13 @@ import 'package:error_handler/lib/domain/use_case/init_local_error_handler.dart'
 
 import 'lib/data/entity/future_response.dart';
 
-class ErrorHandler<T> {
+class ErrorHandler {
   static Future<void> init() async {
     final initialize = InitializeErrorHandlerUseCase();
     await initialize.invoke();
   }
 
-  Future<FutureResponse<T>> futureAsync(T Function() action) async {
+  Future<FutureResponse<T>> futureAsync<T>(T Function() action) async {
     final future = FutureAsyncUseCase<T>();
     return future.invoke(action);
   }

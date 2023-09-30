@@ -10,6 +10,6 @@ class FutureAsyncUseCase<T> extends UseCase<FutureResponse<T>, T Function()> {
 
   @override
   Future<FutureResponse<T>> invoke(T Function() param) {
-    return repository.futureAsync(param);
+    return repository.futureAsync<T>(param);
   }
 }
