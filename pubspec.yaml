@@ -1,7 +1,6 @@
 name: error_handler
 description: A new Flutter project.
 version: 0.0.1
-homepage:
 
 environment:
   sdk: '>=3.1.3 <4.0.0'
@@ -10,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  equatable: ^2.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
