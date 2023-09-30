@@ -2,8 +2,12 @@ import 'package:error_handler/lib/data/entity/error_catcher.dart';
 import 'package:error_handler/lib/data/entity/future_response.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../core/get_it_config/get_it_config.dart';
+
 class LocalErrorHandlerDataSource {
-  Future<void> initializeErrorHandler() async {}
+  Future<void> initializeErrorHandler() async {
+    GetItConfiguration.init();
+  }
 
   Future<FutureResponse<T>> futureAsync<T>(T Function() action) async {
     T? data;
