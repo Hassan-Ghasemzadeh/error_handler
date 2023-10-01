@@ -1,20 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:error_handler/error_handler.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   setUp(
     () {
       ErrorHandler.init();
     },
   );
-  test('error handler futureAsync works', () async {
-    ErrorHandler handler = ErrorHandler();
-    final data = await handler.futureAsync<int>(() {
-      return 11;
+  group('local error handler test', () {
+    test('error handler futureAsync works as expected', () async {
+      ErrorHandler handler = ErrorHandler();
+      final data = await handler.futureAsync<int>(() {
+        return 2023;
+      });
+      expect(data.data, 2023);
     });
-    expect(data.data, 11);
   });
 }
