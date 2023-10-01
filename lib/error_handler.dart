@@ -11,12 +11,12 @@ class ErrorHandler {
     await GetItConfiguration.init();
   }
 
-  Future<FutureResponse<T>> futureAsync<T>(T Function() action) async {
+  static Future<FutureResponse<T>> futureAsync<T>(T Function() action) async {
     final future = FutureAsyncUseCase<T>();
     return future.invoke(action);
   }
 
-  Future<void> registerErrorHandler() async {
+  static Future<void> registerErrorHandler() async {
     final register = RegisterErrorHandlerUseCase();
     register.invoke();
   }
