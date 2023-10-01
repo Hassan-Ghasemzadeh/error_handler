@@ -12,9 +12,4 @@ class LocalErrorHandlerRepositoryImplementation
   Future<FutureResponse<T>> futureAsync<T>(T Function() action) {
     return source.futureAsync<T>(action);
   }
-
-  @override
-  Future<void> initializeErrorHandler() {
-    return source.initializeErrorHandler();
-  }
 }
