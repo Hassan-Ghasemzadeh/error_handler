@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class ErrorCatcher extends Equatable {
   final String message;
-  final StackTrace stackTrace;
+  final StackTrace? stackTrace;
 
   const ErrorCatcher({
     required this.message,
