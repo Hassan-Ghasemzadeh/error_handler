@@ -5,10 +5,10 @@ import 'error_response.dart';
 class FutureResponse<T> extends Equatable {
   final T? data;
 
-  final ErrorResponse? errorCatcher;
+  final ErrorResponse? errorResponse;
 
-  const FutureResponse({required this.data, required this.errorCatcher});
+  const FutureResponse({required this.data, required this.errorResponse});
 
   @override
-  List<Object?> get props => [data, errorCatcher];
+  List<Object?> get props => [data, errorResponse];
 }

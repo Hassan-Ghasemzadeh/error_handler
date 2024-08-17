@@ -22,7 +22,7 @@ class ErrorHandlerDataSource {
       errorResponse =
           ErrorResponse(message: e.toString(), stackTrace: stackTrace);
     }
-    return FutureResponse(data: data, errorCatcher: errorResponse);
+    return FutureResponse(data: data, errorResponse: errorResponse);
   }
 
   //TODO Errors should be sent to server but for now it's ok to just print it
