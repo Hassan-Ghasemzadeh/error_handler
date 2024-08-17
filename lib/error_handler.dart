@@ -18,6 +18,6 @@ class ErrorHandler {
 
   static Future<void> registerErrorHandler() async {
     final register = RegisterErrorHandlerUseCase();
-    register.invoke();
+    register.invoke(null);
   }
 }
