@@ -1,5 +1,6 @@
 import 'package:error_handler/lib/data/entity/error_response.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 
 import '../entity/future_response.dart';
 
@@ -9,9 +10,14 @@ class ErrorHandlerDataSource {
     ErrorResponse? errorResponse;
     try {
       data = action();
+      Logger().log(Level.info, "Your data is $data");
     } catch (e, stackTrace) {
       if (kDebugMode) {
-        print("Error: ${e.toString()}, Stacktrace: $stackTrace");
+        Logger().d(
+          "Error: ${e.toString()}, Stacktrace: $stackTrace",
+          stackTrace: stackTrace,
+          error: e,
+        );
       }
       errorResponse =
           ErrorResponse(message: e.toString(), stackTrace: stackTrace);
@@ -34,11 +40,13 @@ class ErrorHandlerDataSource {
       return true;
     };
     if (errorResponse != null) {
-      if (kDebugMode) {
-        print(
-          "Error: ${errorResponse.toString()}, Stacktrace: ${errorResponse!.stackTrace}",
-        );
-      }
+      Logger().d(
+        "Error: ${errorResponse?.message}, Stacktrace: ${errorResponse?.stackTrace}",
+        stackTrace: errorResponse?.stackTrace,
+        error: Exception(
+          errorResponse?.message,
+        ),
+      );
     }
   }
 }
