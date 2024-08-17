@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../entity/future_response.dart';
 
-class RemoteErrorHandlerDataSource {
+class ErrorHandlerDataSource {
   Future<FutureResponse<T>> futureAsync<T>(T Function() action) async {
     T? data;
     ErrorResponse? errorResponse;
