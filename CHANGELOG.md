@@ -1,0 +1,22 @@
+# Changelog
+
+All notable changes to the `error_handler` package will be documented in this file. This project adheres to Semantic Versioning.
+
+## [1.0.0] - 2026-06-29
+
+### Added
+- **Core Result Pattern**: Introduced `Result<S, F>`, `SuccessResult`, and `FailureResult` using Dart 3 sealed classes for compile-time safe pattern matching.
+- **Functional Operators**: Added fluent API chaining methods including `map`, `flatMap`, `fold`, `getOrElse`, and `fromNullable`.
+- **Safe Execution Guards**: Implemented `Result.guard()` and `Result.guardAsync()` to seamlessly intercept and encapsulate imperative exceptions.
+- **Batch Operations**: Added `Result.combine()` and `Result.partition()` for combining or separating multiple asynchronous operations.
+- **ResultExecutor Layer**: Created a dedicated execution engine with built-in context tracking and automated error logging.
+- **Global Error Hooks**: Added `FlutterErrorHandler` to handle framework-level crashes and integrate with external crash reporters (e.g., Firebase).
+
+### Security & License
+- Distributed under the **GPL v3.0 License** for open-source copyleft protection.
+- Secure key and context tracking adhering to strict memory and performance safety.
+
+---
+
+## [0.0.1] - 2026-06-25
+- Initial project structure setup and architecture design brainstorming.
