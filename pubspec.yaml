@@ -1,6 +1,6 @@
 name: resultex
 description: A robust, type-safe error handling package for Dart and Flutter implementing the Result pattern.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/Hassan-Ghasemzadeh/error_handler
 repository: https://github.com/Hassan-Ghasemzadeh/error_handler.git
 environment:
@@ -17,6 +17,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
