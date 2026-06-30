@@ -8,7 +8,6 @@ import 'package:equatable/equatable.dart';
 ///
 /// [T] The explicit runtime data type of the underlying encapsulated value.
 class Success<T> extends Equatable {
-
   // The internal private state storage holding the successful operation payload.
   final T _value;
 

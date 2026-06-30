@@ -5,7 +5,6 @@ import 'package:resultex/lib/src/model/failure.dart';
 void main() {
   /// Test suite grouping all unit verifications for the monadic [Result] data structure.
   group('Result', () {
-
     /// Verifies that a valid [Result.success] instantiates properly, encapsulates the state,
     /// and correctly delivers the underlying state value payload.
     test('Success should hold value', () {
@@ -52,7 +51,7 @@ void main() {
     test('flatMap should chain operations', () {
       final result = Result.success(42);
       final chained = result.flatMap(
-            (value) => Result.success('Value: $value'),
+        (value) => Result.success('Value: $value'),
       );
       expect(chained.valueOrNull, 'Value: 42');
     });
@@ -130,23 +129,22 @@ void main() {
     /// yield success states, while raw null references wrap into explicit failures using the fallback message.
     test('fromNullable should handle nullable values', () {
       final withValue =
-      Result.fromNullable('hello', errorMessage: 'Value was null');
+          Result.fromNullable('hello', errorMessage: 'Value was null');
       expect(withValue.valueOrNull, 'hello');
 
       final withNull =
-      Result.fromNullable<String>(null, errorMessage: 'Value was null');
+          Result.fromNullable<String>(null, errorMessage: 'Value was null');
       expect(withNull.isFailure, true);
     });
   });
 
   /// Test suite focusing on asynchronous variations and future task pipeline boundaries.
   group('Result async', () {
-
     /// Confirms that [Result.guardAsync] safely resolves asynchronous future workflows
     /// and encapsulates successful data resolutions correctly.
     test('guardAsync should handle async operations', () async {
       final result = await Result.guardAsync(
-            () async {
+        () async {
           await Future.delayed(const Duration(milliseconds: 10));
           return 42;
         },
@@ -159,7 +157,7 @@ void main() {
     /// pipeline breakdowns, wrapping them cleanly into structured domain failures.
     test('guardAsync should catch async exceptions', () async {
       final result = await Result.guardAsync(
-            () async {
+        () async {
           await Future.delayed(const Duration(milliseconds: 10));
           throw Exception('Async error');
         },

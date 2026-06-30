@@ -5,7 +5,6 @@ import 'package:equatable/equatable.dart';
 /// This class extends [Equatable] to facilitate structural comparisons across
 /// layers (Data, Domain, Presentation) without relying on object identity.
 class Failure extends Equatable {
-
   /// A human-readable message describing the reason for the failure.
   final String message;
 
@@ -51,7 +50,7 @@ class Failure extends Equatable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Failure && message == other.message && error == other.error;
+      other is Failure && message == other.message && error == other.error;
 
   /// Generates a hash code compound from the distinct values of [message] and [error].
   @override

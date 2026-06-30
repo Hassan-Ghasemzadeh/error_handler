@@ -1,7 +1,7 @@
 /// A centralized error handling and operation execution library.
-/// 
-/// This library provides a unified interface for monadic result wrappers, 
-/// operational boundary executors, and error monitoring handlers, abstracting 
+///
+/// This library provides a unified interface for monadic result wrappers,
+/// operational boundary executors, and error monitoring handlers, abstracting
 /// the internal project file structure from external consumer packages.
 library;
 

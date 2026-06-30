@@ -12,7 +12,6 @@ import '../model/result.dart';
 /// It encapsulates runtime blocks into a unified [Result] structure, automatically processing structural
 /// diagnostics via centralized [LoggerService] and localized [FlutterErrorHandler] instances.
 class ResultExecutor {
-
   // The primary logging service dependency used to capture standard execution flows.
   final LoggerService _logger;
 
@@ -20,7 +19,7 @@ class ResultExecutor {
   final bool _reportErrors;
 
   /// Creates a constant [ResultExecutor] instance.
-  /// 
+  ///
   /// Requires a concrete [LoggerService] implementation. By default, external error reporting [_reportErrors] is enabled.
   const ResultExecutor({
     required LoggerService logger,
@@ -34,9 +33,9 @@ class ResultExecutor {
   /// Automatically intercepts any thrown runtime errors and transforms them using [_handleError].
   /// An optional [context] description can be specified to enrich debug tracking logs.
   Result<T> execute<T>(
-      T Function() operation, {
-        String? context,
-      }) {
+    T Function() operation, {
+    String? context,
+  }) {
     try {
       final data = operation();
       _logger
@@ -52,9 +51,9 @@ class ResultExecutor {
   /// Resolves the continuous asynchronous execution flow, intercepting potential host exceptions
   /// or server breakdowns, returning a wrapped [Result] object state downstream.
   Future<Result<T>> executeAsync<T>(
-      Future<T> Function() operation, {
-        String? context,
-      }) async {
+    Future<T> Function() operation, {
+    String? context,
+  }) async {
     try {
       final data = await operation();
       _logger.info(
@@ -70,9 +69,9 @@ class ResultExecutor {
   /// Listens to individual outgoing events from the underlying stream, yielding each instance
   /// as an encapsulated [Result.success]. Captures terminal sequence stream errors and wraps them safely.
   Stream<Result<T>> executeStream<T>(
-      Stream<T> Function() streamFactory, {
-        String? context,
-      }) async* {
+    Stream<T> Function() streamFactory, {
+    String? context,
+  }) async* {
     try {
       final stream = streamFactory();
       await for (final data in stream) {
@@ -93,7 +92,7 @@ class ResultExecutor {
 
     // Structure a concise descriptive message binding the error signature with its metadata context.
     final errorMessage =
-    context != null ? 'Error in $context: ${e.toString()}' : e.toString();
+        context != null ? 'Error in $context: ${e.toString()}' : e.toString();
 
     // Log the intercepted diagnostic data through the core error handler instance.
     flutterErrorHandler.logError(errorMessage, e, stackTrace);

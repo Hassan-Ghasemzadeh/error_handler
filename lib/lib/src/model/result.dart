@@ -9,7 +9,6 @@ import 'success.dart';
 /// By modeling errors as values instead of throwing exceptions, it enforces compile-time
 /// exhaustive pattern matching, enhancing domain execution reliability.
 sealed class Result<T> {
-
   /// Base constant constructor for all type-specific result variants.
   const Result();
 
@@ -56,10 +55,10 @@ sealed class Result<T> {
   /// If this instance represents a failure state, the operations bypass mapping
   /// and safely forward the original failure signature downstream.
   Result<R> map<R>(R Function(T value) transform) => switch (this) {
-    _SuccessResult<T>(success: final success) =>
-    Result<R>.success(transform(success.value)),
-    _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
-  };
+        _SuccessResult<T>(success: final success) =>
+          Result<R>.success(transform(success.value)),
+        _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
+      };
 
   /// Transforms the underlying domain failure signature using the provided error [transform] closure.
   ///
@@ -68,7 +67,7 @@ sealed class Result<T> {
       switch (this) {
         _SuccessResult<T>() => this,
         _FailureResult<T>(failure: final failure) =>
-        Result<T>.failure(transform(failure)),
+          Result<T>.failure(transform(failure)),
       };
 
   /// Chains sequential asynchronous or synchronous monadic operations where the [transform] callback
@@ -76,9 +75,9 @@ sealed class Result<T> {
   ///
   /// Prevents flat nested structures like `Result<Result<R>>` by keeping execution pipelines linear.
   Result<R> flatMap<R>(Result<R> Function(T value) transform) => switch (this) {
-    _SuccessResult<T>(success: final success) => transform(success.value),
-    _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
-  };
+        _SuccessResult<T>(success: final success) => transform(success.value),
+        _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
+      };
 
   /// Collapses the dual state of this result wrapper into a uniform type [R].
   ///
@@ -106,17 +105,17 @@ sealed class Result<T> {
   /// Forces extraction of the underlying value or transforms a domain failure
   /// into a terminal runtime state exception.
   T getOrThrow() => switch (this) {
-    _SuccessResult<T>(success: final success) => success.value,
-    _FailureResult<T>(failure: final failure) =>
-    throw Exception(failure.detailedMessage),
-  };
+        _SuccessResult<T>(success: final success) => success.value,
+        _FailureResult<T>(failure: final failure) =>
+          throw Exception(failure.detailedMessage),
+      };
 
   /// Evaluates a nullable [value] reference. Converts to [Result.success] if the target object is present,
   /// otherwise allocates an explicit [Failure] mapped to the fallback [errorMessage].
   static Result<T> fromNullable<T>(
-      T? value, {
-        required String errorMessage,
-      }) =>
+    T? value, {
+    required String errorMessage,
+  }) =>
       value != null
           ? Result.success(value)
           : Result.failure(Failure(message: errorMessage));
@@ -142,8 +141,8 @@ sealed class Result<T> {
   ///
   /// Catches unhandled asynchronous exceptions, converting them into structured failures.
   static Future<Result<T>> guardAsync<T>(
-      Future<T> Function() operation,
-      ) async {
+    Future<T> Function() operation,
+  ) async {
     try {
       final value = await operation();
       return Result.success(value);
@@ -179,8 +178,8 @@ sealed class Result<T> {
   ///
   /// Yields a clean Dart record containing a structured list mapping of all successes alongside gathered failures.
   static (List<T> successes, List<Failure> failures) partition<T>(
-      List<Result<T>> results,
-      ) {
+    List<Result<T>> results,
+  ) {
     final successes = <T>[];
     final failures = <Failure>[];
 
@@ -199,35 +198,35 @@ sealed class Result<T> {
   /// Maps the string display format dynamically reflecting the current active subtype variant.
   @override
   String toString() => switch (this) {
-    _SuccessResult<T>(success: final success) => success.toString(),
-    _FailureResult<T>(failure: final failure) => failure.toString(),
-  };
+        _SuccessResult<T>(success: final success) => success.toString(),
+        _FailureResult<T>(failure: final failure) => failure.toString(),
+      };
 
   /// Implements deep state structural equality validation across distinct [Result] wrappers.
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Result<T> &&
-              switch ((this, other)) {
-                (
-                _SuccessResult<T>(success: final s1),
-                _SuccessResult<T>(success: final s2)
-                ) =>
-                s1 == s2,
-                (
-                _FailureResult<T>(failure: final f1),
-                _FailureResult<T>(failure: final f2)
-                ) =>
-                f1 == f2,
-                _ => false,
-              };
+      other is Result<T> &&
+          switch ((this, other)) {
+            (
+              _SuccessResult<T>(success: final s1),
+              _SuccessResult<T>(success: final s2)
+            ) =>
+              s1 == s2,
+            (
+              _FailureResult<T>(failure: final f1),
+              _FailureResult<T>(failure: final f2)
+            ) =>
+              f1 == f2,
+            _ => false,
+          };
 
   /// Computes a precise hash configuration based on the underlying variant type hash calculation.
   @override
   int get hashCode => switch (this) {
-    _SuccessResult<T>(success: final success) => success.hashCode,
-    _FailureResult<T>(failure: final failure) => failure.hashCode,
-  };
+        _SuccessResult<T>(success: final success) => success.hashCode,
+        _FailureResult<T>(failure: final failure) => failure.hashCode,
+      };
 }
 
 /// A private concrete success variant container extending the base [Result] contract state.
