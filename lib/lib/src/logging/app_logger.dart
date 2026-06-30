@@ -18,43 +18,47 @@ class AppLogger implements LoggerService {
   static const String _yellow = '\x1B[33m';
   static const String _red = '\x1B[31m';
 
+  // State tracking for hierarchical grouped logging
   int _groupDepth = 0;
 
+  /// Generates the appropriate indentation string based on current nesting depth.
   String get _indent => '  ' * _groupDepth;
 
+  /// Wraps a [message] with ANSI [colorCode] strings if the platform terminal supports it.
   String _colorize(String message, String colorCode) {
     return '$colorCode$message$_reset';
   }
 
-  /// Groups related operations dynamically by adding indentation.
+  /// Groups related log outputs visually inside an indented runtime scope.
   void group(String groupName, void Function() block) {
     developer.log(_indent + _colorize('▶️ START: $groupName', _cyan),
         name: 'GROUP');
-    _groupDepth++;
+    _groupDepth++;// Step into the nested layer
     try {
-      block();
+      block();// Execute the operational business logic
     } finally {
-      _groupDepth--;
+      _groupDepth--;// Always restore depth, even if the block throws an exception
       developer.log(_indent + _colorize('◀️ END: $groupName', _cyan),
           name: 'GROUP');
     }
   }
 
-  /// Core utility that handles standard logs and splits massive logs into clean sub-lines.
+  /// Dispatches the [message] into single-line or multi-line block layouts depending on size.
   void _logSmartLines(
       String message, String name, int level, String colorCode) {
     const int maxLength = 100;
-
+    /// Dispatches the [message] into single-line or multi-line block layouts depending on size.
     final List<String> lines = message.contains('\n')
         ? message.split('\n')
         : _splitByLength(message, maxLength);
-
+    // Case 1: Standard or lightweight logs (Prints cleanly on a single line)
     if (lines.length == 1) {
       developer.log(_indent + _colorize(message, colorCode),
           name: name, level: level);
       return;
     }
 
+    // Case 2: Heavy payloads, stack traces, or massive logs (Prints in structured blocks)
     developer.log(
         _indent + _colorize('┌─── Multi-line $name Block ───', colorCode),
         name: name,
@@ -66,6 +70,7 @@ class AppLogger implements LoggerService {
         name: name, level: level);
   }
 
+  /// Splits an overflowing single-line string into manageable text chunks.
   List<String> _splitByLength(String text, int chunkSize) {
     final List<String> chunks = [];
     for (int i = 0; i < text.length; i += chunkSize) {
