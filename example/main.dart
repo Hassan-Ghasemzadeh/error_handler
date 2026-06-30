@@ -131,6 +131,7 @@ void main() async {
   }
 
   if (kDebugMode) {
-    print('\n💡 For more advanced features and detailed documentation, please read the README.');
+    print(
+        '\n💡 For more advanced features and detailed documentation, please read the README.');
   }
 }
