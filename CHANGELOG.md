@@ -4,7 +4,7 @@ All notable changes to the `error_handler` package will be documented in this fi
 
 ## [1.0.2] - 2026-06-30
 - Switched to MIT license for better pub.dev recognition.
-- Upgraded dependencies including get_it to support version 8.0.0.
+- Upgraded dependencies including get_it to support version 9.2.1.
 - 
 ## [1.0.1] - 2026-06-30
 - Updated Flutter environment constraints.
