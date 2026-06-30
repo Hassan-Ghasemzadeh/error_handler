@@ -9,7 +9,6 @@ import 'error/flutter_error_handler.dart';
 /// This class initializes the required dependency injection modules and activates framework-level
 /// error interceptors during the application startup sequence.
 class ErrorHandler {
-
   /// Explicitly exposes the registered [ResultExecutor] instance for fast static-like access.
   ///
   /// Serves as a Clean Architecture facade, allowing users to safely retrieve the execution engine.
@@ -27,7 +26,7 @@ class ErrorHandler {
   /// This asynchronous method boots up the core DI configuration via [GetItConfiguration],
   /// extracts the registered [FlutterErrorHandler] instance, and registers the global hooks
   /// to intercept uncaught UI and platform-level exceptions.
-  void init() async {
+  Future<void> init() async {
     // Note: It is ideal to invoke GetItConfiguration.init() BEFORE resolving the handler
     // to ensure that FlutterErrorHandler is fully registered within the GetIt service locator container.
     await GetItConfiguration.init();
