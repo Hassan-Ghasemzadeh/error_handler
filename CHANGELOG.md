@@ -2,6 +2,9 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project adheres to Semantic Versioning.
 
+## [1.0.4] - 2026-06-30
+- Hard clean and complete removal of unused dependencies for full WASM/Web compatibility.
+
 ## [1.0.3] - 2026-06-30
 - Removed external logger dependency to achieve full Web and WASM compatibility.
 
