@@ -6,7 +6,6 @@ import '../../../core/utils/logger_service.dart';
 /// This class serves as an abstraction layer over the native logging framework,
 /// ensuring complete cross-platform, Web, and WASM compatibility without external dependencies.
 class AppLogger implements LoggerService {
-
   /// Creates an [AppLogger] instance.
   AppLogger();
 
