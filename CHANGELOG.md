@@ -2,6 +2,11 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project adheres to Semantic Versioning.
 
+## [1.0.1] - 2026-06-30
+- Updated Flutter environment constraints.
+- Added documentation example.
+- Fixed pub points analysis.
+- 
 ## [1.0.0] - 2026-06-29
 
 ### Added
