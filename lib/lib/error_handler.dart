@@ -3,7 +3,7 @@
 /// This library provides a unified interface for monadic result wrappers, 
 /// operational boundary executors, and error monitoring handlers, abstracting 
 /// the internal project file structure from external consumer packages.
-library error_handler;
+library;
 
 // Export the core bootstrapping error handler coordinator.
 export 'src/error_handler_base.dart';
