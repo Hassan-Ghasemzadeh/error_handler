@@ -3,11 +3,26 @@ import 'package:get_it/get_it.dart';
 import '../../core/di/get_it_config.dart';
 import 'error/flutter_error_handler.dart';
 
+/// A bootstrapping coordinator responsible for orchestrating the application's global error tracking lifecycle.
+///
+/// This class initializes the required dependency injection modules and activates framework-level
+/// error interceptors during the application startup sequence.
 class ErrorHandler {
+
+  /// Initializes the dependency containers and binds global exception handlers.
+  ///
+  /// This asynchronous method boots up the core DI configuration via [GetItConfiguration],
+  /// extracts the registered [FlutterErrorHandler] instance, and registers the global hooks
+  /// to intercept uncaught UI and platform-level exceptions.
   void init() async {
-    final FlutterErrorHandler executor = GetIt.I.get<FlutterErrorHandler>();
+    // Note: It is ideal to invoke GetItConfiguration.init() BEFORE resolving the handler
+    // to ensure that FlutterErrorHandler is fully registered within the GetIt service locator container.
     await GetItConfiguration.init();
-    // Register global error handlers
+
+    // Resolve the centralized FlutterErrorHandler instance from the Service Locator.
+    final FlutterErrorHandler executor = GetIt.I.get<FlutterErrorHandler>();
+
+    // Register global error handlers across the Flutter framework and native channels.
     executor.registerFlutterErrorHandler();
   }
 }
