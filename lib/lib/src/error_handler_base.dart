@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import '../../core/di/get_it_config.dart';
+import '../error_handler.dart';
 import 'error/flutter_error_handler.dart';
 
 /// A bootstrapping coordinator responsible for orchestrating the application's global error tracking lifecycle.
@@ -8,6 +9,18 @@ import 'error/flutter_error_handler.dart';
 /// This class initializes the required dependency injection modules and activates framework-level
 /// error interceptors during the application startup sequence.
 class ErrorHandler {
+
+  /// Explicitly exposes the registered [ResultExecutor] instance for fast static-like access.
+  ///
+  /// Serves as a Clean Architecture facade, allowing users to safely retrieve the execution engine.
+  static ResultExecutor get executor {
+    if (!GetIt.I.isRegistered<ResultExecutor>()) {
+      throw StateError(
+        'ResultExecutor is not initialized. Make sure to call ErrorHandler().init() before accessing the executor.',
+      );
+    }
+    return GetIt.I.get<ResultExecutor>();
+  }
 
   /// Initializes the dependency containers and binds global exception handlers.
   ///
