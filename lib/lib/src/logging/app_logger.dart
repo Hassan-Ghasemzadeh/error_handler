@@ -33,11 +33,11 @@ class AppLogger implements LoggerService {
   void group(String groupName, void Function() block) {
     developer.log(_indent + _colorize('▶️ START: $groupName', _cyan),
         name: 'GROUP');
-    _groupDepth++;// Step into the nested layer
+    _groupDepth++; // Step into the nested layer
     try {
-      block();// Execute the operational business logic
+      block(); // Execute the operational business logic
     } finally {
-      _groupDepth--;// Always restore depth, even if the block throws an exception
+      _groupDepth--; // Always restore depth, even if the block throws an exception
       developer.log(_indent + _colorize('◀️ END: $groupName', _cyan),
           name: 'GROUP');
     }
@@ -47,6 +47,7 @@ class AppLogger implements LoggerService {
   void _logSmartLines(
       String message, String name, int level, String colorCode) {
     const int maxLength = 100;
+
     /// Dispatches the [message] into single-line or multi-line block layouts depending on size.
     final List<String> lines = message.contains('\n')
         ? message.split('\n')
@@ -96,8 +97,10 @@ class AppLogger implements LoggerService {
   void debug(String message, {Object? error, StackTrace? stackTrace}) {
     if (kDebugMode) {
       _logSmartLines(message, 'DEBUG', 500, _cyan);
-      if (error != null) _logSmartLines(error.toString(), 'DEBUG_ERR', 500, _cyan);
-      if (stackTrace != null) _logSmartLines(stackTrace.toString(), 'DEBUG_TRACE', 500, _cyan);
+      if (error != null)
+        _logSmartLines(error.toString(), 'DEBUG_ERR', 500, _cyan);
+      if (stackTrace != null)
+        _logSmartLines(stackTrace.toString(), 'DEBUG_TRACE', 500, _cyan);
     }
   }
 
@@ -116,7 +119,9 @@ class AppLogger implements LoggerService {
   @override
   void error(String message, {Object? error, StackTrace? stackTrace}) {
     _logSmartLines(message, 'ERROR', 1000, _red);
-    if (error != null) _logSmartLines(error.toString(), 'ERROR_OBJ', 1000, _red);
-    if (stackTrace != null) _logSmartLines(stackTrace.toString(), 'ERROR_TRACE', 1000, _red);
+    if (error != null)
+      _logSmartLines(error.toString(), 'ERROR_OBJ', 1000, _red);
+    if (stackTrace != null)
+      _logSmartLines(stackTrace.toString(), 'ERROR_TRACE', 1000, _red);
   }
 }
