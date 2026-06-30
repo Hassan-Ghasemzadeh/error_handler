@@ -1,25 +1,23 @@
-import 'package:logger/logger.dart';
-
+import 'dart:developer' as developer;
 import '../../../core/utils/logger_service.dart';
 
-/// A concrete implementation of [LoggerService] utilizing the underlying [Logger] package.
+/// A concrete implementation of [LoggerService] utilizing the native Dart developer library.
 ///
-/// This class serves as an abstraction layer over the third-party logging library,
-/// ensuring that changing the logging provider in the future won't impact the core application code.
+/// This class serves as an abstraction layer over the native logging framework,
+/// ensuring complete cross-platform, Web, and WASM compatibility without external dependencies.
 class AppLogger implements LoggerService {
 
-  // The internal logger utility instance responsible for formatting and printing logs.
-  final Logger _logger;
-
   /// Creates an [AppLogger] instance.
-  ///
-  /// Accepts an optional pre-configured external [Logger]. If omitted,
-  /// a default constructor instance of [Logger] is assigned.
-  AppLogger({Logger? logger}) : _logger = logger ?? Logger();
+  AppLogger();
 
   /// Logs an operational informational message using the internal logger's info status.
   @override
-  void info(String message) => _logger.i(message);
+  void info(String message) {
+    developer.log(
+      message,
+      name: 'INFO',
+    );
+  }
 
   /// Logs a verbose diagnostic debug message.
   ///
@@ -27,8 +25,9 @@ class AppLogger implements LoggerService {
   /// and execution [stackTrace] maps directly to the underlying engine.
   @override
   void debug(String message, {Object? error, StackTrace? stackTrace}) {
-    _logger.d(
+    developer.log(
       message,
+      name: 'DEBUG',
       error: error,
       stackTrace: stackTrace,
     );
@@ -36,7 +35,12 @@ class AppLogger implements LoggerService {
 
   /// Logs a potential warning anomaly that does not break application operational flow.
   @override
-  void warning(String message) => _logger.w(message);
+  void warning(String message) {
+    developer.log(
+      message,
+      name: 'WARNING',
+    );
+  }
 
   /// Logs critical runtime failures and high-severity crashes.
   ///
@@ -44,8 +48,9 @@ class AppLogger implements LoggerService {
   /// and the precise system [stackTrace] for immediate developer tracking.
   @override
   void error(String message, {Object? error, StackTrace? stackTrace}) {
-    _logger.e(
+    developer.log(
       message,
+      name: 'ERROR',
       error: error,
       stackTrace: stackTrace,
     );

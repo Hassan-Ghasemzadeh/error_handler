@@ -1,12 +1,12 @@
- import 'package:get_it/get_it.dart';
+import 'package:get_it/get_it.dart';
 
 import 'package:resultex/lib/src/logging/app_logger.dart';
 import 'di_module.dart';
 
- /// A dependency injection module responsible for registering the [AppLogger].
- ///
- /// This module extends [DIModule] to integrate with the application's
- /// dependency injection lifecycle.
+/// A dependency injection module responsible for registering the [AppLogger].
+///
+/// This module extends [DIModule] to integrate with the application's
+/// dependency injection lifecycle.
 class AppLoggerModule extends DIModule {
   /// Registers the dependencies managed by this module into the [GetIt] injector.
   ///

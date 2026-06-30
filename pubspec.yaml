@@ -12,7 +12,6 @@ dependencies:
     sdk: flutter
   equatable: ^2.0.8
   get_it: ^9.2.1
-  logger: ^2.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
