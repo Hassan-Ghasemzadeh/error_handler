@@ -97,10 +97,12 @@ class AppLogger implements LoggerService {
   void debug(String message, {Object? error, StackTrace? stackTrace}) {
     if (kDebugMode) {
       _logSmartLines(message, 'DEBUG', 500, _cyan);
-      if (error != null)
+      if (error != null) {
         _logSmartLines(error.toString(), 'DEBUG_ERR', 500, _cyan);
-      if (stackTrace != null)
+      }
+      if (stackTrace != null) {
         _logSmartLines(stackTrace.toString(), 'DEBUG_TRACE', 500, _cyan);
+      }
     }
   }
 
@@ -119,9 +121,11 @@ class AppLogger implements LoggerService {
   @override
   void error(String message, {Object? error, StackTrace? stackTrace}) {
     _logSmartLines(message, 'ERROR', 1000, _red);
-    if (error != null)
+    if (error != null) {
       _logSmartLines(error.toString(), 'ERROR_OBJ', 1000, _red);
-    if (stackTrace != null)
+    }
+    if (stackTrace != null) {
       _logSmartLines(stackTrace.toString(), 'ERROR_TRACE', 1000, _red);
+    }
   }
 }
