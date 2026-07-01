@@ -1,3 +1,7 @@
+// ==========================================================================
+// 3. CORE IMPLEMENTATION (infrastructure/logging/resultex_logger.dart)
+// ==========================================================================
+
 import 'dart:developer' as developer;
 
 import 'package:ansicolor/ansicolor.dart';
@@ -11,12 +15,13 @@ import 'logger_style.dart';
 /// A concrete implementation of [LoggerService] utilizing encapsulated [LogDetails].
 ///
 /// Implements robust multi-line parsing, automated indentation nesting,
-/// environment-aware runtime filtering, and cross-platform safe colorization via [ansicolor].
+/// environment-aware runtime filtering, and cross-platform safe colorization.
 class ResultexLogger implements LoggerService {
   /// Creates a [ResultexLogger] instance.
   ///
   /// Initializes the default [minLogLevel] and ensures ANSI color support is active.
   ResultexLogger({this.minLogLevel = LogLevel.verbose}) {
+    // Force enables ANSI escape sequences globally for terminal outputs.
     ansiColorDisabled = false;
   }
 
@@ -42,68 +47,151 @@ class ResultexLogger implements LoggerService {
   /// Decorates a raw string payload utilizing the capabilities of the specified [AnsiPen].
   String _colorize(String message, AnsiPen pen) => pen(message);
 
-  /// Groups cascading runtime operations inside a highly scannable, indented console segment.
+  /// Low-level abstraction to route the formatted text to the appropriate stream based on the host platform.
   ///
-  /// Guarantees depth-state recovery via a `finally` block even if the execution routine fails.
+  /// Uses [developer.log] for Web/WASM targets and native standard [print] for desktop (Linux/Mac/Windows)
+  /// to prevent the Flutter framework from stripping out ANSI escape color codes.
+  void _writeToConsole(
+    String formattedMessage, {
+    required String name,
+    required int level,
+  }) {
+    if (kIsWeb) {
+      developer.log(formattedMessage, name: name, level: level);
+    } else {
+      // Direct stdout injection via print preserves live ANSI coloring in Linux environments.
+      if (kDebugMode) {
+        print('[$name] $formattedMessage');
+      }
+    }
+  }
+
+  /// Groups related log outputs visually inside an indented runtime scope with custom full borders.
+  ///
+  /// Dynamically aligns borders using a uniform width to ensure internal logs do not overflow.
   void group(String groupName, void Function() block) {
     if (!_shouldLog(LogLevel.info)) {
       block();
       return;
     }
 
-    developer.log(
-      _indent + _colorize('┌── START: $groupName', LoggerStyles.cyan),
+    final String startText = '??? START: $groupName';
+    final String endText = '??? END: $groupName';
+
+    // Use the class's maximum line length to make sure the box is wide enough
+    // for any internal logs, preventing text from sticking out.
+    const int uniformBoxWidth = _maxLineLength;
+
+    // Create the horizontal ceiling/floor line matching our fixed terminal boundary
+    final String horizontalBorder = '─' * (uniformBoxWidth + 2);
+
+    // 1. Print the TOP box container
+    _writeToConsole(
+      _indent + _colorize('┌$horizontalBorder┐', LoggerStyles.cyan),
       name: 'GROUP',
+      level: 800,
     );
+
+    final String startPadding = ' ' * (uniformBoxWidth - startText.length);
+    _writeToConsole(
+      _indent + _colorize('│ $startText$startPadding │', LoggerStyles.cyan),
+      name: 'GROUP',
+      level: 800,
+    );
+
+    // 2. Execute the inner operational business logic exactly as before
     _groupDepth++;
     try {
       block();
     } finally {
       _groupDepth--;
-      developer.log(
-        _indent + _colorize('└── END: $groupName', LoggerStyles.cyan),
+
+      // 3. Print the BOTTOM box container
+      final String endPadding = ' ' * (uniformBoxWidth - endText.length);
+      _writeToConsole(
+        _indent + _colorize('│ $endText$endPadding │', LoggerStyles.cyan),
         name: 'GROUP',
+        level: 800,
+      );
+
+      _writeToConsole(
+        _indent + _colorize('└$horizontalBorder┘', LoggerStyles.cyan),
+        name: 'GROUP',
+        level: 800,
       );
     }
   }
 
   /// Central processing pipeline for routing, structural line splitting, and printing [LogDetails].
+  ///
+  /// Dynamically wraps standalone or multi-line messages for specific levels into beautiful boxes.
   void _executeLogPipeline(LogDetails details) {
     if (!_shouldLog(details.level)) return;
 
     final String stringMessage = details.message.toString();
     final String name = details.level.name.toUpperCase();
 
+    // Splits the message if it contains newlines or overflows the max length threshold.
     final List<String> lines = stringMessage.contains('\n')
         ? stringMessage.split('\n')
         : _splitByLength(stringMessage, _maxLineLength);
 
-    if (lines.length == 1) {
-      developer.log(
+    // Check if the current level requires a fully enclosed symmetric box layout.
+    // We want boxes for ERROR, CRITICAL, and WARNING levels.
+    final bool requiresBox =
+        details.level == LogLevel.error ||
+        details.level == LogLevel.critical ||
+        details.level == LogLevel.warning;
+
+    if (lines.length == 1 && !requiresBox) {
+      // Standard single-line output for INFO, DEBUG, VERBOSE (No box)
+      _writeToConsole(
         _indent + _colorize(stringMessage, details.pen),
         name: name,
         level: details.level.value,
       );
     } else {
-      developer.log(
-        _indent + _colorize('▼▼▼ Multi-line $name Block ▼▼▼', details.pen),
+      // Multi-line payloads OR single-line logs that require a strict visual box boundary
+      int maxLineLength = 0;
+      for (final line in lines) {
+        if (line.length > maxLineLength) {
+          maxLineLength = line.length;
+        }
+      }
+
+      // Enforce a sensible minimum width for the box layout aesthetics.
+      if (maxLineLength < 40) maxLineLength = 40;
+
+      final String horizontalBorder = '─' * (maxLineLength + 2);
+
+      // Print the top border
+      _writeToConsole(
+        _indent + _colorize('┌$horizontalBorder┐', details.pen),
         name: name,
         level: details.level.value,
       );
+
+      // Print the line content wrapped inside borders
       for (final line in lines) {
-        developer.log(
-          '$_indent│ $line',
+        final int paddingNeeded = maxLineLength - line.length;
+        final String padding = ' ' * paddingNeeded;
+
+        _writeToConsole(
+          _indent + _colorize('│ $line$padding │', details.pen),
           name: name,
           level: details.level.value,
         );
       }
-      developer.log(
-        _indent + _colorize('▲▲▲ End of $name Block ▲▲▲', details.pen),
+
+      // Print the bottom border
+      _writeToConsole(
+        _indent + _colorize('└$horizontalBorder┘', details.pen),
         name: name,
         level: details.level.value,
       );
     }
 
+    // Automatically process auxiliary error and stacktrace layers if present.
     _logTechnicalDetails(details);
   }
 
