@@ -5,7 +5,6 @@ import '../model/log_level.dart';
 /// This class acts as an immutable options container that shapes how log messages
 /// are filtered, wrapped, colored, and framed across different terminal environments.
 class ResultexLoggerSettings {
-
   /// Creates a final configuration instance with robust fallback defaults.
   const ResultexLoggerSettings({
     this.minLogLevel = LogLevel.verbose,
