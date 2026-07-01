@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
-
-import '../logging/app_logger.dart';
+import 'package:resultex_logger/resultex_logger.dart';
 
 /// A centralized coordinator for intercepting, logging, and reporting application errors.
 ///
@@ -8,7 +7,7 @@ import '../logging/app_logger.dart';
 /// platform errors, ensuring they are consistently logged or sent to remote monitoring services.
 class FlutterErrorHandler {
   // The primary logging utility used to record details about captured errors.
-  final AppLogger _logger;
+  final ResultexLogger _logger;
 
   // A flag indicating whether errors should be forwarded to remote crash reporting services.
   final bool _reportErrors;
@@ -17,7 +16,7 @@ class FlutterErrorHandler {
   ///
   /// Requires an [AppLogger] implementation. By default, [_reportErrors] is enabled (`true`).
   FlutterErrorHandler({
-    required AppLogger logger,
+    required ResultexLogger logger,
     bool reportErrors = true,
   })  : _logger = logger,
         _reportErrors = reportErrors;

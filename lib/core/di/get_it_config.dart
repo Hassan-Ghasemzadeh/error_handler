@@ -1,7 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:resultex/core/di/result_executor_module.dart';
-
-import 'app_logger_module.dart';
 import 'flutter_error_handler_module.dart';
 
 /// A configuration class responsible for initializing the application's dependency injection container.
@@ -21,7 +19,6 @@ class GetItConfiguration {
   static Future<void> init() async {
     // Define the list of DI modules to be registered in the application.
     final modules = [
-      AppLoggerModule(),
       ResultExecutorModule(),
       FlutterErrorHandlerModule(),
     ];

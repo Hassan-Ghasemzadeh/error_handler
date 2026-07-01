@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import '../../../core/utils/logger_service.dart';
+import 'package:resultex_logger/core/utils/logger_service.dart';
 import '../error/flutter_error_handler.dart';
 import '../model/failure.dart';
 import '../model/result.dart';
