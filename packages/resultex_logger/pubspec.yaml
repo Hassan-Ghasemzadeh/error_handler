@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   get_it: ^9.2.1
+  ansicolor: ^2.0.3
 
 dev_dependencies:
   flutter_test:
