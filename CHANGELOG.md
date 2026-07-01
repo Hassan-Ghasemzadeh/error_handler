@@ -2,6 +2,12 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project adheres to Semantic Versioning.
 
+## 2.0.0
+
+### Breaking Changes
+- Migrated core modules and decoupled dependency injection from localized constructors.
+- Integrated `resultex_logger` as a core dependency.
+
 ## [1.0.4] - 2026-06-30
 - Hard clean and complete removal of unused dependencies for full WASM/Web compatibility.
 
