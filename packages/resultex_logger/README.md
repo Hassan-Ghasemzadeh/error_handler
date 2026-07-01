@@ -1,39 +1,84 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Resultex Logger 🚀
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+A lightweight, powerful, and highly compatible logging system for Dart and Flutter. Built directly
+on top of native `developer.log`, it ensures seamless **cross-platform, Web, and WASM compatibility
+** without breaking a sweat or relying on heavy external dependencies.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+---
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+## ✨ Features
 
-## Features
+* **✅ Color Logs:** High-visibility ANSI escape sequences to colorize your terminal.
+* **✅ Comprehensive LogLevels:** Full support for `info`, `verbose`, `warning`, `debug`, `error`,
+  `critical`, `fine`, and `good`.
+* **🚧 Logs Grouping (In Progress):** Visual nesting for hierarchical runtime operations.
+* **🚧 Collapsible Huge Logs (In Progress):** Smart multi-line layout to handle massive payloads and
+  stack traces cleanly.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+---
 
-## Getting started
+## 📦 Installation
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Since this package is tailored for internal/monorepo architectural designs, add it to your
+`pubspec.yaml` using a local path:
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  resultex_logger:
+    path: '../error_handler/packages/resultex_logger'
 ```
 
-## Additional information
+**🛠️ Getting Started**
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+1. **Initialize Dependencies**
+   Before using the logger, initialize its dependency injection layer. It is highly recommended to
+   do this in your main.dart before runApp:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize the logger base configuration
+  final loggerBase = ResultexLoggerBase();
+  await loggerBase.init();
+
+  runApp(const MyApp());
+}
+```
+
+2. **Basic Usage & Log Mapping**
+   Import the main entry point and start logging across your application. The logger automatically
+   maps colors, tags, and Syslog levels internally:
+
+```dart
+import 'package:resultex_logger/resultex_logger.dart';
+
+void main() {
+  // Example usage (Assuming LoggerService is fetched via your DI locator, e.g., GetIt)
+  final logger = GetIt.I<LoggerService>();
+
+  // Standard Logs
+  logger.info('Application started successfully.');
+  logger.good('Database connection established.');
+  logger.fine('Resource allocated smoothly.');
+  logger.verbose('User scrolling index: 24');
+
+  // Warnings & Debugs
+  logger.warning('API response time is slower than expected.');
+  logger.debug('Fetching user data dynamic payload...');
+
+  // Errors & Critical Crashes
+  try {
+    throw Exception('Connection timed out');
+  } catch (e, stack) {
+    logger.error('Failed to load dashboard data', error: e, stackTrace: stack);
+    logger.critical(
+        'Fatal: System is unable to recover from this state!', error: e, stackTrace: stack);
+  }
+}
+```
+
+****🏗️ Architecture Note****
+This package adheres strictly to the Single Responsibility Principle. The AppLogger is decoupled
+from initialization lifecycles, preventing circular dependencies and making it extremely easy to
+mock during Unit Testing.
