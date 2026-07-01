@@ -7,7 +7,6 @@ import '../setting/resultex_logger_settings.dart';
 /// raw log payloads and transforming them into a structured list of strings
 /// ready for console output.
 abstract class LoggerFormatter {
-
   /// Formats the provided log details into a list of printable string lines.
   ///
   /// [details] contains the core log payload including message, level, and colors.
@@ -15,5 +14,9 @@ abstract class LoggerFormatter {
   /// [groupDepth] specifies the current indentation level for nested log groups.
   ///
   /// Returns a [List<String>] where each element represents a single line to be printed.
-  List<String> format(LogDetails details, ResultexLoggerSettings settings, int groupDepth);
+  List<String> format(
+    LogDetails details,
+    ResultexLoggerSettings settings,
+    int groupDepth,
+  );
 }

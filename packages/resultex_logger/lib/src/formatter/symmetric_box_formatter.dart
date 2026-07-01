@@ -11,10 +11,10 @@ import '../setting/resultex_logger_settings.dart';
 class SymmetricBoxFormatter implements LoggerFormatter {
   @override
   List<String> format(
-      LogDetails details,
-      ResultexLoggerSettings settings,
-      int groupDepth,
-      ) {
+    LogDetails details,
+    ResultexLoggerSettings settings,
+    int groupDepth,
+  ) {
     final String stringMessage = details.message.toString();
     final String indent = '  ' * groupDepth;
 
@@ -27,8 +27,8 @@ class SymmetricBoxFormatter implements LoggerFormatter {
     // Box layouts are strictly enforced for high-priority or severe logs (Error, Critical, Warning).
     final bool requiresBox =
         details.level == LogLevel.error ||
-            details.level == LogLevel.critical ||
-            details.level == LogLevel.warning;
+        details.level == LogLevel.critical ||
+        details.level == LogLevel.warning;
 
     // Helper closure to inject ANSI escape color codes safely via LogDetails pen.
     String penText(String text) =>
