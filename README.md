@@ -35,10 +35,10 @@ final result = Result.failure(Failure(message: "Network error"));
 ### 3. Pattern Matching (Dart 3)
 ```dart
 switch (result) {
-  case SuccessResult<User>(value: final user):
-    print('Welcome ${user.name}!');
-  case FailureResult<User>(failure: final failure):
-    print('Error: ${failure.message}');
+case SuccessResult<User>(value: final user):
+print('Welcome ${user.name}!');
+case FailureResult<User>(failure: final failure):
+print('Error: ${failure.message}');
 }
 ```
 ## 📖 Usage Guide
