@@ -1,8 +1,18 @@
 /// The main entry point of the `resultex_logger` package.
 ///
-/// This library exports the core logging functionalities, allowing consuming
-/// applications to import a single file to access the complete logging system.
+/// This library encapsulates and exports the core logging API, configurations,
+/// and formatter strategies, allowing consuming applications to import a single
+/// file to access the entire logging suite.
 library;
 
-// Exports the concrete logger implementation and its public API contract.
+// Export the concrete logger implementation and its corresponding contract service.
 export 'package:resultex_logger/src/logger/logger.dart';
+
+// Export the operational configuration settings for the logger.
+export 'package:resultex_logger/src/setting/resultex_logger_settings.dart';
+
+// Export the structural layout formatter strategies for console framing.
+export 'package:resultex_logger/src/formatter/symmetric_box_formatter.dart';
+
+// Export the severity levels defining the system-wide log filter thresholds.
+export 'package:resultex_logger/src/model/log_level.dart';
