@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
+import 'package:resultex/core/di/get_it_config.dart';
 
 import '../../../core/utils/logger_service.dart';
 
@@ -9,7 +10,9 @@ import '../../../core/utils/logger_service.dart';
 /// ensuring complete cross-platform, Web, and WASM compatibility without external dependencies.
 class AppLogger implements LoggerService {
   /// Creates an [AppLogger] instance.
-  AppLogger();
+  AppLogger() {
+    GetItConfiguration.init();
+  }
 
   // ANSI Escape sequences for terminal text colorization.
   static const String _reset = '\x1B[0m';
