@@ -5,4 +5,4 @@
 library;
 
 // Exports the concrete logger implementation and its public API contract.
-export 'package:resultex_logger/src/resultex_logger.dart';
+export 'package:resultex_logger/src/logger/logger.dart';

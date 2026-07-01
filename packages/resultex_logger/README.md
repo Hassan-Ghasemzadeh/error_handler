@@ -51,7 +51,7 @@ void main() async {
    maps colors, tags, and Syslog levels internally:
 
 ```dart
-import 'package:resultex_logger/resultex_logger.dart';
+import 'package:resultex_logger/logger.dart';
 
 void main() {
   // Example usage (Assuming LoggerService is fetched via your DI locator, e.g., GetIt)

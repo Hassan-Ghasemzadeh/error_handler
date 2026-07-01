@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import '../../src/resultex_logger.dart';
+import '../../src/logger/logger.dart';
 import 'di_module.dart';
 
 /// A dependency injection module responsible for registering the [AppLogger].
