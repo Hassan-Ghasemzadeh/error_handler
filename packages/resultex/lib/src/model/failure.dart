@@ -17,11 +17,7 @@ class Failure extends Equatable {
   /// Creates an immutable [Failure] instance.
   ///
   /// Requires a [message] and accepts optional [error] payloads or [stackTrace] details.
-  const Failure({
-    required this.message,
-    this.error,
-    this.stackTrace,
-  });
+  const Failure({required this.message, this.error, this.stackTrace});
 
   /// Accumulates all available failure properties into a comprehensive, multiline diagnostic string.
   ///

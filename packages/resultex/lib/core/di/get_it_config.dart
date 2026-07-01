@@ -18,10 +18,7 @@ class GetItConfiguration {
   /// Call this method during the early bootstrap phase of the application (e.g., in `main.dart`).
   static Future<void> init() async {
     // Define the list of DI modules to be registered in the application.
-    final modules = [
-      ResultExecutorModule(),
-      FlutterErrorHandlerModule(),
-    ];
+    final modules = [ResultExecutorModule(), FlutterErrorHandlerModule()];
     // Iterate through each module and register its dependencies into the service locator.
     for (final module in modules) {
       module.register(_injector);

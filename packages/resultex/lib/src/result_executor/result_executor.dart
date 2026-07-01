@@ -24,22 +24,20 @@ class ResultExecutor {
   const ResultExecutor({
     required LoggerService logger,
     bool reportErrors = true,
-  })  : _logger = logger,
-        _reportErrors = reportErrors;
+  }) : _logger = logger,
+       _reportErrors = reportErrors;
 
   /// Executes a standard synchronous [operation] closure block securely.
   ///
   /// Returns a [Result.success] containing the computation data if execution is optimal.
   /// Automatically intercepts any thrown runtime errors and transforms them using [_handleError].
   /// An optional [context] description can be specified to enrich debug tracking logs.
-  Result<T> execute<T>(
-    T Function() operation, {
-    String? context,
-  }) {
+  Result<T> execute<T>(T Function() operation, {String? context}) {
     try {
       final data = operation();
-      _logger
-          .info('Operation successful${context != null ? " in $context" : ""}');
+      _logger.info(
+        'Operation successful${context != null ? " in $context" : ""}',
+      );
       return Result.success(data);
     } catch (e, stackTrace) {
       return _handleError<T>(e, stackTrace, context);
@@ -57,7 +55,8 @@ class ResultExecutor {
     try {
       final data = await operation();
       _logger.info(
-          'Async operation successful${context != null ? " in $context" : ""}');
+        'Async operation successful${context != null ? " in $context" : ""}',
+      );
       return Result.success(data);
     } catch (e, stackTrace) {
       return _handleError<T>(e, stackTrace, context);
@@ -91,8 +90,9 @@ class ResultExecutor {
     final flutterErrorHandler = GetIt.I.get<FlutterErrorHandler>();
 
     // Structure a concise descriptive message binding the error signature with its metadata context.
-    final errorMessage =
-        context != null ? 'Error in $context: ${e.toString()}' : e.toString();
+    final errorMessage = context != null
+        ? 'Error in $context: ${e.toString()}'
+        : e.toString();
 
     // Log the intercepted diagnostic data through the core error handler instance.
     flutterErrorHandler.logError(errorMessage, e, stackTrace);
@@ -104,11 +104,7 @@ class ResultExecutor {
 
     // Return a structured Domain Failure representation inside a Result container.
     return Result.failure(
-      Failure(
-        message: errorMessage,
-        error: e,
-        stackTrace: stackTrace,
-      ),
+      Failure(message: errorMessage, error: e, stackTrace: stackTrace),
     );
   }
 }
