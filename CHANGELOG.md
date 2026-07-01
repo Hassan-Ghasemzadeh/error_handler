@@ -2,6 +2,12 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project adheres to Semantic Versioning.
 
+## 2.0.1
+
+- Internal restructuring and code migrations.
+- Integrated `resultex_logger` package as a core module dependency.
+- Fixed dartdoc references and static analysis warnings.
+
 ## 2.0.0
 
 ### Breaking Changes
