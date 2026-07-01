@@ -1,7 +1,3 @@
-// ==========================================================================
-// 3. CORE IMPLEMENTATION (infrastructure/logging/resultex_logger.dart)
-// ==========================================================================
-
 import 'dart:developer' as developer;
 
 import 'package:ansicolor/ansicolor.dart';
