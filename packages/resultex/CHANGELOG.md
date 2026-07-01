@@ -1,4 +1,7 @@
-## 2.0.0
+## v2.0.1
+* updated README.md and CHANGELOG.md
+
+## v2.0.0
 
 ### Breaking Changes
 
