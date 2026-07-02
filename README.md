@@ -37,7 +37,7 @@ Add `resultex` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  resultex: ^2.1.0
+  resultex: ^2.2.0
 ```
 
 **🎯 Core Concepts**
