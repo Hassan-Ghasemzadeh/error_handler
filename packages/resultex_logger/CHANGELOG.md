@@ -1,7 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
- 
+ # [1.1.1] - 2026-07-02
+- Updated GitHub repository url
+- Updated environment sdk and flutter version
+
 ## [1.1.0] - 2026-07-01
 ### Added
 - Introduced strong-typed severity control via the new `LogLevel` enum (supporting numerical Syslog weights).
