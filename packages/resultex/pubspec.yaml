@@ -2,7 +2,7 @@ name: resultex
 description: A robust core architecture ecosystem for Flutter and Dart, providing unified dependency injection and error management utilities.
 version: 2.0.1
 homepage: https://github.com/Hassan-Ghasemzadeh/error_handler
-repository: https://github.com/Hassan-Ghasemzadeh/error_handler/packages/resultex
+repository: https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex
 
 environment:
   sdk: ^3.12.2
