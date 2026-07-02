@@ -3,7 +3,7 @@
 A robust, type-safe error handling ecosystem for Dart and Flutter that implements the Result pattern
 for clean, predictable error handling without exceptions.
 
-[![pub package](https://img.shields.io/pub/v/resultex.svg)](https://pub.dev/packages/resultex)
+[![pub package](https://img.shields.io/pub/v/resultex)](https://pub.dev/packages/resultex)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 📦 Overview
