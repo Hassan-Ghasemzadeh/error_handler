@@ -14,7 +14,7 @@ dependencies:
 
   equatable: ^2.0.8
   get_it: ^9.2.1
-  resultex_logger: ^1.0.0
+  resultex_logger: ^1.1.1
 
 dev_dependencies:
   flutter_test:
