@@ -6,7 +6,6 @@ import 'package:resultex/src/model/result.dart';
 /// Utility extensions on the [Result] sealed hierarchy to streamline functional
 /// recovery paths and fluid asynchronous fallback operations.
 extension ResultExtensions<T> on Result<T> {
-
   /// Recovers from an operational failure by mapping the non-generic [Failure]
   /// instance into a new alternative [Result].
   Result<T> recover(Result<T> Function(Failure failure) onFailure) {
