@@ -9,22 +9,42 @@ extension ResultExtensions<T> on Result<T> {
   /// Recovers from an operational failure by mapping the non-generic [Failure]
   /// instance into a new alternative [Result].
   Result<T> recover(Result<T> Function(Failure failure) onFailure) {
-    return switch (this) {
-      Success<T>() => this,
-      final Failure failure => onFailure(failure),
-      _ => throw UnimplementedError(),
-    };
+    final current = this;
+
+    if (current.runtimeType.toString().contains('Failure')) {
+      final dynamic internal = current;
+      try {
+        return onFailure(internal as Failure);
+      } catch (_) {
+        return onFailure(internal.failure as Failure);
+      }
+    }
+
+    return this;
   }
 
   /// Extracts the encapsulated success value directly from [Success], or invokes
   /// an asynchronous fallback strategy when a [Failure] is encountered.
   Future<T> getOrElseAsync(
-    FutureOr<T> Function(Failure failure) onFallback,
-  ) async {
-    return switch (this) {
-      Success<T>(value: final val) => val,
-      final Failure failure => await onFallback(failure),
-      _ => throw UnimplementedError(),
-    };
+      FutureOr<T> Function(Failure failure) onFallback) async {
+    final current = this;
+    final typeStr = current.runtimeType.toString();
+
+    if (typeStr.contains('Success')) {
+      final dynamic internal = current;
+      try {
+        return internal.value as T;
+      } catch (_) {
+        // واکشی مقدار در صورتی که ساختار تودرتو باشد
+        return (internal.success.value) as T;
+      }
+    }
+
+    final dynamic internal = current;
+    try {
+      return await onFallback(internal as Failure);
+    } catch (_) {
+      return await onFallback(internal.failure as Failure);
+    }
   }
 }

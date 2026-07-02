@@ -15,7 +15,11 @@ class FlutterErrorHandler {
   /// Creates a [FlutterErrorHandler] instance.
   ///
   /// Requires an [AppLogger] implementation. By default, [_reportErrors] is enabled (`true`).
-  FlutterErrorHandler({required this._logger, this._reportErrors = true});
+  FlutterErrorHandler({
+    required ResultexLogger logger,
+    bool reportErrors = true,
+  })  : _logger = logger,
+        _reportErrors = reportErrors;
 
   /// Routes the captured [error] and [stackTrace] to the appropriate logging level.
   ///
