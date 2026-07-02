@@ -2,7 +2,7 @@ name: resultex_logger
 description: A lightweight, high-performance, and colorized logging system for Flutter and Dart built on top of native developer.log
 version: 1.1.0
 homepage: 'https://github.com/Hassan-Ghasemzadeh/error_handler'
-repository: 'https://github.com/Hassan-Ghasemzadeh/error_handler/packages/resultex_logger'
+repository: 'https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex_logger'
 
 environment:
   sdk: ^3.12.2
