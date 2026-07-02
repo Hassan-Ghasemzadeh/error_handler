@@ -2,19 +2,31 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+
 ## [2.2.0] - 2026-07-02
 
 ### Added
-- **Flutter UI Extension (`.when()`)**: Added a highly readable, Dart 3 pattern-matching-backed extension method on `Result` to cleanly map success and failure states directly into Flutter widgets without conditions.
-- **Parallel Execution Utility (`ResultUtils.combineAll`)**: Introduced a concurrent utility method to fire multiple `Future<Result>` operations simultaneously.
-- **Composite Error Framework (`MultiFailure`)**: Added a new failure variant that aggregates all intercepted errors from parallel dispatches instead of short-circuiting on the first failure.
+
+- **Flutter UI Extension (`.when()`)**: Added a highly readable, Dart 3 pattern-matching-backed
+  extension method on `Result` to cleanly map success and failure states directly into Flutter
+  widgets without conditions.
+- **Parallel Execution Utility (`ResultUtils.combineAll`)**: Introduced a concurrent utility method
+  to fire multiple `Future<Result>` operations simultaneously.
+- **Composite Error Framework (`MultiFailure`)**: Added a new failure variant that aggregates all
+  intercepted errors from parallel dispatches instead of short-circuiting on the first failure.
 
 ### Changed
-- **License Alignment**: Fully migrated and aligned the project license framework to **MIT** across all documentation and registry metadata for seamless commercial and open-source adoption.
-- **Documentation Updates**: Rewrote the `README.md` to include interactive layout design recipes, concurrent API usage guides, and modern Dart 3 structural pattern examples.
+
+- **License Alignment**: Fully migrated and aligned the project license framework to **MIT** across
+  all documentation and registry metadata for seamless commercial and open-source adoption.
+- **Documentation Updates**: Rewrote the `README.md` to include interactive layout design recipes,
+  concurrent API usage guides, and modern Dart 3 structural pattern examples.
 
 ### Fixed
-- **Pattern Matching Type Inference**: Resolved internal compiler mismatches during تو در تو (nested) destructuring of the `Success<T>` wrapper inside concrete `SuccessResult` scopes.
+
+- **Pattern Matching Type Inference**: Resolved internal compiler mismatches during تو در تو (
+  nested) destructuring of the `Success<T>` wrapper inside concrete `SuccessResult` scopes.
+
 ## 2.1.0
 
 - **Feat**: Introduced `ResultExtensions` on the `Result<T>` sealed hierarchy.
