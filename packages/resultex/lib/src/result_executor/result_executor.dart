@@ -24,8 +24,8 @@ class ResultExecutor {
   const ResultExecutor({
     required LoggerService logger,
     bool reportErrors = true,
-  }) : _logger = logger,
-       _reportErrors = reportErrors;
+  })  : _logger = logger,
+        _reportErrors = reportErrors;
 
   /// Executes a standard synchronous [operation] closure block securely.
   ///
@@ -90,9 +90,8 @@ class ResultExecutor {
     final flutterErrorHandler = GetIt.I.get<FlutterErrorHandler>();
 
     // Structure a concise descriptive message binding the error signature with its metadata context.
-    final errorMessage = context != null
-        ? 'Error in $context: ${e.toString()}'
-        : e.toString();
+    final errorMessage =
+        context != null ? 'Error in $context: ${e.toString()}' : e.toString();
 
     // Log the intercepted diagnostic data through the core error handler instance.
     flutterErrorHandler.logError(errorMessage, e, stackTrace);

@@ -55,11 +55,11 @@ sealed class Result<T> {
   /// If this instance represents a failure state, the operations bypass mapping
   /// and safely forward the original failure signature downstream.
   Result<R> map<R>(R Function(T value) transform) => switch (this) {
-    _SuccessResult<T>(success: final success) => Result<R>.success(
-      transform(success.value),
-    ),
-    _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
-  };
+        _SuccessResult<T>(success: final success) => Result<R>.success(
+            transform(success.value),
+          ),
+        _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
+      };
 
   /// Transforms the underlying domain failure signature using the provided error [transform] closure.
   ///
@@ -68,8 +68,8 @@ sealed class Result<T> {
       switch (this) {
         _SuccessResult<T>() => this,
         _FailureResult<T>(failure: final failure) => Result<T>.failure(
-          transform(failure),
-        ),
+            transform(failure),
+          ),
       };
 
   /// Chains sequential asynchronous or synchronous monadic operations where the [transform] callback
@@ -77,9 +77,9 @@ sealed class Result<T> {
   ///
   /// Prevents flat nested structures like `Result<Result<R>>` by keeping execution pipelines linear.
   Result<R> flatMap<R>(Result<R> Function(T value) transform) => switch (this) {
-    _SuccessResult<T>(success: final success) => transform(success.value),
-    _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
-  };
+        _SuccessResult<T>(success: final success) => transform(success.value),
+        _FailureResult<T>(failure: final failure) => Result<R>.failure(failure),
+      };
 
   /// Collapses the dual state of this result wrapper into a uniform type [R].
   ///
@@ -87,36 +87,38 @@ sealed class Result<T> {
   R fold<R>({
     required R Function(T value) onSuccess,
     required R Function(Failure failure) onFailure,
-  }) => switch (this) {
-    _SuccessResult<T>(success: final success) => onSuccess(success.value),
-    _FailureResult<T>(failure: final failure) => onFailure(failure),
-  };
+  }) =>
+      switch (this) {
+        _SuccessResult<T>(success: final success) => onSuccess(success.value),
+        _FailureResult<T>(failure: final failure) => onFailure(failure),
+      };
 
   /// Performs state matching similarly to [fold], but explicitly passes the underlying
   /// granular [Success] context object rather than just its unwrapped value.
   R match<R>({
     required R Function(Success<T> success) onSuccess,
     required R Function(Failure failure) onFailure,
-  }) => switch (this) {
-    _SuccessResult<T>(success: final success) => onSuccess(success),
-    _FailureResult<T>(failure: final failure) => onFailure(failure),
-  };
+  }) =>
+      switch (this) {
+        _SuccessResult<T>(success: final success) => onSuccess(success),
+        _FailureResult<T>(failure: final failure) => onFailure(failure),
+      };
 
   /// Forces extraction of the underlying value or transforms a domain failure
   /// into a terminal runtime state exception.
   T getOrThrow() => switch (this) {
-    _SuccessResult<T>(success: final success) => success.value,
-    _FailureResult<T>(failure: final failure) => throw Exception(
-      failure.detailedMessage,
-    ),
-  };
+        _SuccessResult<T>(success: final success) => success.value,
+        _FailureResult<T>(failure: final failure) => throw Exception(
+            failure.detailedMessage,
+          ),
+      };
 
   /// Evaluates a nullable [value] reference. Converts to [Result.success] if the target object is present,
   /// otherwise allocates an explicit [Failure] mapped to the fallback [errorMessage].
   static Result<T> fromNullable<T>(T? value, {required String errorMessage}) =>
       value != null
-      ? Result.success(value)
-      : Result.failure(Failure(message: errorMessage));
+          ? Result.success(value)
+          : Result.failure(Failure(message: errorMessage));
 
   /// Wraps a synchronous functional code [operation] executing inside a localized boundary context.
   ///
@@ -186,9 +188,9 @@ sealed class Result<T> {
   /// Maps the string display format dynamically reflecting the current active subtype variant.
   @override
   String toString() => switch (this) {
-    _SuccessResult<T>(success: final success) => success.toString(),
-    _FailureResult<T>(failure: final failure) => failure.toString(),
-  };
+        _SuccessResult<T>(success: final success) => success.toString(),
+        _FailureResult<T>(failure: final failure) => failure.toString(),
+      };
 
   /// Implements deep state structural equality validation across distinct [Result] wrappers.
   @override
@@ -212,9 +214,9 @@ sealed class Result<T> {
   /// Computes a precise hash configuration based on the underlying variant type hash calculation.
   @override
   int get hashCode => switch (this) {
-    _SuccessResult<T>(success: final success) => success.hashCode,
-    _FailureResult<T>(failure: final failure) => failure.hashCode,
-  };
+        _SuccessResult<T>(success: final success) => success.hashCode,
+        _FailureResult<T>(failure: final failure) => failure.hashCode,
+      };
 }
 
 /// A private concrete success variant container extending the base [Result] contract state.
