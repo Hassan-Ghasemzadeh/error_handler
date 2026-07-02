@@ -1,413 +1,209 @@
-# Result Package
+# Resultex
 
-A robust, type-safe error handling package for Dart and Flutter that implements the Result pattern
+A robust, type-safe error handling ecosystem for Dart and Flutter that implements the Result pattern
 for clean, predictable error handling without exceptions.
 
-## 📦 Overview
+[![pub package](https://img.shields.io/pub/v/resultex.svg)](https://pub.dev/packages/resultex)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-`Result` is a functional programming approach to error handling that wraps your results in a
-type-safe container. Instead of throwing exceptions, every function returns a `Result` that is
-either a `Success` with a value or a `Failure` with error details.
+📦 Overview
+-------------
+`resultex` brings a functional programming approach to error handling by wrapping your operational
+outcomes in a type-safe container. Instead of throwing heavy exceptions and messing up your call
+stack, every function returns a `Result` that is either a `SuccessResult` wrapping your value or a
+`FailureResult` containing structured error details.
 
-### Why Result?
+### Why Resultex?
 
-- ✅ **No more try-catch everywhere** - Handle errors where they matter
-- ✅ **Type-safe** - Compiler knows if you've handled both cases
-- ✅ **Pattern matching** - Clean Dart 3 switch expressions
-- ✅ **Composable** - Chain operations with `map`, `flatMap`
-- ✅ **Testable** - Predictable behavior, no unexpected exceptions
-- ✅ **Clean Code** - Following SOLID principles
+* 🛡️ **Zero Try-Catch Boilerplate** - Handle operational errors exactly where they matter.
+* 🔒 **Type-Safe Destructuring** - The Dart compiler ensures you handle both success and failure
+  states.
+* 🧩 **Pattern Matching** - Fully optimized for Dart 3+ exhaustive switch expressions.
+* 🚂 **Composable Pipelines** - Chain complex operations effortlessly with `map` and `flatMap`.
+* 🧪 **Highly Testable** - Predictable control flow, making Unit Testing a breeze without unexpected
+  runtime crashes.
+* 💎 **Clean Architecture Approved** - Follows SOLID principles, separating business logic outcomes
+  from presentation layers.
 
-## 🚀 Installation
+🚀 Installation
+----------------
 
 ### Prerequisites
 
-- Dart SDK: `>=3.0.0 <4.0.0`
-- Flutter: `>=3.10.0`
+* **Dart SDK:** `>=3.0.0 <4.0.0`
+* **Flutter SDK:** `>=3.10.0`
 
-## 🎯 Core Concepts
+Add `resultex` to your `pubspec.yaml`:
 
-### 1. Successful Result
-
-```dart
-
-final result = Result.success(User(id: 1, name: "Ali"));
-// Contains: Success<User> with value
+```yaml
+dependencies:
+  resultex: ^2.1.0
 ```
 
-### 2. Failure Result
+**🎯 Core Concepts**
 
-```dart
+1. Successful Result
 
-final result = Result.failure(Failure(message: "Network error"));
-// Contains: Failure with message and optional error/stackTrace
+```Dart
+
+final result = Result.success(User(id: 1, name: "Hassan"));
+// Contains a SuccessResult wrapping a Success<User> container
 ```
 
-### 3. Pattern Matching (Dart 3)
+2. Failure Result
 
-```dart
+```Dart
+
+final result = Result.failure(Failure(message: "Network request timeout"));
+// Contains a FailureResult with messages, codes, and optional stackTraces
+```
+
+3. Exhaustive Pattern Matching (Dart 3+)
+
+```Dart
 switch (result) {
-case SuccessResult<User>(value: final user):
-print('Welcome ${user.name}!');
-case FailureResult<User>(failure: final failure):
-print('Error: ${failure.message}');
+case SuccessResult<User>(success: Success(:final value)):
+print('Welcome back, ${value.name}!');
+case FailureResult<User>(failure: final fail):
+print('Error occurred: ${fail.message}');
 }
 ```
 
-## Advanced Extensions (v2.1.0+)
+**🎨 Advanced Features & Extensions**
 
-`resultex` introduces fluid, functional programming-inspired extensions to streamline asynchronous
-fallbacks, caching strategies, and local recovery paths without breaking your conditional branches.
+1. UI Layer Clean Mapping (.when())
+   The package provides a tailored Flutter extension to directly map your Result states into widgets
+   inside the build method without bloated conditions.
 
-### 1. Graceful Recovery with `.recover()`
+```Dart
+import 'package:resultex/core/utils/result_flutterx_extension.dart';
 
-Use `.recover()` to intercept an operational `Failure` and route it through an alternative backup
-execution pipeline. If the initial operation succeeds, the recovery closure is completely bypassed.
+@override
+Widget build(BuildContext context) {
+  return userResult.when(
+    onSuccess: (user) => Text('Hello, ${user.name}'),
+    onFailure: (failure) => Text('Error: ${failure.message}'),
+  );
+}
+```
 
-```dart
-// Example: Attempting a remote API call, falling back to a local database on failure
+2. Concurrent Parallel Execution (ResultUtils.combineAll)
+   When executing multiple operations simultaneously, ResultUtils.combineAll fires them in parallel.
+   If any operation fails, it aggregates all intercepted errors into a unified MultiFailure contract
+   instead of short-circuiting on the first error.
+
+```Dart
+import 'package:resultex/core/utils/result_utils.dart';
+
+final Result<List<dynamic>> dashboardResult = await
+ResultUtils.combineAll
+([repository.fetchUserProfile(), // Future<Result<User>>
+repository.fetchNotifications(), // Future<Result<List<Notif>>>
+repository.fetchCryptoWallet(), // Future<Result<Wallet>>
+]);
+
+dashboardResult.when(
+onSuccess: (data) {
+final user = data[0] as User;
+final wallet = data[2] as CryptoWallet;
+// Render your screen using safely casted data
+},
+onFailure: (failure) {
+if (failure is MultiFailure) {
+print('${failure.failures.length} operations failed concurrently.');
+}
+},
+);
+```
+
+3. Operational Recovery Path (.recover())
+   Intercept an operational Failure and route it through an alternative backup execution pipeline
+   smoothly.
+
+```Dart
+
 Result<User> userResult = await
 authRepository.fetchRemoteUser
 ();
 
 Result<User> finalizedResult = userResult.recover((failure) {
-  print('Remote fetch failed: ${failure.message}. Accessing local storage...');
+  print('Remote fetch failed: ${failure.message}. Falling back to local cache...');
   return Result.success(localDatabase.getCachedUser());
 });
 ```
 
-## 📖 Usage Guide
-
-### Basic Usage
-
-```dart
-// Repository
-class UserRepository {
-  final ApiClient _api;
-  final ResultExecutor _executor;
-
-  Future<Result<User>> getUser(int id) async {
-    return _executor.executeAsync(
-          () => _api.fetchUser(id),
-      context: 'getUser($id)',
-    );
-  }
-}
-
-// BLoC / Controller
-Future<void> loadUser(int id) async {
-  final result = await repository.getUser(id);
-
-  result.fold(
-    onSuccess: (user) => emit(UserLoaded(user)),
-    onFailure: (failure) => emit(UserError(failure.message)),
-  );
-}
-```
-
-### Transform Values with map
+**📖 Fluid Usage Guide**
+Safe Execution Closures (guard / guardAsync)
+Automatically intercept synchronous or asynchronous unexpected exceptions and encapsulate them into
+safe Result variants.
 
 ```dart
-
-final result = await
-repository.getUser
-(1);
-
-// Transform only if success
-final nameResult = result.map((user) => user
-.
-name
-);
-// Result<String>: Success("Ali") or Failure("Network error")
-```
-
-### Chain Operations with flatMap
-
-```dart
-// Get user, then get their orders
-final ordersResult = await
-repository.getUser
-(1)
-.then((result) => result.flatMap(
-(user) => orderRepository.getOrders(user.id)
-,
-)
-);
-```
-
-### Provide Defaults with getOrElse
-
-```dart
-
-final user = result.getOrElse(User.guest());
-// Returns user or guest if failure
-```
-
-### Null Safety with fromNullable
-
-```dart
-
-final result = Result.fromNullable(
-  cachedUser,
-  errorMessage: 'User not found in cache',
-);
-```
-
-### Safe Execution with guard
-
-```dart
-// Synchronous
-final result = Result.guard(() => jsonDecode(rawJson));
-
-// Asynchronous
-final result = await
+// Synchronous parsing guard
+final result = Result.guard(() => jsonDecode(rawJsonString));
+// Asynchronous API call guard
+final networkResult = await
 Result.guardAsync
 (
 () => http.get(Uri.parse(url
 )
 )
-,
 );
 ```
 
-### Combine Multiple Results
+**Functional Chaining (map & flatMap)**
+Transform successful values or sequentially chain multiple business operations without nesting
+blocks.
 
-```dart
+```Dart
+// Map values on success
+final nameResult = result.map((user) => user.name); // Result<String>
 
-final results = await
-Future.wait
-([repository.getUser(1),
-repository.getUser(2),
-]);
-
-// One fails, all fails
-final combined = Result.
-combine
-(
-results
+// Chain dependencies flatly
+final ordersResult = await
+repository.getUser
+(1)
+.then((res) => res.flatMap((user) => orderRepository.getOrders(user.id)
+)
 );
-// Result<List<User>>
 ```
 
-### Partition Successes and Failures
+**🔧 Advanced ResultExecutor Architecture**
+Wrap execution scopes into monitored contexts complete with automated structured logging and error
+tracking capabilities.
 
-```dart
-final (users, errors) = Result.partition
-(
-results
-);
-// users: List<User> - all successful
-// errors: List<Failure> - all failures
-```
+```Dart
 
-## 🔧 ResultExecutor
-
-```dart
-// Setup
-final executor = ResultExecutor(
-  logger: AppLogger(),
-);
-
-// Usage
+final executor = ResultExecutor(logger: AppLogger());
 final result = await
 executor.executeAsync
 (
 () async {
-// Your operation
-final data = await api.fetch();
-return processData(data);
+`final data = await api.fetchData();
+`return processData(data);
 },
 context
 :
-'
-fetchAndProcess
-'
-,
+fetchAndProcessDashboardData
 );
 ```
 
-## Features:
+**🏗️ Best Practices**
+✅ DO
+Use ResultUtils.combineAll for maximizing parallel performance across independent network
+dispatches.
 
-🎯 Consistent error formatting
+Use the .when() extension inside Flutter layout building pipelines for pristine scannability.
 
-📝 Automatic logging
+Provide meaningful context tags within ResultExecutor blocks to maintain bulletproof debug logs.
 
-🔍 Debug mode support
+❌ DON'T
+Don't force-extract values without evaluating state via pattern matching or explicit folds.
 
-📊 Execution context tracking
+Don't catch generic raw exceptions manually inside execution blocks managed by guard hooks.
 
-## 🌐 Global Error Handling
+**📄 License**
+This project is licensed under the MIT License - see the LICENSE file for details. Open Source
+development is respected; feel free to modify, distribute, and implement this package in both public
+repositories and enterprise closed-source commercial systems.
 
-```dart
-void main() {
-  final errorHandler = FlutterErrorHandler(
-    logger: AppLogger(),
-    crashReporter: FirebaseCrashReporter(),
-  );
-
-  errorHandler.register();
-
-  runApp(MyApp());
-}
-```
-
-## 🎨 Real-World Examples
-
-### 1. Form Validation
-
-```dart
-Result<String> validateEmail(String email) {
-  if (email.isEmpty) return Result.failure(Failure(message: "Email is required"));
-  if (!email.contains('@')) return Result.failure(Failure(message: "Invalid email"));
-  return Result.success(email);
-}
-
-// Usage
-validateEmail
-(
-value).fold(
-onSuccess: (email) => submitForm(email),
-onFailure: (error) => showError(error.message),
-);
-```
-
-### 2. Cache-First Strategy
-
-```dart
-Future<Result<User>> getUser(int id) async {
-  // Try cache first
-  final cached = await cache.getUser(id);
-  if (cached != null) return Result.success(cached);
-
-  // Fetch from network
-  final result = await network.getUser(id);
-
-  // Cache if successful
-  return result.map((user) {
-    cache.saveUser(user);
-    return user;
-  });
-}
-```
-
-### 3. Multiple API Calls
-
-```dart
-Future<Result<DashboardData>> loadDashboard() async {
-  final results = await Future.wait([
-    repository.getUser(userId),
-    repository.getNotifications(userId),
-    repository.getStats(userId),
-  ]);
-
-  final (success, failures) = Result.partition(results);
-
-  if (failures.isNotEmpty) {
-    return Result.failure(Failure(
-      message: '${failures.length} operations failed',
-    ));
-  }
-
-  return Result.success(DashboardData(
-    user: success[0] as User,
-    notifications: success[1] as List<Notification>,
-    stats: success[2] as Stats,
-  ));
-}
-```
-
-## 🏗️ Best Practices
-
-### ✅ DO:
-
-#### - Always use ResultExecutor for API calls
-
-#### - Use context parameter for debugging
-
-#### - Handle both onSuccess and onFailure in fold
-
-#### - Use map for simple transformations
-
-#### - Use flatMap for chaining async operations
-
-### ❌ DON'T:
-
-#### - Don't extract value without checking isSuccess
-
-#### - Don't catch exceptions inside guard/guardAsync
-
-#### - Don't ignore failures - always handle both cases
-
-#### - Don't use getOrThrow() in production code
-
-## 🔄 Migration Guide
-
-### Before (Exception-based):
-
-```dart
-try {
-final user = await api.getUser(1);
-// use user
-} catch (e) {
-showError(e.toString());
-}
-```
-
-### After (Result-based):
-
-````dart
-
-final result = await
-repository.getUser
-(1);result.fold(
-onSuccess: (user) => useUser(user),
-onFailure: (error) => showError
-(
-error
-.
-message
-)
-,
-);
-````
-
-## 🚀 Performance
-
-Result is a zero-cost abstraction in release mode. The Dart compiler optimizes sealed classes
-efficiently, making it suitable for high-performance applications.
-
-## Contact
-
-Email: software.clean.development@gmail.com
-
-## License
-
-Copyright © 2023
-
-This Error handler is a free software licensed under GPL v3.0
-It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-Being Open Source doesn't mean you can just make a copy of the app and upload it on playstore or
-sell
-a closed source copy of the same.
-Read the following carefully:
-
-1. Any copy of a software under GPL must be under same license. So you can't upload the app on a
-   closed source
-   app repository like PlayStore/AppStore without distributing the source code.
-2. You can't sell any copied/modified version of the app under any "non-free" license.
-   You must provide the copy with the original software or with instructions on how to obtain
-   original software,
-   should clearly state all changes, should clearly disclose full source code, should include same
-   license
-   and all copyrights should be retained.
-
-In simple words, You can ONLY use the source code of this app for `Open Source` Project under
-`GPL v3.0` or later
-with all your source code CLEARLY DISCLOSED on any code hosting platform like GitHub, with clear
-INSTRUCTIONS on
-how to obtain the original software, should clearly STATE ALL CHANGES made and should RETAIN all
-copyrights.
-Use of this software under any "non-free" license is NOT permitted.
-
-### Made with ❤️ for clean, maintainable Dart/Flutter code
+**Made with ❤️ for clean, maintainable Dart & Flutter code architectures.**
