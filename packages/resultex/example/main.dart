@@ -12,7 +12,7 @@ void main() async {
   // Simulating ecosystem lifecycle initialization
   final loggerBase = Resultex();
   await loggerBase.init();
-
+  await _loadDashboardData();
   if (kDebugMode) {
     print('Resultex core ecosystem successfully initialized.');
   }
