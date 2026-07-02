@@ -25,8 +25,7 @@ class SymmetricBoxFormatter implements LoggerFormatter {
         : _splitByLength(stringMessage, settings.maxLineWidth);
 
     // Box layouts are strictly enforced for high-priority or severe logs (Error, Critical, Warning).
-    final bool requiresBox =
-        details.level == LogLevel.error ||
+    final bool requiresBox = details.level == LogLevel.error ||
         details.level == LogLevel.critical ||
         details.level == LogLevel.warning;
 
