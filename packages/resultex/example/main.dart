@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:resultex/resultex.dart';
 
 void main() async {
@@ -5,5 +6,7 @@ void main() async {
   final loggerBase = Resultex();
   await loggerBase.init();
 
-  print('Resultex core ecosystem successfully initialized.');
+  if (kDebugMode) {
+    print('Resultex core ecosystem successfully initialized.');
+  }
 }
