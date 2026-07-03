@@ -61,9 +61,9 @@ class ResultBuilder<S> extends StatelessWidget {
         // Leverage Dart 3+ exhaustive pattern matching to bind state variants to UI builders
         return switch (result) {
           SuccessResult<S>(success: Success(:final value)) =>
-              onSuccess(context, value),
+            onSuccess(context, value),
           FailureResult<S>(failure: final failure) =>
-              onFailure(context, failure),
+            onFailure(context, failure),
         };
       },
     );
