@@ -59,7 +59,7 @@ else
 fi
 
 # Step 4: Run Pub Publish Dry-Run
-log_info "Step 3: Running package publishing dry-run..."
+log_info "Step 4: Running package publishing dry-run..."
 if flutter pub publish --dry-run ; then
     log_success "Dry-run passed! The package is structurally ready for Pub.dev."
     echo -e "\n${GREEN}🚀 All checks passed successfully! You are safe to publish.${NC}"
