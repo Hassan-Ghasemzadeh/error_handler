@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:resultex/core/utils/result_flutterx_extension.dart';
+import 'package:resultex/core/extensions/result_flutterx_extension.dart';
 import 'package:resultex/core/utils/result_utils.dart';
 import 'package:resultex/resultex.dart';
 import 'package:resultex/src/model/multi_failure.dart';
