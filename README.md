@@ -272,19 +272,19 @@ fetchAndProcessDashboardData
 
 ### **🏗️ Best Practices**
 
-
-✅ DO  
+✅ DO
 
 - Use ResultUtils.combineAll for maximizing parallel performance across independent network
-dispatches.
+  dispatches.
 - Use the .when() extension inside Flutter layout building pipelines for pristine scannability.
 - Provide meaningful context tags within ResultExecutor blocks to maintain bulletproof debug logs.
 
-❌ DON'T  
-- Don't force-extract values without evaluating state via pattern matching or explicit folds.  
+❌ DON'T
+
+- Don't force-extract values without evaluating state via pattern matching or explicit folds.
 - Don't catch generic raw exceptions manually inside execution blocks managed by guard hooks.
 
-**📄 License**  
+**📄 License**
 ---------------
 This project is licensed under the MIT License - see the LICENSE file for details. Open Source
 development is respected; feel free to modify, distribute, and implement this package in both public
