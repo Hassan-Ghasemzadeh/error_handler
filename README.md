@@ -48,7 +48,7 @@ dependencies:
   resultex: ^2.2.0
 ```
 
-**🎯 Core Concepts**
+### **🎯 Core Concepts**
 
 1. Successful Result
 
@@ -77,7 +77,82 @@ print('Error occurred: ${fail.message}');
 }
 ```
 
-**🎨 Advanced Features & Extensions**
+### **🎨 Reactive UI Layer (New in v2.3.0)**
+
+🚦 State Management via ResultNotifier  
+A lightweight, lifecycle-aware alternative to heavy state management boilerplate. Track any
+asynchronous operation safely inside your controllers or state classes.
+
+```dart
+
+final userNotifier = ResultNotifier<User>();
+
+// Automatically handles loading state, catches unexpected errors, and updates the UI
+userNotifier.track
+(
+repository
+.
+fetchUserProfile
+(
+)
+);
+```
+
+**🧱 Declarative Layouts via ResultBuilder**  
+Eliminate bloated conditions inside your widget tree. Separate your UI cleanly into three
+predictable layout paths.
+
+```Dart
+@override
+Widget build(BuildContext context) {
+  return ResultBuilder<User>(
+    notifier: _userNotifier,
+    onLoading: (context) => const CircularProgressIndicator(),
+    onFailure: (context, failure) => Text('Error: ${failure.message}'),
+    onSuccess: (context, user) => Text('Hello, ${user.name}'),
+  );
+}
+```
+
+### **🚂 Advanced Functional Pipelines**
+
+🔄 Asynchronous Chaining (asyncMap & asyncFlatMap)
+Chain multiple asynchronous dependencies sequentially without running into await callback hell.
+
+```Dart
+// Streamline complex database/network pipelines elegantly
+Future<Result<Orders>> ordersResult = repository.getUser(1) // Future<Result<User>>
+    .asyncMap((user) => user.id) // Future<Result<int>>
+    .asyncFlatMap((id) => orderRepository.getOrders(id)); // Future<Result<Orders>>
+```
+
+**🎭 Adapting Errors downstream (mapFailure)**  
+Transform internal exceptions into localized or presentation-friendly error messages before hitting
+the UI.
+
+```Dart
+
+final uiResult = apiResult.mapFailure(
+      (fail) => Failure(message: 'Localized Error: ${fail.message}'),
+);
+```
+
+**🔄 Resilient Operation Retries (withRetry)**  
+Attach configurable recovery retries to any transient network dispatch with support for exponential
+backoff.
+
+```Dart
+
+final networkResult = await
+Result.guardAsync
+(
+() => (() => http.get(uri)).withRetry(
+const RetryOptions(maxAttempts: 3, delay: Duration(seconds: 2), backoffFactor: 2.0),
+),
+);
+```
+
+### **🎨 Advanced Features & Extensions**
 
 1. UI Layer Clean Mapping (.when())
    The package provides a tailored Flutter extension to directly map your Result states into widgets
@@ -140,7 +215,7 @@ Result<User> finalizedResult = userResult.recover((failure) {
 });
 ```
 
-**📖 Fluid Usage Guide**
+**📖 Fluid Usage Guide**  
 Safe Execution Closures (guard / guardAsync)
 Automatically intercept synchronous or asynchronous unexpected exceptions and encapsulate them into
 safe Result variants.
@@ -158,7 +233,7 @@ Result.guardAsync
 );
 ```
 
-**Functional Chaining (map & flatMap)**
+**Functional Chaining (map & flatMap)**  
 Transform successful values or sequentially chain multiple business operations without nesting
 blocks.
 
@@ -175,7 +250,7 @@ repository.getUser
 );
 ```
 
-**🔧 Advanced ResultExecutor Architecture**
+**🔧 Advanced ResultExecutor Architecture**  
 Wrap execution scopes into monitored contexts complete with automated structured logging and error
 tracking capabilities.
 
@@ -195,23 +270,24 @@ fetchAndProcessDashboardData
 );
 ```
 
-**🏗️ Best Practices**
-✅ DO
-Use ResultUtils.combineAll for maximizing parallel performance across independent network
+### **🏗️ Best Practices**
+
+
+✅ DO  
+
+- Use ResultUtils.combineAll for maximizing parallel performance across independent network
 dispatches.
+- Use the .when() extension inside Flutter layout building pipelines for pristine scannability.
+- Provide meaningful context tags within ResultExecutor blocks to maintain bulletproof debug logs.
 
-Use the .when() extension inside Flutter layout building pipelines for pristine scannability.
+❌ DON'T  
+- Don't force-extract values without evaluating state via pattern matching or explicit folds.  
+- Don't catch generic raw exceptions manually inside execution blocks managed by guard hooks.
 
-Provide meaningful context tags within ResultExecutor blocks to maintain bulletproof debug logs.
-
-❌ DON'T
-Don't force-extract values without evaluating state via pattern matching or explicit folds.
-
-Don't catch generic raw exceptions manually inside execution blocks managed by guard hooks.
-
-**📄 License**
+**📄 License**  
+---------------
 This project is licensed under the MIT License - see the LICENSE file for details. Open Source
 development is respected; feel free to modify, distribute, and implement this package in both public
 repositories and enterprise closed-source commercial systems.
 
-**Made with ❤️ for clean, maintainable Dart & Flutter code architectures.**
+### **Made with ❤️ for clean, maintainable Dart & Flutter code architectures.**
