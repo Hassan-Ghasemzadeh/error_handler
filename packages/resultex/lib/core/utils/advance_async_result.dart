@@ -8,7 +8,6 @@ import '../../src/model/success.dart';
 /// This prevents nested code structures (callback hell) when combining multiple
 /// asynchronous operations that return a [Result].
 extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
-
   /// Transforms the successful value inside the [Result] asynchronously.
   ///
   /// If the current [Result] is a success, the [transform] function is applied
@@ -25,7 +24,7 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
 
     return switch (result) {
       SuccessResult<S>(success: Success(:final value)) =>
-          Result.success(await transform(value)),
+        Result.success(await transform(value)),
       FailureResult<S>(failure: final failure) => Result.failure(failure),
     };
   }
@@ -43,13 +42,13 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
   ///     .asyncFlatMap((user) => repository.getOrders(user.id));
   /// ```
   Future<Result<T>> asyncFlatMap<T>(
-      FutureOr<Result<T>> Function(S value) transform,
-      ) async {
+    FutureOr<Result<T>> Function(S value) transform,
+  ) async {
     final result = await this;
 
     return switch (result) {
       SuccessResult<S>(success: Success(:final value)) =>
-      await transform(value),
+        await transform(value),
       FailureResult<S>(failure: final failure) => Result.failure(failure),
     };
   }
