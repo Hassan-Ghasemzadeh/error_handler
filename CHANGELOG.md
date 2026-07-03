@@ -3,6 +3,27 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## 2.3.0
+
+### 🚀 Added
+
+- **Advanced Async Functional Chaining:** Introduced `asyncMap` and `asyncFlatMap` extensions on
+  `Future<Result<S>>` to seamlessly chain asynchronous operations without nested `await` blocks.
+- **Reactive UI State Management (`ResultNotifier`):** Added a lightweight, lifecycle-aware state
+  manager extending Flutter's `ValueNotifier` to track operational statuses natively.
+- **Declarative Layout Builder (`ResultBuilder`):** Added a tailored UI builder widget that
+  exhaustively pattern-matches `ResultNotifier` states into `onLoading`, `onSuccess`, and
+  `onFailure` widget trees.
+- **Resilient Recovery Pipelines:** Added advanced `mapFailure` and `asyncMapFailure` extensions to
+  mutate and adapt failure contracts down the stream.
+- **Transient Network/Operation Retries:** Added a flexible `withRetry` mechanism on `Future`
+  closures supporting custom attempt limits and backoff strategies.
+
+### ⚡ Changed
+
+- Fully optimized all internal UI routing mechanics to exploit Dart 3+ exhaustive switch expressions
+  for rigid compile-time safety.
+
 ## [2.2.0] - 2026-07-02
 
 ### Added
