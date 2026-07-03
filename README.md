@@ -1,9 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/refs/heads/main/docs/assets/header.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/refs/heads/main/docs/assets/header.svg">
-    <img alt="Resultex Ecosystem Banner" src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/refs/heads/main/docs/assets/header.svg" width="100%">
-  </picture>
+  <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/header.svg" alt="Resultex Ecosystem Banner" width="100%">
 </p>
 
 # Resultex
