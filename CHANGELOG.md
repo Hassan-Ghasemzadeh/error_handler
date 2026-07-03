@@ -3,6 +3,9 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## 2.3.1
+- Updated README.md and scripts
+
 ## 2.3.0
 
 ### 🚀 Added
