@@ -1,69 +1,65 @@
 #!/usr/bin/env bash
 
-# Exit immediately if a command exits with a non-zero status,
-# and treat unset variables as an error.
 set -euo pipefail
 
-# ANSI Color Codes for beautiful terminal output
+# ANSI Color Codes
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
+log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
+log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
+# ۱. بررسی اینکه آیا کاربر مسیر پوشه را وارد کرده است یا خیر
+if [ $# -eq 0 ]; then
+    log_error "Please provide the package directory path."
+    echo -e "Usage: $0 <package-directory>"
+    echo -e "Example: $0 ./resultex  or  $0 ./resultex_network"
+    exit 1
+fi
 
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+TARGET_DIR="$1"
+
+# ۲. بررسی وجود داشتن پوشه معرفی شده
+if [ ! -d "$TARGET_DIR" ]; then
+    log_error "Directory '$TARGET_DIR' does not exist."
+    exit 1
+fi
+
+# ۳. رفتن به پوشه هدف
+cd "$TARGET_DIR"
+
+# ۴. بررسی اینکه آیا این پوشه واقعاً یک پروژه دارت/فلاتر است (بررسی وجود pubspec.yaml)
+if [ ! -f "pubspec.yaml" ]; then
+    log_error "No 'pubspec.yaml' found in '$TARGET_DIR'. This is not a Dart/Flutter package."
+    exit 1
+fi
 
 echo -e "${BLUE}============================================"
-echo -e "   Resultex Package Pre-Publish Validator   "
+echo -e "   Target Package: $(basename "$(pwd)")"
 echo -e "============================================${NC}\n"
 
-# Step 1: Format Dart Code
-log_info "Step 1: Formatting code formatting using 'dart format'..."
-if dart format . ; then
-    log_success "Code formatting completed successfully."
-else
-    log_error "Code formatting failed. Please check your files."
-    exit 1
-fi
+# Step 1: Format
+log_info "Step 1: Formatting code..."
+dart format .
 
 echo ""
 
-# Step 2: Analyze Flutter Project
-log_info "Step 2: Analyzing code semantics using 'flutter analyze'..."
-if flutter analyze ; then
-    log_success "No issues found! Code analysis passed cleanly."
-else
-    log_error "Flutter analysis found errors or warnings. Fix them before publishing."
-    exit 1
-fi
+# Step 2: Analyze
+log_info "Step 2: Analyzing code..."
+flutter analyze
 
 echo ""
 
-# Step 3: Run pana analyzer
-log_info "Step 3: Running package publishing dry-run..."
-if flutter pana . ; then
-    log_success "pana passed! flutter pub analyzer didn't saw any problem."
-    echo -e "\n${GREEN}🚀 All checks passed successfully! You are safe to publish.${NC}"
-else
-    log_error "Pana saw afew problems. check and fix it before publish"
-    exit 1
-fi
+# Step 3: Pana
+log_info "Step 3: Running pana analyzer..."
+pana .
 
-# Step 4: Run Pub Publish Dry-Run
-log_info "Step 4: Running package publishing dry-run..."
-if flutter pub publish --dry-run ; then
-    log_success "Dry-run passed! The package is structurally ready for Pub.dev."
-    echo -e "\n${GREEN}🚀 All checks passed successfully! You are safe to publish.${NC}"
-else
-    log_error "Publish dry-run failed. Review the warnings above."
-    exit 1
-fi
+# Step 4: Dry-run
+log_info "Step 4: Running publish dry-run..."
+flutter pub publish --dry-run
+
+echo ""
+log_success "🚀 All checks passed successfully for $(basename "$(pwd)")!"
