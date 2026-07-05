@@ -110,9 +110,41 @@ Widget build(BuildContext context) {
 }
 ```
 
-### **🚂 Advanced Functional Pipelines**
+## **🚂 Advanced Functional Pipelines**
 
-🔄 Asynchronous Chaining (asyncMap & asyncFlatMap)
+### 🔗 Type-Safe Record Zipping (Dart 3+)
+
+Resultex provides an elegant, compile-time type-safe ecosystem to consolidate completely dynamic and heterogeneous `Result` instances concurrently using modern Dart 3 Records.
+
+Instead of manual index casting (`as User`), you can wrap your independent operations inside a record tuple and call `.zip()` directly. If any internal operation yields a `FailureResult`, the entire pipeline short-circuits instantly, propagating that precise failure downstream.
+
+### Heterogeneous Zip Example (Up to 5 Elements)
+
+```dart
+import 'package:resultex/resultex.dart';
+
+Future<void> loadDashboard() async {
+  // 1. Fire asynchronous requests or continuous operations
+  final Result<User> userRes = await authRepository.getProfile();
+  final Result<CryptoWallet> walletRes = await cryptoRepository.getBalance();
+
+  // 2. Zip disparate types seamlessly with 100% type safety
+  final Result<DashboardView> dashboardResult = (userRes, walletRes).zip(
+        (User user, CryptoWallet wallet) {
+      // Both parameters are strongly typed based on the input record tuple!
+      return DashboardView(user: user, wallet: wallet);
+    },
+  );
+
+  // 3. Evaluate and fold into your presentation tier
+  dashboardResult.fold(
+    onSuccess: (view) => renderDashboard(view),
+    onFailure: (failure) => showErrorSnackBar(failure.message),
+  );
+}
+```
+
+**🔄 Asynchronous Chaining (asyncMap & asyncFlatMap)**  
 Chain multiple asynchronous dependencies sequentially without running into await callback hell.
 
 ```Dart
