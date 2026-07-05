@@ -1,7 +1,7 @@
 import '../../resultex.dart';
 import '../../src/model/success.dart';
 
-class ResultUtils {
+class ResultCollection {
   /// Iterates over a [list] of elements, applies a transformation function [mapper]
   /// that returns a [Result], and aggregates the outcomes based on the selected [strict] strategy.
   ///
