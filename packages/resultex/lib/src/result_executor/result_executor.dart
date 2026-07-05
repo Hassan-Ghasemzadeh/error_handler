@@ -7,10 +7,11 @@ import '../error/flutter_error_handler.dart';
 import '../model/failure.dart';
 import '../model/result.dart';
 
-/// A centralized execution wrapper engine responsible for intercepting exceptions and standardizing operational outputs.
+/// A centralized execution wrapper engine responsible for intercepting exceptions,
+/// standardizing operational outputs, and routing structured diagnostics.
 ///
-/// It encapsulates runtime blocks into a unified [Result] structure, automatically processing structural
-/// diagnostics via centralized [LoggerService] and localized [FlutterErrorHandler] instances.
+/// It encapsulates runtime blocks into a unified [Result] structure, automatically processing
+/// structural telemetry via a centralized [LoggerService] and localized [FlutterErrorHandler].
 class ResultExecutor {
   // The primary logging service dependency used to capture standard execution flows.
   final LoggerService _logger;
@@ -33,11 +34,11 @@ class ResultExecutor {
   /// Automatically intercepts any thrown runtime errors and transforms them using [_handleError].
   /// An optional [context] description can be specified to enrich debug tracking logs.
   Result<T> execute<T>(T Function() operation, {String? context}) {
+    final tag = context != null ? '[$context]' : '[ResultExecutor]';
     try {
+      _logger.info('$tag Execution started.');
       final data = operation();
-      _logger.info(
-        'Operation successful${context != null ? " in $context" : ""}',
-      );
+      _logger.info('$tag Operation successful.');
       return Result.success(data);
     } catch (e, stackTrace) {
       return _handleError<T>(e, stackTrace, context);
@@ -46,18 +47,33 @@ class ResultExecutor {
 
   /// Executes an asynchronous [operation] block tracking a standard Dart [Future] pipeline.
   ///
-  /// Resolves the continuous asynchronous execution flow, intercepting potential host exceptions
-  /// or server breakdowns, returning a wrapped [Result] object state downstream.
+  /// Automatically flattens operations returning a [Result] directly to avoid nested `Result<Result<T>>` types.
+  /// Resolves the continuous asynchronous execution flow, intercepting potential host exceptions,
+  /// and yielding a formatted terminal log detailing the final status.
   Future<Result<T>> executeAsync<T>(
-    Future<T> Function() operation, {
+    FutureOr<dynamic> Function() operation, {
     String? context,
   }) async {
+    final tag = context != null ? '[$context]' : '[ResultExecutor]';
     try {
-      final data = await operation();
-      _logger.info(
-        'Async operation successful${context != null ? " in $context" : ""}',
-      );
-      return Result.success(data);
+      _logger.info('$tag Async execution started.');
+      final dynamic dynamicData = await operation();
+
+      // Flat-mapping: Safely inspect and flatten nested Result patterns
+      if (dynamicData is Result) {
+        if (dynamicData is SuccessResult) {
+          _logger.info(
+              '$tag Async operation completed successfully with wrapped Result.');
+          return Result.success(dynamicData.success.value as T);
+        } else if (dynamicData is FailureResult) {
+          _logger.warning(
+              '$tag Async operation forwarded an internal Result Failure: ${dynamicData.failure.message}');
+          return Result.failure(dynamicData.failure);
+        }
+      }
+
+      _logger.info('$tag Async operation successful.');
+      return Result.success(dynamicData as T);
     } catch (e, stackTrace) {
       return _handleError<T>(e, stackTrace, context);
     }
@@ -71,11 +87,14 @@ class ResultExecutor {
     Stream<T> Function() streamFactory, {
     String? context,
   }) async* {
+    final tag = context != null ? '[$context]' : '[ResultExecutor]';
     try {
+      _logger.info('$tag Stream pipeline subscription initialized.');
       final stream = streamFactory();
       await for (final data in stream) {
         yield Result.success(data);
       }
+      _logger.info('$tag Stream pipeline completed execution gracefully.');
     } catch (e, stackTrace) {
       yield _handleError<T>(e, stackTrace, context);
     }
@@ -86,22 +105,20 @@ class ResultExecutor {
   /// Dynamically locates the centralized [FlutterErrorHandler] instance using [GetIt],
   /// reformats raw errors with [context] labels, and yields an immutable [Result.failure] object.
   Result<T> _handleError<T>(Object e, StackTrace stackTrace, String? context) {
-    // Resolve the specialized application error handler using Service Locator.
+    final tag = context != null ? '[$context]' : '[ResultExecutor]';
     final flutterErrorHandler = GetIt.I.get<FlutterErrorHandler>();
 
-    // Structure a concise descriptive message binding the error signature with its metadata context.
     final errorMessage =
         context != null ? 'Error in $context: ${e.toString()}' : e.toString();
 
-    // Log the intercepted diagnostic data through the core error handler instance.
+    // Log through both the explicit terminal logger and the global error handler infrastructure
+    _logger.debug('$tag Intercepted critical crash: $errorMessage');
     flutterErrorHandler.logError(errorMessage, e, stackTrace);
 
-    // Forward the anomaly payload to external remote services if reporting flags allow.
     if (_reportErrors && kDebugMode) {
       flutterErrorHandler.reportErrorToService(e, stackTrace, context);
     }
 
-    // Return a structured Domain Failure representation inside a Result container.
     return Result.failure(
       Failure(message: errorMessage, error: e, stackTrace: stackTrace),
     );
