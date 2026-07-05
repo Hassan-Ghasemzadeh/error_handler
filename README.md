@@ -114,9 +114,12 @@ Widget build(BuildContext context) {
 
 ### 🔗 Type-Safe Record Zipping (Dart 3+)
 
-Resultex provides an elegant, compile-time type-safe ecosystem to consolidate completely dynamic and heterogeneous `Result` instances concurrently using modern Dart 3 Records.
+Resultex provides an elegant, compile-time type-safe ecosystem to consolidate completely dynamic and
+heterogeneous `Result` instances concurrently using modern Dart 3 Records.
 
-Instead of manual index casting (`as User`), you can wrap your independent operations inside a record tuple and call `.zip()` directly. If any internal operation yields a `FailureResult`, the entire pipeline short-circuits instantly, propagating that precise failure downstream.
+Instead of manual index casting (`as User`), you can wrap your independent operations inside a
+record tuple and call `.zip()` directly. If any internal operation yields a `FailureResult`, the
+entire pipeline short-circuits instantly, propagating that precise failure downstream.
 
 ### Heterogeneous Zip Example (Up to 5 Elements)
 
