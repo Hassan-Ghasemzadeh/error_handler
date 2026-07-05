@@ -2,6 +2,12 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+## 2.4.0
+
+### 🚀 New Features
+- Redesigned the type-safe zipping architecture to natively leverage Dart 3 Records (`(Result1, Result2).zip(...)`) supporting up to 5 heterogeneous elements.
+- Optimized multi-layered compile-time type evaluations using modern exhaustive pattern matching.
+- Enhanced `ResultExecutor.executeAsync` to handle asynchronous flat-mapping lifecycles, preventing nested `Result<Result<T>>` structures.
 
 ## 2.3.1
 - Updated README.md and scripts
