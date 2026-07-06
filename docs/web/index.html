@@ -209,3 +209,177 @@
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .code-title { color: var(--text-muted); font-size: 0.85rem; margin-left: 0.5rem; font-family: monospace; }
+
+        .code-body {
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace;
+            font-size: 0.92rem;
+            color: #f8f8f2;
+        }
+
+        /* Code Highlighter (Dracula Setup) */
+        .k { color: #ff79c6; } /* Keyword */
+        .t { color: #8be9fd; } /* Type */
+        .s { color: #f1fa8c; } /* String */
+        .c { color: #6272a4; font-style: italic; } /* Comment */
+        .f { color: #50fa7b; } /* Function/Method */
+        .n { color: #bd93f9; } /* Number/Constant */
+
+        /* Installation Section */
+        .install-box {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            font-size: 1rem;
+            color: var(--text-white);
+            margin-bottom: 6rem;
+        }
+        .install-command { color: var(--success); }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.8rem; }
+            .tagline { font-size: 1.15rem; }
+            .cta-buttons { flex-direction: column; gap: 0.8rem; }
+            .btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<header>
+    <div class="badge">
+        <span class="badge-dot"></span>
+        <span>Dart 3 Records & Pattern Matching Fully Supported</span>
+    </div>
+    <h1>Resultex</h1>
+    <p class="tagline">An elegant, type-safe, and highly expressive functional error handling
+        pattern for Dart and Flutter. Stop throwing exceptions, start handling results.</p>
+
+    <div class="cta-buttons">
+        <a href="https://pub.dev/packages/resultex" class="btn btn-primary" target="_blank">
+            View on Pub.dev
+        </a>
+        <a href="https://github.com/CodeAraStudio/error_handler" class="btn btn-secondary"
+           target="_blank">
+            GitHub Repository
+        </a>
+    </div>
+</header>
+
+<main>
+    <section class="features">
+        <div class="card">
+            <h3>Functional Architecture</h3>
+            <p>Encapsulate Success data and Failures into explicit types. Avoid runtime crashes
+                caused by unhandled implicit exceptions.</p>
+        </div>
+        <div class="card">
+            <h3>Clean Architecture Ready</h3>
+            <p>Designed specifically to protect Use Cases and Repositories. Safely catch Data Layer
+                issues and bubble them up cleanly to your BLoC/Cubit.</p>
+        </div>
+        <div class="card">
+            <h3>Zero Dependencies</h3>
+            <p>Ultra lightweight, performant, and completely dependency-free. Blends seamlessly into
+                any standard Dart or Flutter codebase.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-header">
+            <h2>Installation</h2>
+            <p>Add Resultex to your Flutter project with a single command:</p>
+        </div>
+        <div class="install-box">
+            <div>
+                <span>$ </span>
+                <span class="install-command">flutter pub add resultex</span>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Replace error-prone try-catch blocks with clear, declarative code flow control.</p>
+        </div>
+
+        <div class="code-window">
+            <div class="code-header">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+                <span class="code-title">example_repository.dart</span>
+            </div>
+            <div class="code-body">
+<pre><span class="c">// 1. Define a function that explicitly promises a Success or Failure</span>
+<span class="t">Result</span>&lt;<span class="t">User</span>, <span
+            class="t">Failure</span>&gt; <span class="f">getUserProfile</span>(<span class="t">String</span> userId) {
+  <span class="k">try</span> {
+    <span class="k">final</span> user = api.<span class="f">fetchUser</span>(userId);
+    <span class="k">return</span> <span class="t">Result</span>.<span class="f">success</span>(user);
+  } <span class="k">catch</span> (exception) {
+    <span class="k">return</span> <span class="t">Result</span>.<span class="f">failure</span>(<span
+            class="t">ServerFailure</span>(exception.<span class="f">toString</span>()));
+  }
+}
+
+<span class="k">void</span> <span class="f">main</span>() {
+  <span class="c">// 2. Execute and process the returned state securely</span>
+  <span class="k">final</span> result = <span class="f">getUserProfile</span>(<span class="s">"user_99"</span>);
+
+  <span class="c">// Flow-control using smooth fold pattern matching</span>
+  result.<span class="f">fold</span>(
+    onSuccess: (user) => <span class="f">print</span>(<span class="s">"Success: Active user is ${user.name}"</span>),
+    onFailure: (failure) => <span class="f">print</span>(<span class="s">"Error encountered: ${failure.message}"</span>),
+  );
+}</pre>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>Maintained by <a href="https://codearastudio.ir">CodeAra Studio</a>. Architected with ❤️ for
+        the Flutter Community.</p>
+</footer>
+
+</body>
+</html>
