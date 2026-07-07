@@ -3,6 +3,34 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## 2.5.0
+
+### 🚀 New Features
+
+- **ResultTextController (Flutter)**: Introduced an advanced reactive text field validator
+  controller enabling direct mapping of native UI form inputs into declarative, type-safe `Result`
+  outputs.
+- **VoidResult & Functional Unit**: Introduced the semantic `Unit` object (built on top of a strict
+  `final class` contract) and `VoidResult` type alias to elegantly model actions that finish
+  successfully without returning data, eliminating `Result<void>` or `null` bypasses.
+- **Conditional Interception (.ensure)**: Added the `.ensure()` filtering pipeline to conditionally
+  validate wrapped data; failing the predicate dynamically reroutes the execution into a
+  `FailureResult`.
+- **Reactive Stream Safety**: Implemented `ResultStreamX` featuring `.toResultStream()` to map
+  native asynchronous Dart Streams safely into predictable, crash-proof `Stream<Result<T>>`
+  pipelines.
+- **Passive Inspect Telemetry**: Added `.inspectSuccess()` and `.inspectFailure()` monadic
+  side-effect pipelines to intercept data streams for logging/analytics without modifying the
+  internal payload state.
+- **Dart 3 Records Zipping**: Redesigned the type-safe zipping architecture to natively leverage
+  Dart 3 Records (`(Result1, Result2).zip(...)`) supporting up to 5 heterogeneous elements with
+  exhaustive pattern matching.
+- **FutureResultX Extension**: Introduced the highly requested `.toResult()` extension on raw
+  asynchronous primitive futures, enabling instant inline conversion from third-party APIs into
+  clean `Result` wrappers.
+- **ResultExecutor Optimization**: Enhanced `executeAsync` to handle asynchronous flat-mapping
+  lifecycles seamlessly, preventing annoying nested `Result<Result<T>>` structures.
+
 ## 2.4.0
 
 ### 🚀 New Features
