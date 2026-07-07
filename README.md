@@ -41,10 +41,10 @@ Add `resultex` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  resultex: ^2.2.0
+resultex: ^2.5.0
 ```
 
-### **🎯 Core Concepts**
+### **Core Concepts**
 
 1. Successful Result
 
@@ -73,9 +73,114 @@ print('Error occurred: ${fail.message}');
 }
 ```
 
-### **🎨 Reactive UI Layer (New in v2.3.0)**
+### Reactive UI Validation (`ResultTextController`)
 
-🚦 State Management via ResultNotifier  
+Stop writing custom stateful boilerplate or messy condition branches just to validate form fields.
+`ResultTextController` extends Flutter's native `TextEditingController` with a built-in functional
+error boundary.
+
+```dart
+// 1. Declare the controller with atomic business logic predicates
+final emailController = ResultTextController<String>(
+  validator: (text) {
+    if (text.isEmpty) return Result.failure(Failure(message: 'Email cannot be empty'));
+    if (!text.contains('@')) return Result.failure(Failure(message: 'Invalid email format'));
+    return Result.success(text.trim());
+  },
+);
+
+// 2. Evaluate instantly in your UI thread without boilerplate
+@override
+Widget build(BuildContext context) {
+  return TextField(
+    controller: emailController,
+    decoration: InputDecoration(
+      // Dynamic inline error reading!
+      errorText: emailController.validatedResult.when(
+        onSuccess: (_) => null,
+        onFailure: (fail) => fail.message,
+      ),
+    ),
+  );
+}
+```
+
+**Functional Side-Effect Interception (.inspect)**  
+Sometimes you need to intercept data midway through a functional stream for analytics, local
+caching, or debugging without modifying the wrapped payload state. Use .inspectSuccess and
+.inspectFailure to execute clean passive telemetry.
+
+```Dart
+
+final profileResult = await
+authRepository.getProfile
+().inspectSuccess
+(
+(user) => firebaseAnalytics.logUserLogin(user.id))
+    .inspectFailure((fail) => appLogger.critical('Telemetry crash: ${fail.message}'))
+    .map((user) => user
+.
+toSummary
+(
+)
+); // The user object travels downstream completely unaltered!
+```
+
+**Fluent Pipeline Constraints (.ensure)**  
+Enforce atomic operational rules instantly downstream using .ensure. If the predicate yields false,
+it automatically short-circuits the pipeline into a structured FailureResult.
+
+```Dart
+
+final Result<User> adultUserResult = await
+authRepository.getProfile
+().ensure
+(
+(user) => user.age >= 18,
+(user) => Failure(message: "Access Forbidden: ${user.name} is underaged."),
+);
+```
+
+**Crash-Proof Reactive Flows (.toResultStream())**  
+Raw asynchronous Streams (like WebSockets, Location trackers, or Firebase listeners) are highly
+prone to unhandled runtime leaks that crash the UI stack. Safely encapsulate them into stable
+error-boundary streams.
+
+```Dart
+// Transforms Stream<T> natively into a stable Stream<Result<T>>
+Stream<Result<LocationData>> safeCoordinates = locationService
+    .listenToCoordinates()
+    .toResultStream();
+
+safeCoordinates.listen
+(
+(result) {
+result.when(
+onSuccess: (coords) => updateMapPin(coords),
+onFailure: (fail) => showNetworkAlert(fail.message),
+);
+});
+```
+
+**Zero-Data Expressive Closures (VoidResult)**  
+In functional design, returning Result<void> or Result.success(null) is an anti-pattern. Use the
+robust, immutable VoidResult alias and Unit type to cleanly model operations that succeed with no
+return payload (like deleting database entities).
+
+```Dart
+VoidResult logoutUser() {
+  try {
+    secureStorage.clearAllTokens();
+    return VoidResult.success(); // Expressive, type-safe substitute for void/null
+  } catch (e) {
+    return VoidResult.failure(Failure(message: e.toString()));
+  }
+}
+```
+
+### **Reactive UI Layer**
+
+State Management via ResultNotifier  
 A lightweight, lifecycle-aware alternative to heavy state management boilerplate. Track any
 asynchronous operation safely inside your controllers or state classes.
 
@@ -94,7 +199,7 @@ fetchUserProfile
 );
 ```
 
-**🧱 Declarative Layouts via ResultBuilder**  
+**Declarative Layouts via ResultBuilder**  
 Eliminate bloated conditions inside your widget tree. Separate your UI cleanly into three
 predictable layout paths.
 
@@ -110,9 +215,9 @@ Widget build(BuildContext context) {
 }
 ```
 
-## **🚂 Advanced Functional Pipelines**
+## **Advanced Functional Pipelines**
 
-### 🔗 Type-Safe Record Zipping (Dart 3+)
+### Type-Safe Record Zipping (Dart 3+)
 
 Resultex provides an elegant, compile-time type-safe ecosystem to consolidate completely dynamic and
 heterogeneous `Result` instances concurrently using modern Dart 3 Records.
@@ -147,7 +252,7 @@ Future<void> loadDashboard() async {
 }
 ```
 
-**🔄 Asynchronous Chaining (asyncMap & asyncFlatMap)**  
+**Asynchronous Chaining (asyncMap & asyncFlatMap)**  
 Chain multiple asynchronous dependencies sequentially without running into await callback hell.
 
 ```Dart
@@ -157,7 +262,7 @@ Future<Result<Orders>> ordersResult = repository.getUser(1) // Future<Result<Use
     .asyncFlatMap((id) => orderRepository.getOrders(id)); // Future<Result<Orders>>
 ```
 
-**🎭 Adapting Errors downstream (mapFailure)**  
+**Adapting Errors downstream (mapFailure)**  
 Transform internal exceptions into localized or presentation-friendly error messages before hitting
 the UI.
 
@@ -168,7 +273,7 @@ final uiResult = apiResult.mapFailure(
 );
 ```
 
-**🔄 Resilient Operation Retries (withRetry)**  
+**Resilient Operation Retries (withRetry)**  
 Attach configurable recovery retries to any transient network dispatch with support for exponential
 backoff.
 
@@ -183,7 +288,7 @@ const RetryOptions(maxAttempts: 3, delay: Duration(seconds: 2), backoffFactor: 2
 );
 ```
 
-### **🎨 Advanced Features & Extensions**
+### **Advanced Features & Extensions**
 
 1. UI Layer Clean Mapping (.when())
    The package provides a tailored Flutter extension to directly map your Result states into widgets
@@ -246,7 +351,7 @@ Result<User> finalizedResult = userResult.recover((failure) {
 });
 ```
 
-**📖 Fluid Usage Guide**  
+**Fluid Usage Guide**  
 Safe Execution Closures (guard / guardAsync)
 Automatically intercept synchronous or asynchronous unexpected exceptions and encapsulate them into
 safe Result variants.
@@ -281,7 +386,7 @@ repository.getUser
 );
 ```
 
-**🔧 Advanced ResultExecutor Architecture**  
+**Advanced ResultExecutor Architecture**  
 Wrap execution scopes into monitored contexts complete with automated structured logging and error
 tracking capabilities.
 
@@ -301,7 +406,7 @@ fetchAndProcessDashboardData
 );
 ```
 
-### **🏗️ Best Practices**
+### **Best Practices**
 
 ✅ DO
 
