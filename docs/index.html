@@ -3,46 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeAra Studio | Open Source Packages</title>
+    <title>CodeAra Studio | High-Performance Open Source Ecosystem</title>
     <style>
         body {
-            background-color: #0b0f19;
+            background-color: #070a13;
             color: #f8fafc;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
         }
-        .container { text-align: center; padding: 2rem; }
-        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #38bdf8, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p { color: #94a3b8; margin-bottom: 2.5rem; }
-        .package-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 1.5rem 2rem;
-            border-radius: 16px;
-            text-decoration: none;
-            color: #f1f5f9;
+        .container {
+            max-width: 650px;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        /* Studio Branding & Intro */
+        .studio-badge {
             display: inline-flex;
             align-items: center;
-            gap: 1rem;
-            transition: all 0.2s;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            padding: 0.35rem 1rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
         }
-        .package-card:hover { transform: translateY(-2px); border-color: #38bdf8; box-shadow: 0 10px 25px rgba(56, 189, 248, 0.15); }
-        .arrow { color: #38bdf8; font-weight: bold; }
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0 0 1rem 0;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 40%, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .studio-description {
+            color: #94a3b8;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+        .studio-description strong {
+            color: #38bdf8;
+            font-weight: 500;
+        }
+
+        /* Divider Label */
+        .section-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #475569;
+            margin-bottom: 1.5rem;
+            display: block;
+            font-weight: 700;
+        }
+
+        /* Package Card System */
+        .package-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 1.75rem 2rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(8px);
+        }
+        .package-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(56, 189, 248, 0.4);
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+            box-shadow: 0 20px 40px rgba(56, 189, 248, 0.08);
+        }
+        .package-info {
+            text-align: left;
+        }
+        .package-title {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.35rem;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .package-desc {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .arrow {
+            color: #38bdf8;
+            font-size: 1.3rem;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+        .package-card:hover .arrow {
+            transform: translateX(4px);
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>CodeAra Studio</h1>
-    <p>Explore our open-source Dart & Flutter packages.</p>
+    <!-- Studio Introduction Header -->
+    <div class="studio-badge">CodeAra Studio</div>
+    <h1>Crafting Bulletproof Software Architecture</h1>
+    <p class="studio-description">
+        We build robust, developer-first tooling and open-source packages designed to eliminate
+        runtime crashes, enforce <strong>type safety</strong>, and streamline clean software layers
+        in <strong>Dart & Flutter</strong> applications.
+    </p>
 
-    <a href="/resultex" class="package-card">
-        <div>
-            <strong style="display:block; text-align:left; font-size: 1.1rem;">Resultex</strong>
-            <span style="color:#64748b; font-size:0.9rem;">Functional error handling for Dart</span>
+    <!-- Packages Section -->
+    <span class="section-label">Production Ready Packages</span>
+
+    <a href="https://www.codearastudio.ir/resultex" class="package-card">
+        <div class="package-info">
+            <strong class="package-title">Resultex</strong>
+            <span class="package-desc">A robust, type-safe functional error handling ecosystem leveraging Dart 3 Records and explicit reactive UI contracts.</span>
         </div>
         <span class="arrow">&rarr;</span>
     </a>
