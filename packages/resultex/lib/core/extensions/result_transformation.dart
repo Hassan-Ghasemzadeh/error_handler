@@ -41,6 +41,35 @@ extension ResultTransformationX<T> on Result<T> {
       FailureResult<T>(failure: final fail) => throw ResultException(fail),
     };
   }
+
+  /// Invokes a passive side-effect callback [action] if the result context is successful.
+  ///
+  /// The encapsulated success value is forwarded completely untouched downstream,
+  /// making this ideal for analytic tracking, debugging, or local storage caching.
+  ///
+  /// ```dart
+  /// final result = authResult.inspectSuccess((user) => analytics.logLogin(user.id));
+  /// ```
+  Result<T> inspectSuccess(void Function(T value) action) {
+    if (this case SuccessResult<T>(success: Success(:final value))) {
+      action(value);
+    }
+    return this;
+  }
+
+  /// Invokes a passive side-effect callback [action] if the result context is a failure.
+  ///
+  /// Forwards the intercepted [Failure] context untouched downstream for passive telemetry.
+  ///
+  /// ```dart
+  /// final result = apiResult.inspectFailure((fail) => logger.error(fail.message));
+  /// ```
+  Result<T> inspectFailure(void Function(Failure failure) action) {
+    if (this case FailureResult<T>(:final failure)) {
+      action(failure);
+    }
+    return this;
+  }
 }
 
 /// A specialized runtime exception wrapper utilized by [ResultTransformationX.throwIfNeeded].
