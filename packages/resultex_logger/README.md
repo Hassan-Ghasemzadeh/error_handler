@@ -18,10 +18,8 @@ on top of native `developer.log`, it ensures seamless **cross-platform, Web, and
 ---
 
 ## 📸 Preview
-
-|         Debug & Info Logs          |            Errors & Warnings            |
-|:----------------------------------:|:---------------------------------------:|
-| ![Debug & Info Logs](لینک_عکس_اول) | ![Errors & Warnings Logs](لینک_عکس_دوم) |
+  <img src="https://github.com/Hassan-Ghasemzadeh/error_handler/blob/main/docs/assets/screenshot-dash.png" alt="Resultex Ecosystem Banner" width="100%">
+  <img src="https://github.com/Hassan-Ghasemzadeh/error_handler/blob/main/docs/assets/screenshot-hash.png" alt="Resultex Ecosystem Banner" width="100%">
 
 ---
 
