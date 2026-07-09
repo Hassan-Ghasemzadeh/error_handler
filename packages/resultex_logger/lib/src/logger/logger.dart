@@ -59,7 +59,7 @@ class ResultexLogger implements LoggerService {
   ///
   /// Increments the nested spacing layout depth during execution, ensuring all nested logs
   /// maintain unified indentation. Safely wraps execution inside a try-finally block to prevent
-  /// depth leaks and guarantee the printing of the [END GROUP] marker even on system failures.
+  /// depth leaks and guarantee the printing of the (`END GROUP` format) marker even on system failures.
   void group(String title, void Function() body) {
     // 1. Log the initiation title of the operational scope
     info('📦 START GROUP: $title');
