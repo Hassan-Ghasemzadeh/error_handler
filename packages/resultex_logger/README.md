@@ -24,8 +24,7 @@ Since this package is tailored for internal/monorepo architectural designs, add 
 
 ```yaml
 dependencies:
-  resultex_logger:
-    path: '../error_handler/packages/resultex_logger'
+  resultex_logger: ^1.1.1
 ```
 
 **🛠️ Getting Started**
@@ -39,7 +38,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize the logger base configuration
-  final loggerBase = ResultexLoggerBase();
+  // Initialize the concrete instance of AppLogger.
+  final logger = ResultexLogger(
+    settings: ResultexLoggerSettings(
+      maxLineWidth: 40, // Slimmer boxes
+      lineSymbol: '*', // Use hashes instead of solid lines
+    ),
+  );
+
   await loggerBase.init();
 
   runApp(const MyApp());
@@ -54,9 +60,17 @@ void main() async {
 import 'package:resultex_logger/logger.dart';
 
 void main() {
-  // Example usage (Assuming LoggerService is fetched via your DI locator, e.g., GetIt)
-  final logger = GetIt.I<LoggerService>();
 
+  // Initialize the logger base configuration
+  // Initialize the concrete instance of AppLogger.
+  final logger = ResultexLogger(
+    settings: ResultexLoggerSettings(
+      maxLineWidth: 40, // Slimmer boxes
+      lineSymbol: '*', // Use hashes instead of solid lines
+    ),
+  );
+
+  await loggerBase.init();
   // Standard Logs
   logger.info('Application started successfully.');
   logger.good('Database connection established.');
