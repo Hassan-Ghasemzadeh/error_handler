@@ -17,9 +17,7 @@ void main() async {
     logger.info('Application started successfully.');
   }
   logger.debug('Database connection established.');
-  logger.debug('Resource allocated smoothly.');
-  logger.debug('User scrolling index: 24');
-
+  logger.info('Resource allocated smoothly.');
   // Warnings & Debugs
   logger.warning('API response time is slower than expected.');
   logger.debug('Fetching user data dynamic payload...');
