@@ -1,6 +1,18 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## 1.1.3
+
+### Added
+- **Extended Log Levels**: Introduced `LogLevel.critical`, `LogLevel.good`, `LogLevel.fine`, and `LogLevel.verbose` to the telemetry core for precise runtime segmentation and semantic tracking.
+- **Enhanced `LoggerService` Interface**: Updated the core logging contract to explicitly expose dedicated API endpoints for the new severity weights.
+- **Platform Style Expansions**: Added system-level `magenta` (for catastrophic infrastructure crashes) and low-contrast balanced `gray` ANSI pens to `LoggerStyles`.
+
+### Changed
+- **Pipeline Evaluation Overhaul**: Re-architected the `_shouldLog` operational layer inside `ResultexLogger` to evaluate granular filtering thresholds using numerical Syslog weights (`value`) instead of position indexes.
+
+### Fixed
+- **AnsiPen Reference Linking**: Restructured inline documentation to clean up references and prevent complex element loop timeouts during automatic `dartdoc` execution.
 
 ## [1.1.2] - 2026-07-09
 
