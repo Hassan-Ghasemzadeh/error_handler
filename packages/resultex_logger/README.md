@@ -4,6 +4,9 @@ A lightweight, powerful, and highly compatible logging system for Dart and Flutt
 on top of native `developer.log`, it ensures seamless **cross-platform, Web, and WASM compatibility
 ** without breaking a sweat or relying on heavy external dependencies.
 
+[![pub package](https://img.shields.io/pub/v/resultex_logger)](https://pub.dev/packages/resultex_logger)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ---
 
 ## ✨ Features
@@ -32,7 +35,7 @@ Since this package is tailored for internal/monorepo architectural designs, add 
 
 ```yaml
 dependencies:
-  resultex_logger: ^1.1.1
+  resultex_logger: ^1.1.3
 ```
 
 **🛠️ Getting Started**
