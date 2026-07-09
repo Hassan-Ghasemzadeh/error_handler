@@ -17,10 +17,12 @@ on top of native `developer.log`, it ensures seamless **cross-platform, Web, and
 
 ---
 
-## 📸 Preview
-  <img src="https://github.com/Hassan-Ghasemzadeh/error_handler/blob/main/docs/assets/screenshot-dash.png" alt="Resultex Ecosystem Banner" width="100%">
-  <img src="https://github.com/Hassan-Ghasemzadeh/error_handler/blob/main/docs/assets/screenshot-hash.png" alt="Resultex Ecosystem Banner" width="100%">
+## 📸 Preview 
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/screenshot-dash.png" alt="Resultex Standard Logs" width="48%" />
+  <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/screenshot-hash.png" alt="Resultex Error Logs" width="48%" />
+</p>
 ---
 
 ## 📦 Installation
