@@ -46,6 +46,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize the logger base configuration
+  final loggerBase = ResultexLoggerBase();
   // Initialize the concrete instance of AppLogger.
   final logger = ResultexLogger(
     settings: ResultexLoggerSettings(
@@ -69,6 +70,7 @@ import 'package:resultex_logger/logger.dart';
 
 void main() {
   // Initialize the logger base configuration
+  final loggerBase = ResultexLoggerBase();
   // Initialize the concrete instance of AppLogger.
   final logger = ResultexLogger(
     settings: ResultexLoggerSettings(
