@@ -37,7 +37,9 @@ class ResultexLogger implements LoggerService {
   int _groupDepth = 0;
 
   /// Evaluates whether the requested [level] satisfies the minimum logging thresholds.
-  bool _shouldLog(LogLevel level) => level.index <= settings.minLogLevel.index;
+  ///
+  /// Compares numerical weights where a higher level value indicates greater severity.
+  bool _shouldLog(LogLevel level) => level.value >= settings.minLogLevel.value;
 
   /// Writes the finalized message stream to the system terminal interface.
   ///
@@ -62,7 +64,7 @@ class ResultexLogger implements LoggerService {
   /// depth leaks and guarantee the printing of the (`END GROUP` format) marker even on system failures.
   void group(String title, void Function() body) {
     // 1. Log the initiation title of the operational scope
-    info('📦 START GROUP: $title');
+    info('→ START GROUP: $title');
 
     // 2. Step up the indentation nesting depth for sub-logs
     _groupDepth++;
@@ -75,7 +77,7 @@ class ResultexLogger implements LoggerService {
       _groupDepth--;
 
       // 5. Signal the structural ending of the active log block scope
-      info('🔻 END GROUP: $title');
+      info('← END GROUP: $title');
     }
   }
 
@@ -127,6 +129,58 @@ class ResultexLogger implements LoggerService {
     }
   }
 
+  /// Logs a highly critical system failure that requires immediate operator attention.
+  @override
+  void critical(String message, {Object? error, StackTrace? stackTrace}) {
+    _executeLogPipeline(
+      LogDetails(
+        message: message,
+        level: LogLevel.critical,
+        pen: LoggerStyles.magenta,
+        error: error,
+        stackTrace: stackTrace,
+      ),
+    );
+  }
+
+  /// Logs severe exceptions and stack traces requiring immediate review.
+  @override
+  void error(String message, {Object? error, StackTrace? stackTrace}) {
+    _executeLogPipeline(
+      LogDetails(
+        message: message,
+        level: LogLevel.error,
+        pen: LoggerStyles.red,
+        error: error,
+        stackTrace: stackTrace,
+      ),
+    );
+  }
+
+  /// Logs a system warning regarding non-fatal but suspicious architecture behavior.
+  @override
+  void warning(String message) {
+    _executeLogPipeline(
+      LogDetails(
+        message: message,
+        level: LogLevel.warning,
+        pen: LoggerStyles.yellow,
+      ),
+    );
+  }
+
+  /// Logs a successful milestone, completed transaction, or validated operation status.
+  @override
+  void good(String message) {
+    _executeLogPipeline(
+      LogDetails(
+        message: message,
+        level: LogLevel.good,
+        pen: LoggerStyles.green,
+      ),
+    );
+  }
+
   /// Logs a standard informational statement to the console.
   @override
   void info(String message) {
@@ -135,6 +189,18 @@ class ResultexLogger implements LoggerService {
         message: message,
         level: LogLevel.info,
         pen: LoggerStyles.green,
+      ),
+    );
+  }
+
+  /// Logs a fine-grained informational event tracing micro-operations or minor state changes.
+  @override
+  void fine(String message) {
+    _executeLogPipeline(
+      LogDetails(
+        message: message,
+        level: LogLevel.fine,
+        pen: LoggerStyles.cyan,
       ),
     );
   }
@@ -157,28 +223,14 @@ class ResultexLogger implements LoggerService {
     );
   }
 
-  /// Logs a system warning regarding non-fatal but suspicious architecture behavior.
+  /// Logs a hyper-detailed step-by-step trace for deep-dive analytical debugging.
   @override
-  void warning(String message) {
+  void verbose(String message) {
     _executeLogPipeline(
       LogDetails(
         message: message,
-        level: LogLevel.warning,
-        pen: LoggerStyles.yellow,
-      ),
-    );
-  }
-
-  /// Logs severe exceptions and stack traces requiring immediate review.
-  @override
-  void error(String message, {Object? error, StackTrace? stackTrace}) {
-    _executeLogPipeline(
-      LogDetails(
-        message: message,
-        level: LogLevel.error,
-        pen: LoggerStyles.red,
-        error: error,
-        stackTrace: stackTrace,
+        level: LogLevel.verbose,
+        pen: LoggerStyles.gray,
       ),
     );
   }
