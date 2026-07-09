@@ -11,8 +11,14 @@ enum LogLevel {
   /// Actionable anomalies or unexpected states that do not break the application flow.
   warning(900),
 
+  /// Successful completions, database confirmations, or validated responses.
+  good(850),
+
   /// General operational milestones, network responses, or lifecycle state changes.
   info(800),
+
+  /// Fine-grained informational events tracing micro-operations or minor state changes.
+  fine(700),
 
   /// Verbose diagnostic information used locally by developers during execution.
   debug(500),
