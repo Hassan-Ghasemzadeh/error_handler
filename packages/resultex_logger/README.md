@@ -80,11 +80,9 @@ void main() {
   );
 
   await loggerBase.init();
-  // Standard Logs
-  logger.info('Application started successfully.');
-  logger.good('Database connection established.');
-  logger.fine('Resource allocated smoothly.');
-  logger.verbose('User scrolling index: 24');
+  // Standard Logs 
+  logger.debug('Database connection established.');
+  logger.info('Resource allocated smoothly.');
 
   // Warnings & Debugs
   logger.warning('API response time is slower than expected.');
