@@ -3,7 +3,7 @@ import 'package:resultex_logger/core/di/resultex_logger_module.dart';
 
 /// A configuration class responsible for initializing the application's dependency injection container.
 ///
-/// This class aggregates all separate [DIModule] instances and executes their registration
+/// This class aggregates all separate (DIModule) instances and executes their registration
 /// sequence to prepare the service locator for the application.
 class GetItConfiguration {
   // Holds the global singleton instance of the GetIt service locator.
@@ -11,7 +11,7 @@ class GetItConfiguration {
 
   /// Initializes and registers all application dependencies asynchronously.
   ///
-  /// This method defines the central list of configuration [modules], iterates through them,
+  /// This method defines the central list of configuration (modules), iterates through them,
   /// and triggers their respective `register` method using the shared [_injector] instance.
   ///
   /// Call this method during the early bootstrap phase of the application (e.g., in `main.dart`).
