@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-07-09
+
+### Added
+
+- Added high-visibility terminal output screenshots to the README.
+
+### Changed
+
+- Updated the example project implementation for better clarity and alignment with best practices.
+- Improved README documentation and configuration guides.
+
+
 # [1.1.1] - 2026-07-02
 
 - Updated GitHub repository url
