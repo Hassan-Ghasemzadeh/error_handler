@@ -12,8 +12,15 @@ void main() async {
     ),
   );
   await loggerBase.init();
-
   if (kDebugMode) {
-    print('Resultex Logger Example running...');
+    logger.info('Resultex Logger Example running...');
+    logger.info('Application started successfully.');
   }
+  logger.debug('Database connection established.');
+  logger.debug('Resource allocated smoothly.');
+  logger.debug('User scrolling index: 24');
+
+  // Warnings & Debugs
+  logger.warning('API response time is slower than expected.');
+  logger.debug('Fetching user data dynamic payload...');
 }
