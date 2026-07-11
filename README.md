@@ -215,117 +215,89 @@ Widget build(BuildContext context) {
 }
 ```
 
-## **🔮 Advanced Functional & Reactive Operations**
+## Advanced Features (Enterprise Grade)
 
-The latest updates to resultex bridge the gap between pure functional domain modeling and practical,
-real-world application state management.
+Resultex is built to scale. For large, complex Flutter applications, the package offers advanced
+architectural tools to handle memory safety, concurrency, and global monitoring.
 
-**🚦 1. Parallel Validation Accumulation (ResultAccumulatorX.accumulate)**
+### 1. Memory-Safe Operations (`CancellableResult`)
 
-In classic functional programming, pipelines short-circuit at the very first failure. However, when
-validating complex UI forms, you want to capture all errors simultaneously (e.g., "password too
-short" and "invalid email format") instead of forcing the user to submit multiple times.
-
-ResultAccumulatorX.accumulate aggregates multiple lazy validation evaluations, returning a single
-consolidated result.
+Prevent memory leaks and the dreaded `setState() called after dispose()` error in Flutter. When a
+user navigates away from a screen, you can instantly abort any pending background operations.
 
 ```dart
-import 'package:resultex/resultex.dart';
+late CancellableResult<UserProfile> profileRequest;
 
-// 1. Accumulate multiple text controller validations parallelly
-final formResult = ResultAccumulatorX.accumulate<String>([
-      () => emailController.validatedResult,
-      () => passwordController.validatedResult,
-      () => usernameController.validatedResult,
+@override
+void initState() {
+  super.initState();
+  profileRequest = Result.cancellable(() => api.fetchUserProfile());
+
+  profileRequest.value.then((result) {
+    result.when(
+      onSuccess: (profile) => setState(() => this.profile = profile),
+      onFailure: (failure) {
+        // Automatically ignores the failure if it was cancelled
+        if (failure is CancellationFailure) return;
+        showError(failure.message);
+      },
+    );
+  });
+}
+
+@override
+void dispose() {
+  profileRequest.cancel('Screen disposed'); // Instantly severs the pipeline
+  super.dispose();
+}
+```
+
+2. High-Availability Racing (Result.race)
+   Speed up your app by requesting data from multiple sources simultaneously. Result.race waits for
+   the first successful response and ignores the rest. It only returns a failure if ALL operations
+   fail.
+
+```Dart
+
+final Result<AppConfig> configResult = await
+Result.race
+([api.fetchFromPrimaryServer(),
+api.fetchFromBackupCDN(),
+localDatabase.getCachedConfig(),
 ]);
+```
 
-// 2. Unpack the consolidated outcome safely
-formResult.when
-(
-onSuccess: (cleanDataList) {
-// cleanDataList is a List<String> containing all valid sanitized fields
-authBloc.submitRegistration(cleanDataList[0], cleanDataList[1]);
-},
-onFailure: (failure) {
-if (failure is AccumulatedFailure) {
-// Access the complete list of individual failures captured
-for (final err in failure.errors) {
-showFieldWarning(err.message);
+3. Concurrent Request Memoization (Result.memoizeAsync)
+   Optimize performance by ensuring a heavy process or network request is only executed once, even
+   if requested multiple times concurrently by different UI components.
+
+```Dart
+// The network request executes only once.
+final fetchDashboard = Result.memoizeAsync(() => api.getHeavyDashboardData());
+
+// Both widgets safely await the exact same process without duplicate API calls.
+final widgetOneData = await
+
+fetchDashboard();
+
+final widgetTwoData = await
+
+fetchDashboard();
+```
+
+4. Global Error Telemetry (ResultexObserver)
+   Stop writing repetitive logging boilerplate in your UI or Domain layers. Register a global
+   observer once to automatically catch and report every Failure instantiated in your app to your
+   telemetry service (like Sentry or Firebase).
+
+```Dart
+void main() {
+  ResultexObserver.initialize((failure, stackTrace) {
+// Automatically logs every failure across the entire app
+    FirebaseCrashlytics.instance.recordError(failure.message, stackTrace);
+  });
+  runApp(const MyApp());
 }
-} else {
-showGenericError(failure.message);
-}
-},
-);
-```
-
-**🔌 2. Declarative State Management Bridge (toBlocState)**
-
-Stop writing repetitive if (result is SuccessResult) logic inside your state management layers. The
-toBlocState extension bridges your underlying architecture directly with your Bloc or state emitters
-natively.
-
-It supports both synchronous Result objects and asynchronous Future streams out of the box.
-
-```dart
-// inside your BLoC / Cubit event handlers:
-
-// Before (Standard approach):
-emit(AuthLoading());
-
-final result = await
-authRepository.login
-(
-credentials);
-result.when(
-onSuccess: (user) => emit(AuthSuccess(user)),
-onFailure: (fail) => emit(AuthError(fail.message)),
-);
-
-// After (Expressive, pipeline-bridged approach with toBlocState):
-emit(AuthLoading());
-await authRepository.login(credentials).toBlocState(
-onSuccess: (user) => emit(AuthSuccess(user)),
-onFailure: (fail) => emit(AuthError(fail.
-message
-)
-)
-,
-);
-```
-
-**🩹 3. Monadic Pipeline Recovery (.recover & .recoverAsync)**
-
-Not all failures are fatal. Sometimes, a network timeout should simply fall back to local disk
-storage, or a corrupted user state should fall back to an anonymous guest user.
-
-The .recover operator intercepts failures, allowing you to gracefully route them through a safety
-backup logic stream without breaking method chaining.
-
-Synchronous Recovery:
-
-```dart
-
-final profile = authRepository.getCachedUser()
-    .recover((failure) {
-// If local cache fails, seamlessly recover with a fallback Guest instance
-  return Result.success(User.guest());
-});
-```
-
-Asynchronous Recovery (e.g., remote database fallbacks):
-
-```dart
-
-final Result<AppLayoutConfig> layout = await
-remoteConfigService.fetchLatest
-().recoverAsync
-(
-(networkFailure) async {
-appLogger.warning('Remote config failed, falling back to local database...');
-// Recovers asynchronously from the disk database
-return localDatabase.getCachedConfig();
-});
 ```
 
 ## **Advanced Functional Pipelines**
