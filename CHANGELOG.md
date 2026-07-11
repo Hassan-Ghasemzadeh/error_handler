@@ -2,6 +2,33 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+## 2.5.1
+
+## Advanced Functional & Reactive Operations
+
+This release introduces powerful monadic pipelines, UI-layer reactive bridges, and parallel validation mechanisms to make resultex the ultimate state and error management ecosystem for Dart and Flutter.
+
+**1. Parallel Validation Accumulation**
+
+- Added ResultAccumulatorX.accumulate to evaluate multiple lazy validation closures simultaneously.
+
+- Introduced AccumulatedFailure to safely group and propagate multiple parallel validation errors (e.g., UI form validations) instead of short-circuiting at the first failure.
+
+**2. Declarative State Management Bridge**
+
+- Added the highly requested .toBlocState() extension for synchronous Result and asynchronous Future<Result> instances.
+
+- Streamlined presentation-layer boilerplate by natively routing success payloads and failures directly to your state emission systems (like BLoC/Cubit emit methods) in a single declarative chain.
+
+**3. Monadic Pipeline Recovery**
+
+- Added .recover() (synchronous) and .recoverAsync() (asynchronous) operational boundaries.
+
+- Enabled clean inline fallback routing (e.g., retrieving cached disk data if a remote network configuration call fails) without breaking method chaining.
+
+**Quality of Life & Performance**
+- Improved type safety and compiler optimization structures across all monadic operators.
+- Fully tested async/sync recovery edge cases to guarantee zero unhandled runtime crashes.
 
 ## 2.5.0
 
