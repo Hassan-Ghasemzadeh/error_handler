@@ -2,33 +2,41 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
-## 2.5.1
 
-## Advanced Functional & Reactive Operations
+## [2.6.0] - 2026-07-11
 
-This release introduces powerful monadic pipelines, UI-layer reactive bridges, and parallel validation mechanisms to make resultex the ultimate state and error management ecosystem for Dart and Flutter.
+### Enterprise Concurrency & Lifecycle
 
-**1. Parallel Validation Accumulation**
+* **Added `CancellableResult` and `CancellationFailure`**: Prevent memory leaks and `setState` after
+  dispose errors in Flutter by instantly aborting pending asynchronous operations when a view is
+  disposed.
+* **Added `Result.race`**: Race multiple asynchronous `Result` operations. Resolves with the first
+  `SuccessResult` or an `AccumulatedFailure` if all operations fail, perfect for redundant network
+  requests.
+* **Added `Result.memoizeAsync`**: Optimize performance by caching functional evaluations. Prevents
+  duplicate network/computation calls for concurrent requests in the UI.
 
-- Added ResultAccumulatorX.accumulate to evaluate multiple lazy validation closures simultaneously.
+### Advanced Error Management
 
-- Introduced AccumulatedFailure to safely group and propagate multiple parallel validation errors (e.g., UI form validations) instead of short-circuiting at the first failure.
+* **Added `ResultexObserver`**: A globally accessible, thread-safe observer for centralized error
+  logging and crash reporting (e.g., Firebase Crashlytics, Sentry) without polluting business logic.
+* **Added `Result.accumulate`**: Parallel validation flow support. Validate a collection of results
+  simultaneously and catch all errors at once via the new `AccumulatedFailure` class (ideal for
+  complex form validations).
+* **Added Monadic Recovery (`.recover` & `.recoverAsync`)**: Gracefully patch pipeline failures by
+  routing operational infractions through a fallback provider (e.g., falling back to a local
+  database when a network request fails).
 
-**2. Declarative State Management Bridge**
+### State Management Integration
 
-- Added the highly requested .toBlocState() extension for synchronous Result and asynchronous Future<Result> instances.
+* **Added `toBlocState` Extension**: Seamlessly bridge asynchronous core architecture outcomes with
+  Flutter state emitters (`BLoC`/`Cubit`). Automatically unpacks monad containers and dispatches
+  execution blocks straight to state emission streams.
 
-- Streamlined presentation-layer boilerplate by natively routing success payloads and failures directly to your state emission systems (like BLoC/Cubit emit methods) in a single declarative chain.
+### Refactoring & Internal Improvements
 
-**3. Monadic Pipeline Recovery**
-
-- Added .recover() (synchronous) and .recoverAsync() (asynchronous) operational boundaries.
-
-- Enabled clean inline fallback routing (e.g., retrieving cached disk data if a remote network configuration call fails) without breaking method chaining.
-
-**Quality of Life & Performance**
-- Improved type safety and compiler optimization structures across all monadic operators.
-- Fully tested async/sync recovery edge cases to guarantee zero unhandled runtime crashes.
+* Enhanced asynchronous generic type matching and pipeline safety across all extension methods.
+* Maintained 100% backward compatibility with `v2.5.0` core APIs.
 
 ## 2.5.0
 
