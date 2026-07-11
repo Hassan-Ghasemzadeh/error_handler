@@ -215,6 +215,119 @@ Widget build(BuildContext context) {
 }
 ```
 
+## **🔮 Advanced Functional & Reactive Operations**
+
+The latest updates to resultex bridge the gap between pure functional domain modeling and practical,
+real-world application state management.
+
+**🚦 1. Parallel Validation Accumulation (ResultAccumulatorX.accumulate)**
+
+In classic functional programming, pipelines short-circuit at the very first failure. However, when
+validating complex UI forms, you want to capture all errors simultaneously (e.g., "password too
+short" and "invalid email format") instead of forcing the user to submit multiple times.
+
+ResultAccumulatorX.accumulate aggregates multiple lazy validation evaluations, returning a single
+consolidated result.
+
+```dart
+import 'package:resultex/resultex.dart';
+
+// 1. Accumulate multiple text controller validations parallelly
+final formResult = ResultAccumulatorX.accumulate<String>([
+      () => emailController.validatedResult,
+      () => passwordController.validatedResult,
+      () => usernameController.validatedResult,
+]);
+
+// 2. Unpack the consolidated outcome safely
+formResult.when
+(
+onSuccess: (cleanDataList) {
+// cleanDataList is a List<String> containing all valid sanitized fields
+authBloc.submitRegistration(cleanDataList[0], cleanDataList[1]);
+},
+onFailure: (failure) {
+if (failure is AccumulatedFailure) {
+// Access the complete list of individual failures captured
+for (final err in failure.errors) {
+showFieldWarning(err.message);
+}
+} else {
+showGenericError(failure.message);
+}
+},
+);
+```
+
+**🔌 2. Declarative State Management Bridge (toBlocState)**
+
+Stop writing repetitive if (result is SuccessResult) logic inside your state management layers. The
+toBlocState extension bridges your underlying architecture directly with your Bloc or state emitters
+natively.
+
+It supports both synchronous Result objects and asynchronous Future streams out of the box.
+
+```dart
+// inside your BLoC / Cubit event handlers:
+
+// Before (Standard approach):
+emit(AuthLoading());
+
+final result = await
+authRepository.login
+(
+credentials);
+result.when(
+onSuccess: (user) => emit(AuthSuccess(user)),
+onFailure: (fail) => emit(AuthError(fail.message)),
+);
+
+// After (Expressive, pipeline-bridged approach with toBlocState):
+emit(AuthLoading());
+await authRepository.login(credentials).toBlocState(
+onSuccess: (user) => emit(AuthSuccess(user)),
+onFailure: (fail) => emit(AuthError(fail.
+message
+)
+)
+,
+);
+```
+
+**🩹 3. Monadic Pipeline Recovery (.recover & .recoverAsync)**
+
+Not all failures are fatal. Sometimes, a network timeout should simply fall back to local disk
+storage, or a corrupted user state should fall back to an anonymous guest user.
+
+The .recover operator intercepts failures, allowing you to gracefully route them through a safety
+backup logic stream without breaking method chaining.
+
+Synchronous Recovery:
+
+```dart
+
+final profile = authRepository.getCachedUser()
+    .recover((failure) {
+// If local cache fails, seamlessly recover with a fallback Guest instance
+  return Result.success(User.guest());
+});
+```
+
+Asynchronous Recovery (e.g., remote database fallbacks):
+
+```dart
+
+final Result<AppLayoutConfig> layout = await
+remoteConfigService.fetchLatest
+().recoverAsync
+(
+(networkFailure) async {
+appLogger.warning('Remote config failed, falling back to local database...');
+// Recovers asynchronously from the disk database
+return localDatabase.getCachedConfig();
+});
+```
+
 ## **Advanced Functional Pipelines**
 
 ### Type-Safe Record Zipping (Dart 3+)
