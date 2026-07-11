@@ -220,7 +220,7 @@ Widget build(BuildContext context) {
 Resultex is built to scale. For large, complex Flutter applications, the package offers advanced
 architectural tools to handle memory safety, concurrency, and global monitoring.
 
-### 1. Memory-Safe Operations (`CancellableResult`)
+1. Memory-Safe Operations (`CancellableResult`)
 
 Prevent memory leaks and the dreaded `setState() called after dispose()` error in Flutter. When a
 user navigates away from a screen, you can instantly abort any pending background operations.
