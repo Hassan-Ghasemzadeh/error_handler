@@ -1,5 +1,7 @@
+import 'package:equatable/equatable.dart';
+
 /// Configuration options for configuring exponential or linear retry behavior.
-class RetryOptions {
+class RetryOptions extends Equatable {
   /// The maximum number of retry attempts before giving up.
   final int maxAttempts;
 
@@ -15,4 +17,7 @@ class RetryOptions {
     this.delay = const Duration(seconds: 2),
     this.backoffFactor = 1.0,
   });
+
+  @override
+  List<Object?> get props => [maxAttempts, delay, backoffFactor];
 }
