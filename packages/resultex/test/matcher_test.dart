@@ -13,7 +13,8 @@ void main() {
     });
 
     test('isFailure should validate FailureResult correctly', () {
-      final Result<String> sampleFailure = Result.failure(Failure(message: 'Database crashed'));
+      final Result<String> sampleFailure =
+          Result.failure(Failure(message: 'Database crashed'));
 
       expect(sampleFailure, isFailure());
       expect(sampleFailure, isFailure('Database crashed'));
