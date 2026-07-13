@@ -72,7 +72,43 @@ case FailureResult<User>(failure: final fail):
 print('Error occurred: ${fail.message}');
 }
 ```
+### (Unit Testing Matchers)
+ 
+### Fluent Unit Testing (`resultex_test.dart`)
 
+Resultex provides first-class framework-level matchers to make your domain and data layer unit tests extremely expressive and readable.
+
+To keep your production builds lightweight, these utilities are isolated. Simply import the dedicated test entry point in your test files:
+
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:resultex/resultex.dart';
+import 'package:resultex/resultex_test.dart'; // Import custom matchers
+
+void main() {
+  group('User Repository Tests', () {
+    test('should return SuccessResult with accurate payload', () async {
+      final result = await repository.fetchUser(1);
+
+      expect(result, isSuccess<User>());
+      expect(result, isSuccess<User>(expectedUser)); // Verifies the internal payload
+    });
+
+    test('should gracefully intercept server errors', () async {
+      final result = await repository.fetchUser(500);
+
+      expect(result, isFailure());
+      expect(result, isFailure('Internal Server Error')); // Verifies the exact message
+    });
+
+    test('should match specific clean architecture failure types', () async {
+      final result = await repository.fetchUserWithoutInternet();
+
+      expect(result, isFailureType<NetworkFailure>()); // Asserts the exact subclass
+    });
+  });
+}
+```
 ### Reactive UI Validation (`ResultTextController`)
 
 Stop writing custom stateful boilerplate or messy condition branches just to validate form fields.
