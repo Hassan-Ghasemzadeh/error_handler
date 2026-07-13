@@ -17,7 +17,7 @@ extension ResultAccumulatorX on Result {
   ///   () => passwordController.validatedResult,
   /// ]);
   /// ```
-  static Result<List<T>> accumulate<T>(List<Result<T> Function()> providers) {
+  Result<List<T>> accumulate<T>(List<Result<T> Function()> providers) {
     final List<T> successPayloads = [];
     final List<Failure> gatheredFailures = [];
 
