@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:resultex/core/extensions/result_extensions.dart';
+import 'package:resultex/core/extensions/result_recovery_extension.dart';
+import 'package:resultex/core/extensions/result_unwrap_x.dart';
 import 'package:resultex/resultex.dart';
 import 'package:resultex/src/model/failure.dart';
 
