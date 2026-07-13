@@ -47,24 +47,16 @@ if [[ ! "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
     exit 1
 fi
 
-# Extract the current version for replacement
+# Extract the current version for logging
 OLD_VERSION=$(grep "^version:" pubspec.yaml | awk '{print $2}')
 
 echo "🔄 Bumping version from $OLD_VERSION to $NEW_VERSION..."
 
-# 1. Update pubspec.yaml
+# 1. Update pubspec.yaml only
 sed -i "s/^version: .*/version: $NEW_VERSION/" pubspec.yaml
 echo "✅ Updated pubspec.yaml"
 
-# 2. Update CHANGELOG.md if it exists
-if [ -f "CHANGELOG.md" ]; then
-    sed -i "s/$OLD_VERSION/$NEW_VERSION/g" CHANGELOG.md
-    echo "📝 Updated CHANGELOG.md headings"
-else
-    echo "⚠️ CHANGELOG.md not found, skipping..."
-fi
-
-# 3. Refresh dependencies inside the target directory
+# 2. Refresh dependencies inside the target directory
 echo "⚡ Running 'flutter pub get'..."
 flutter pub get
 
