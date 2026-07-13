@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:resultex/resultex.dart';
 import 'package:resultex/src/model/failure.dart';
-import 'package:resultex/src/resultex_test.dart'; // مچرهای خودت
+import 'package:resultex/src/test/resultex_test.dart'; // مچرهای خودت
 
 void main() {
   group('Resultex Custom Matchers Verification', () {
