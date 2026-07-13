@@ -5,28 +5,7 @@ import 'package:resultex/src/model/result.dart';
 
 /// Utility extensions on the [Result] sealed hierarchy to streamline functional
 /// recovery paths and fluid asynchronous fallback operations.
-extension ResultExtensions<T> on Result<T> {
-  /// Recovers from an operational failure by mapping the non-generic [Failure]
-  /// instance into a new alternative [Result].
-  Result<T> recover(Result<T> Function(Failure failure) onFailure) {
-    final current = this;
-
-    // Check if the runtime implementation represents a failure state
-    if (current.runtimeType.toString().contains('Failure')) {
-      final dynamic internal = current;
-      try {
-        // Attempt direct casting if the object implements Failure directly
-        return onFailure(internal as Failure);
-      } catch (_) {
-        // Fallback: extract the underlying failure instance if it is wrapped inside a private class
-        return onFailure(internal.failure as Failure);
-      }
-    }
-
-    // Bypass recovery and return the original success state untouched
-    return this;
-  }
-
+extension ResultUnwrapX<T> on Result<T> {
   /// Extracts the encapsulated success value directly from [Success], or invokes
   /// an asynchronous fallback strategy when a [Failure] is encountered.
   Future<T> getOrElseAsync(
