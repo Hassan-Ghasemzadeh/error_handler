@@ -18,5 +18,5 @@ typedef VoidResult = Result<Unit>;
 /// Extension helper to quickly generate successful void outcomes.
 extension VoidResultX on Result<Unit> {
   /// Syntactic sugar to return a successful [VoidResult] instantly.
-  static VoidResult success() => Result.success(unit);
+  VoidResult success() => Result.success(unit);
 }
