@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:resultex/core/extensions/future_result.dart';
@@ -16,18 +18,125 @@ void main() async {
   final loggerBase = Resultex();
   await loggerBase.init();
 
-  // 1. Run the legacy homogeneous concurrent dashboard loader
+  // Run legacy dashboards and collection utilities examples
   await _loadDashboardData();
-
-  // 2. Run the newly added heterogeneous type-safe zipping example
   await _loadZippedDashboardData();
-
-  // 3. Run the newly added safe collection transformation pipeline
   await _processBatchRawFeeds();
 
+  // =========================================================================
+  // Execute new ResultExecutor educational examples
+  // =========================================================================
+  _demonstrateSyncExecution();
+  await _demonstrateAsyncExecution();
+  await _demonstrateStreamExecution();
+
   if (kDebugMode) {
-    print(
-        'Resultex core ecosystem successfully initialized with all advanced extensions.');
+    print('\nAll Resultex learning models executed perfectly.');
+  }
+}
+
+// =========================================================================
+// NEW: ResultExecutor Educational Examples
+// =========================================================================
+
+/// 1. Demonstrates handling synchronous (Sync) operations and capturing unexpected runtime crashes.
+void _demonstrateSyncExecution() {
+  // Assuming the executor instance is exposed via your core package singleton
+  final executor = Resultex.executor;
+
+  if (kDebugMode) {
+    print('\n--- [ResultExecutor] 1. Synchronous Execution Demo ---');
+  }
+
+  // Scenario: Parsing an invalid string to an integer which normally throws a FormatException
+  final Result<int> syncResult = executor.execute<int>(
+    () {
+      final rawString = "123_invalid_number";
+      return int.parse(rawString); // This line will intentionally crash
+    },
+    context: 'ParsingUserAgeScope',
+  );
+
+  // The executor safely intercepts the crash, routes diagnostics, and returns a structured Failure
+  syncResult.fold(
+    onSuccess: (value) => print('Sync Success: $value'),
+    onFailure: (failure) {
+      if (kDebugMode) {
+        print('Sync Intercepted Crash Successfully!');
+        print('Captured Error Message: ${failure.message}');
+      }
+    },
+  );
+}
+
+/// 2. Demonstrates handling asynchronous (Async) pipelines and the flat-mapping capability.
+Future<void> _demonstrateAsyncExecution() async {
+  final executor = Resultex.executor;
+  final repository = DashboardRepository();
+
+  if (kDebugMode) {
+    print('\n--- [ResultExecutor] 2. Async & Flat-Mapping Demo ---');
+  }
+
+  // Case A: Wrapping a raw primitive Future pipeline (e.g., standard HTTP or third-party client)
+  final Result<String> rawAsyncResult = await executor.executeAsync<String>(
+    () async {
+      await Future.delayed(const Duration(milliseconds: 200));
+      return "Raw_Session_Token_XYZ";
+    },
+    context: 'FetchRawTokenNetworkScope',
+  );
+
+  // Case B: Flat-mapping a repository call that already returns a Result wrapper.
+  // The executor automatically flattens it to Result<User> instead of nesting into Result<Result<User>>.
+  final Result<User> profileResult = await executor.executeAsync<User>(
+    () => repository.fetchUserProfile(),
+    // This repository method returns Future<Result<User>>
+    context: 'MonitoredProfileFetchScope',
+  );
+
+  profileResult.fold(
+    onSuccess: (user) {
+      if (kDebugMode) print('Async Executor Success: Loaded User ${user.name}');
+    },
+    onFailure: (fail) => print('Async Executor Failure: ${fail.message}'),
+  );
+}
+
+/// 3. Demonstrates monitoring and securing multi-event stream pipelines.
+Future<void> _demonstrateStreamExecution() async {
+  final executor = Resultex.executor;
+
+  if (kDebugMode) {
+    print('\n--- [ResultExecutor] 3. Stream Pipeline Monitoring Demo ---');
+  }
+
+  // A mock stream factory that emits safe events and then throws a unexpected terminal exception
+  Stream<double> mockPriceStreamFactory() async* {
+    yield 54200.50; // Valid event 1
+    yield 54350.20; // Valid event 2
+    throw TimeoutException("Lost connection to live crypto socket feed!");
+  }
+
+  // Transforms the raw stream into a safe Stream<Result<T>> for secure UI binding (e.g., StreamBuilder)
+  final Stream<Result<double>> securePriceStream =
+      executor.executeStream<double>(
+    mockPriceStreamFactory,
+    context: 'CryptoLivePriceFeedScope',
+  );
+
+  // Listening to the safe stream sequences without breaking the host runtime loop
+  await for (final Result<double> result in securePriceStream) {
+    result.fold(
+      onSuccess: (price) {
+        if (kDebugMode) print('Stream Event -> Live Price Updated: \$$price');
+      },
+      onFailure: (failure) {
+        if (kDebugMode) {
+          print('Stream Intercepted Exception Safely: ${failure.message}');
+        }
+      },
+    );
   }
 }
 
