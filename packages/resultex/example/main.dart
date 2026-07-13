@@ -59,7 +59,11 @@ void _demonstrateSyncExecution() {
 
   // The executor safely intercepts the crash, routes diagnostics, and returns a structured Failure
   syncResult.fold(
-    onSuccess: (value) => print('Sync Success: $value'),
+    onSuccess: (value) {
+      if (kDebugMode) {
+        print('Sync Success: $value');
+      }
+    },
     onFailure: (failure) {
       if (kDebugMode) {
         print('Sync Intercepted Crash Successfully!');
@@ -79,13 +83,13 @@ Future<void> _demonstrateAsyncExecution() async {
   }
 
   // Case A: Wrapping a raw primitive Future pipeline (e.g., standard HTTP or third-party client)
-  final Result<String> rawAsyncResult = await executor.executeAsync<String>(
-    () async {
-      await Future.delayed(const Duration(milliseconds: 200));
-      return "Raw_Session_Token_XYZ";
-    },
-    context: 'FetchRawTokenNetworkScope',
-  );
+  // final Result<String> rawAsyncResult = await executor.executeAsync<String>(
+  //   () async {
+  //     await Future.delayed(const Duration(milliseconds: 200));
+  //     return "Raw_Session_Token_XYZ";
+  //   },
+  //   context: 'FetchRawTokenNetworkScope',
+  // );
 
   // Case B: Flat-mapping a repository call that already returns a Result wrapper.
   // The executor automatically flattens it to Result<User> instead of nesting into Result<Result<User>>.
@@ -99,7 +103,11 @@ Future<void> _demonstrateAsyncExecution() async {
     onSuccess: (user) {
       if (kDebugMode) print('Async Executor Success: Loaded User ${user.name}');
     },
-    onFailure: (fail) => print('Async Executor Failure: ${fail.message}'),
+    onFailure: (fail) {
+      if (kDebugMode) {
+        print('Async Executor Failure: ${fail.message}');
+      }
+    },
   );
 }
 

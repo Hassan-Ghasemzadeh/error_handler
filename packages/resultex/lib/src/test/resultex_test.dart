@@ -21,7 +21,8 @@ class _IsSuccess<T> extends CustomMatcher {
   @override
   Object? featureValueOf(dynamic actual) {
     if (actual is! SuccessResult<T>) {
-      throw Exception('Expected SuccessResult<$T> but got ${actual.runtimeType}');
+      throw Exception(
+          'Expected SuccessResult<$T> but got ${actual.runtimeType}');
     }
     // Assumes the SuccessResult class exposes its encapsulated payload via a `.value` property
     return actual.success.value;
@@ -55,7 +56,7 @@ class _IsFailure extends CustomMatcher {
 /// Asserts that the actual value is a [FailureResult] wrapping a specific subclass of [Failure] (e.g., NetworkFailure).
 Matcher isFailureType<F extends Failure>() {
   return isA<FailureResult>().having(
-        (result) => result.failure,
+    (result) => result.failure,
     'failure type',
     isA<F>(),
   );
