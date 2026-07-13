@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_test:
+    sdk: flutter
 
   equatable: ^2.0.8
   get_it: ^9.2.1
