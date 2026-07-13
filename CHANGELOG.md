@@ -2,6 +2,14 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+## [2.6.1] - 2026-07-13
+
+### 🚀 Added
+* **Custom Test Matchers**: Introduced `isSuccess`, `isFailure`, and `isFailureType` inside `lib/resultex_test.dart` for clean, expressive, and robust unit testing of `Result` types.
+
+### Fixed
+* Resolved minor internal bugs to improve core package stability and pipeline performance.
+* Adjusted `flutter_test` dependency allocation to correctly support library-level custom matchers.
 
 ## [2.6.0] - 2026-07-11
 
