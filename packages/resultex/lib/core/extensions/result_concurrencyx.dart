@@ -12,7 +12,7 @@ extension ResultConcurrencyX on Result {
   /// a [FailureResult], it resolves with an [AccumulatedFailure] containing all errors.
   ///
   /// Ideal for redundant network requests or high-availability resource loading.
-  static Future<Result<T>> race<T>(Iterable<Future<Result<T>>> futures) async {
+  Future<Result<T>> race<T>(Iterable<Future<Result<T>>> futures) async {
     if (futures.isEmpty) {
       return Result.failure(
           Failure(message: 'No futures provided for racing.'));
