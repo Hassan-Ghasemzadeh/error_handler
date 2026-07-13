@@ -72,13 +72,16 @@ case FailureResult<User>(failure: final fail):
 print('Error occurred: ${fail.message}');
 }
 ```
+
 ### (Unit Testing Matchers)
- 
+
 ### Fluent Unit Testing (`resultex_test.dart`)
 
-Resultex provides first-class framework-level matchers to make your domain and data layer unit tests extremely expressive and readable.
+Resultex provides first-class framework-level matchers to make your domain and data layer unit tests
+extremely expressive and readable.
 
-To keep your production builds lightweight, these utilities are isolated. Simply import the dedicated test entry point in your test files:
+To keep your production builds lightweight, these utilities are isolated. Simply import the
+dedicated test entry point in your test files:
 
 ```dart
 import 'package:flutter_test/flutter_test.dart';
@@ -109,6 +112,7 @@ void main() {
   });
 }
 ```
+
 ### Reactive UI Validation (`ResultTextController`)
 
 Stop writing custom stateful boilerplate or messy condition branches just to validate form fields.
