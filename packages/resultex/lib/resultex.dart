@@ -13,3 +13,7 @@ export 'src/model/result.dart';
 
 // Export the operation runner engine that wraps runtime execution flows.
 export 'src/result_executor/result_executor.dart';
+
+// Export UI Component Widgets
+export 'src/ui/widget/result_builder.dart';
+export 'src/ui/widget/result_switch.dart';
