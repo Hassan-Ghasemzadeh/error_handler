@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-
 import '../../../resultex.dart';
 import '../../model/failure.dart';
-import '../../model/success.dart';
 import '../notifier/result_notifier.dart';
+import 'result_switch.dart';
 
-/// A declarative Flutter widget that listens to a [ResultNotifier] and rebuilds its UI
-/// based on the emitted [Result] state.
+/// A reactive, declarative Flutter widget that listens to a [ResultNotifier]
+/// and automatically rebuilds its UI subtree whenever the underlying state changes.
 ///
-/// This widget eliminates layout-building boilerplate by automatically separating the
-/// presentation layer into three explicit states: loading/idle, success, and failure.
+/// This widget delegates its rendering logic directly to [ResultSwitch] to enforce
+/// a strict separation of concerns between state observation and state representation.
 ///
 /// Example:
 /// ```dart
@@ -21,25 +20,24 @@ import '../notifier/result_notifier.dart';
 /// )
 /// ```
 class ResultBuilder<S> extends StatelessWidget {
-  /// The [ResultNotifier] whose state changes will trigger this widget to rebuild.
+  /// The active [ResultNotifier] instance whose state changes drive this widget's rebuilds.
   final ResultNotifier<S> notifier;
 
-  /// A builder function invoked when the current state is `null`.
-  ///
-  /// This typically represents an initial uninitialized state or an active loading operation.
+  /// Builder callback executed when the notifier's value is `null`, typically
+  /// representing an uninitialized, idle, or loading state.
   final Widget Function(BuildContext context) onLoading;
 
-  /// A builder function invoked when the operation completes successfully.
+  /// Builder callback executed when the notifier emits a [SuccessResult].
   ///
-  /// Provides the unwrapped data payload of type [S] directly to the layout ecosystem.
+  /// Yields the unpacked success payload of type [S] to the UI tree.
   final Widget Function(BuildContext context, S data) onSuccess;
 
-  /// A builder function invoked when the operation encounters a managed [Failure].
+  /// Builder callback executed when the notifier emits a [FailureResult].
   ///
-  /// Provides the structured [Failure] details to safely render error feedback or retry logic.
+  /// Yields the encapsulated [Failure] payload to safely render error feedback.
   final Widget Function(BuildContext context, Failure failure) onFailure;
 
-  /// Creates a highly isolated and reactive [ResultBuilder] component tree.
+  /// Creates a highly reactive and isolated [ResultBuilder] linked to the specified [notifier].
   const ResultBuilder({
     super.key,
     required this.notifier,
@@ -50,21 +48,19 @@ class ResultBuilder<S> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // We wrap the execution inside a ValueListenableBuilder to handle micro-optimizations
+    // and automatically trigger rebuilds upon notifier emissions.
     return ValueListenableBuilder<Result<S>?>(
       valueListenable: notifier,
       builder: (context, result, _) {
-        // Fallback to the loading state if no result has been emitted yet (null state)
-        if (result == null) {
-          return onLoading(context);
-        }
-
-        // Leverage Dart 3+ exhaustive pattern matching to bind state variants to UI builders
-        return switch (result) {
-          SuccessResult<S>(success: Success(:final value)) =>
-            onSuccess(context, value),
-          FailureResult<S>(failure: final failure) =>
-            onFailure(context, failure),
-        };
+        // Delegate the presentation/structural rendering task directly to the static ResultSwitch,
+        // maintaining a single source of truth for the presentation layer logic.
+        return ResultSwitch<S>(
+          result: result,
+          onLoading: onLoading,
+          onSuccess: onSuccess,
+          onFailure: onFailure,
+        );
       },
     );
   }
