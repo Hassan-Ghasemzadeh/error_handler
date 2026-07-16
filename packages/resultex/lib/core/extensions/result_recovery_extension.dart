@@ -1,5 +1,4 @@
 import '../../resultex.dart';
-import '../../src/model/failure.dart';
 
 /// Monadic recovery extensions for the [Result] ecosystem.
 extension ResultRecoveryX<T> on Result<T> {

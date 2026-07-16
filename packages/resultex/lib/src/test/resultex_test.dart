@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:resultex/resultex.dart';
 
-import '../model/failure.dart';
 
 /// Asserts that the actual value is a [SuccessResult].
 ///

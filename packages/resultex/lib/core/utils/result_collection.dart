@@ -1,5 +1,4 @@
 import '../../resultex.dart';
-import '../../src/model/success.dart';
 
 class ResultCollection {
   /// Iterates over a [list] of elements, applies a transformation function [mapper]

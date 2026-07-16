@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../resultex.dart';
-import '../../model/failure.dart';
-import '../notifier/result_notifier.dart';
 
 /// A reactive, declarative Flutter widget that listens to a [ResultNotifier]
 /// and automatically rebuilds its UI subtree whenever the underlying state changes.

@@ -1,6 +1,4 @@
 import '../../resultex.dart';
-import '../../src/model/failure.dart';
-import '../../src/model/success.dart';
 
 /// Core conversion extensions on [Result] to enhance developer experience
 /// and interoperability with standard Dart API structures.

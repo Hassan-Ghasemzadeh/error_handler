@@ -1,5 +1,4 @@
 import '../../resultex.dart';
-import '../../src/model/failure.dart';
 
 /// Callback signature for intercepting global failures.
 typedef FailureObserverCallback = void Function(

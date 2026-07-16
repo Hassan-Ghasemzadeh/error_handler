@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../resultex.dart';
-import '../../model/failure.dart';
 
 /// A specialized [ValueNotifier] that manages and exposes a [Result] state to the UI.
 ///

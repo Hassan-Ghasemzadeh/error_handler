@@ -1,6 +1,5 @@
 import '../../resultex.dart';
 import '../../src/model/accumulated_failure.dart';
-import '../../src/model/failure.dart';
 
 /// Core architectural extensions for handling multiple [Result] collections.
 extension ResultAccumulatorX on Result {

@@ -1,6 +1,4 @@
 import '../../resultex.dart';
-import '../../src/model/failure.dart';
-import '../../src/model/success.dart';
 
 extension ResultFilterX<T> on Result<T> {
   /// Validates that an encapsulated success value strictly satisfies the given [predicate].

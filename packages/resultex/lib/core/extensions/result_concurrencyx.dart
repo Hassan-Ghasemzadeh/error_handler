@@ -1,7 +1,6 @@
 import 'dart:async';
 import '../../resultex.dart';
 import '../../src/model/accumulated_failure.dart';
-import '../../src/model/failure.dart';
 
 /// Advanced concurrency extensions for the [Result] monad.
 extension ResultConcurrencyX on Result {

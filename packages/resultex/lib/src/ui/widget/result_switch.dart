@@ -1,7 +1,5 @@
 import 'package:flutter/widgets.dart';
 import '../../../resultex.dart';
-import '../../model/failure.dart';
-import '../../model/success.dart';
 
 /// A pure presentation widget that maps a static [Result] state straight to the UI.
 ///
@@ -50,7 +48,8 @@ class ResultSwitch<S> extends StatelessWidget {
     // 2. Leverage Dart 3+ exhaustive pattern matching to map the terminal states.
     // By asserting non-nullability (result!), we safely promote the variable to a terminal Result subtype.
     return switch (result!) {
-      SuccessResult<S>(success: Success(:final value)) => onSuccess(context, value),
+      SuccessResult<S>(success: Success(:final value)) =>
+        onSuccess(context, value),
       FailureResult<S>(failure: final failure) => onFailure(context, failure),
     };
   }

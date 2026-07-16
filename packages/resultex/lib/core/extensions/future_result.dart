@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import '../../resultex.dart';
-import '../../src/model/failure.dart';
 
 /// Extension on standard Dart [Future] blocks to seamlessly encapsulate raw asynchronous
 /// processing scopes directly into safe functional [Result] pipelines.

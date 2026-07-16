@@ -1,7 +1,5 @@
 import '../../resultex.dart';
-import '../../src/model/failure.dart';
 import '../../src/model/multi_failure.dart';
-import '../../src/model/success.dart';
 
 /// Utility methods for managing and aggregating multiple [Result] instances.
 abstract class ResultUtils {
