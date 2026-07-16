@@ -13,11 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^5.10.0
-  resultex: ^2.6.1
-
-dependency_overrides:
-  resultex:
-    path: ../resultex
+  resultex: ^2.7.0
 
 dev_dependencies:
   flutter_test:
