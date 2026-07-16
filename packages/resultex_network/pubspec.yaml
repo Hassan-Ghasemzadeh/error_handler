@@ -12,6 +12,15 @@ dependencies:
   dio: ^5.10.0
   resultex: ^2.6.1
 
+dependency_overrides:
+  resultex:
+    path: ../resultex
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
