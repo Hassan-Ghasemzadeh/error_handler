@@ -44,3 +44,11 @@ export 'core/utils/result_memoizer.dart';
 /// Exports generic functional helper utilities and extension methods (such as map,
 /// then, and combine) to streamline [Result] manipulation.
 export 'core/utils/result_utils.dart';
+
+/// Exports model classes
+/// Failure model class
+export 'src/model/failure.dart';
+
+/// Exports model classes
+/// Success model classes
+export 'src/model/success.dart';
