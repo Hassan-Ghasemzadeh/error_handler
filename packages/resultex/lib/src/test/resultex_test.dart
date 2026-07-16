@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:resultex/resultex.dart';
 
-
 /// Asserts that the actual value is a [SuccessResult].
 ///
 /// If [valueMatcher] is provided, it additionally evaluates whether the encapsulated

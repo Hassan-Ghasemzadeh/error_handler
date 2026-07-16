@@ -3,6 +3,24 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## [2.7.0] - 2026-07-16
+
+### Added
+
+- **Public API Exposure**: Exported core domain models (`Failure`, `Success`) directly from the main
+  library entry point (`lib/resultex.dart`). This enables clean integration with external
+  sub-packages (like `resultex_network`) and third-party extensions without referencing internal
+  `src/` files.
+- **New `ResultSwitch` Widget**: Added a declarative, elegant UI component that allows developers to
+  pattern-match and switch between different `Result` states directly in the widget tree, keeping
+  presentation code clean and readable.
+
+### Changed
+
+- **Refactored `ResultBuilder`**: Thoroughly polished and optimized the state-rebuilding pipeline in
+  `ResultBuilder` to offer smoother UI updates, stronger type safety, and better integration with
+  asynchronous states.
+
 ## [2.6.1] - 2026-07-13
 
 ### 🚀 Added
