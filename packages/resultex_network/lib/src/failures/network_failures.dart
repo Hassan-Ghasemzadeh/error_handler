@@ -15,6 +15,34 @@ class NetworkFailure extends Failure {
   });
 }
 
+/// Represents a failure originating from the server (HTTP 500+).
+///
+/// Use this when the backend is down, undergoing maintenance, or threw an exception.
+class ServerFailure extends NetworkFailure {
+  const ServerFailure({
+    required super.message,
+    super.statusCode,
+  });
+}
+
+/// Represents an authentication or authorization failure (HTTP 401, 403).
+///
+/// Use this to trigger session expirations or redirect users to the login screen.
+class UnauthorizedFailure extends NetworkFailure {
+  const UnauthorizedFailure({
+    required super.message,
+    super.statusCode,
+  });
+}
+
+/// Represents a requested resource that could not be found (HTTP 404).
+class NotFoundFailure extends NetworkFailure {
+  const NotFoundFailure({
+    required super.message,
+    super.statusCode = 404,
+  });
+}
+
 /// Represents a form validation failure (HTTP 422).
 ///
 /// This is highly tailored for API architectures like Laravel or NestJS that return
