@@ -16,3 +16,6 @@ export 'package:resultex_logger/src/formatter/symmetric_box_formatter.dart';
 
 // Export the severity levels defining the system-wide log filter thresholds.
 export 'package:resultex_logger/src/model/log_level.dart';
+
+// Export logger base
+export 'src/logger_base.dart';
