@@ -17,6 +17,10 @@ dependencies:
   connectivity_plus: ^7.3.0
   resultex_logger: ^1.1.3
 
+dependency_overrides:
+  resultex_logger:
+    path: ../resultex_logger
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
