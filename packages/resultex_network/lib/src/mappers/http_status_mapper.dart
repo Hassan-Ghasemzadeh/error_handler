@@ -9,44 +9,68 @@ abstract class HttpStatusMapper {
     final serverMessage = _extractServerMessage(responseData);
 
     switch (statusCode) {
+      // 400 Bad Request:
+      // General client-side error (e.g., malformed request syntax).
+      // We use the generic NetworkFailure here unless a specific BadRequestFailure is needed later.
       case 400:
         return NetworkFailure(
           statusCode: statusCode,
           message: serverMessage ??
               'Bad Request. The server could not process the payload.',
         );
+
+      // 401 Unauthorized / 403 Forbidden:
+      // Authentication or permission issues.
+      // Mapping these to [UnauthorizedFailure] allows the Presentation layer (e.g., Bloc/Cubit)
+      // to easily catch this specific failure and redirect the user to the Login screen.
       case 401:
-        return NetworkFailure(
+        return UnauthorizedFailure(
           statusCode: statusCode,
           message: serverMessage ??
               'Unauthorized. Your session has expired, please log in again.',
         );
       case 403:
-        return NetworkFailure(
+        return UnauthorizedFailure(
           statusCode: statusCode,
           message: serverMessage ??
               'Forbidden. You do not have permission to access this resource.',
         );
+
+      // 404 Not Found:
+      // The resource doesn't exist.
+      // Mapping to [NotFoundFailure] helps UI show specific "Empty State" or "Not Found" illustrations.
       case 404:
-        return NetworkFailure(
-          statusCode: statusCode,
+        return NotFoundFailure(
           message: serverMessage ??
               'The requested resource was not found on the server.',
         );
+
+      // 422 Unprocessable Entity:
+      // Highly used in Laravel for form validation errors.
+      // We parse the nested error messages into a structured [ValidationFailure].
       case 422:
         return _parseValidationFailure(responseData, serverMessage);
+
+      // 500 Internal Server Error / 503 Service Unavailable:
+      // Critical backend issues.
+      // Mapping to [ServerFailure] ensures Retry Interceptors or global error handlers
+      // know this is a backend problem, not a client mistake.
       case 500:
-        return NetworkFailure(
+        return ServerFailure(
           statusCode: statusCode,
-          message:
+          message: serverMessage ??
               'Internal Server Error. The technical team has been automatically notified.',
         );
       case 503:
-        return NetworkFailure(
+        return ServerFailure(
           statusCode: statusCode,
-          message:
+          message: serverMessage ??
               'Service Temporarily Unavailable. The server is undergoing scheduled maintenance.',
         );
+
+      // Default fallback:
+      // Catches any unexpected HTTP anomalies (e.g., 409 Conflict, 502 Bad Gateway)
+      // gracefully without breaking the app flow.
       default:
         return NetworkFailure(
           statusCode: statusCode,
