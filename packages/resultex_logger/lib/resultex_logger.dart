@@ -18,4 +18,4 @@ export 'package:resultex_logger/src/formatter/symmetric_box_formatter.dart';
 export 'package:resultex_logger/src/model/log_level.dart';
 
 // Export logger base
-export 'src/logger_base.dart';
+export 'src/resultex_logger_base.dart';
