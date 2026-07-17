@@ -24,3 +24,7 @@ export 'src/extensions/dio_result_extension.dart';
 /// This eliminates the need for developers to write duplicate imports for both
 /// the network layer and the core functional wrappers.
 export 'package:resultex/resultex.dart';
+
+/// Exports the [ResultexRetryInterceptor] which automatically retries failed
+/// network requests using an exponential backoff strategy.
+export 'src/interceptors/resultex_retry_interceptor.dart';
