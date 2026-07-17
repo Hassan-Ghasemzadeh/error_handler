@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:resultex_network/resultex_network.dart';
@@ -9,8 +10,31 @@ void main() {
 /// Initialize the Dio client with the [ResultexDioInterceptor].
 /// This intercepts raw network errors (timeouts, 4xx, 5xx) and transforms
 /// them into domain-safe [Failure] objects automatically.
-final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'))
-  ..interceptors.add(ResultexDioInterceptor());
+final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
+
+void setupNetwork() {
+  // Order of interceptors is extremely important!
+  dio.interceptors.addAll([
+    // Connectivity Check: Runs FIRST. If offline, stops everything.
+    ResultexConnectivityInterceptor(
+      checkInternet: () async {
+        // Checking internet connection using a standard third-party package
+        final List<ConnectivityResult> connectivityResult =
+            await (Connectivity().checkConnectivity());
+        return !connectivityResult.contains(ConnectivityResult.none);
+      },
+    ),
+
+    // Retry Logic: Runs if connected, but the server drops the connection.
+    ResultexRetryInterceptor(
+      dio: dio,
+      maxRetries: 3,
+    ),
+
+    //Error Mapper: Runs LAST. Maps any uncaught raw errors to Result Failures.
+    ResultexDioInterceptor(),
+  ]);
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
