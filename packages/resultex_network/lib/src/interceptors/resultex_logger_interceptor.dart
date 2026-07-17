@@ -9,6 +9,7 @@ import '../failures/network_failures.dart';
 /// critical errors (like 500s) in production environments.
 class ResultexLoggerInterceptor extends Interceptor {
   // Initialize the concrete instance of AppLogger.
+  final loggerBase = ResultexLoggerBase()..init();
   final logger = ResultexLogger(
     settings: ResultexLoggerSettings(
       maxLineWidth: 40, // Slimmer boxes
