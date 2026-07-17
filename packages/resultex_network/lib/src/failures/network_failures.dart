@@ -79,3 +79,33 @@ class OfflineFailure extends NetworkFailure {
     super.statusCode,
   });
 }
+
+/// Represents a rate-limiting failure (HTTP 429 Too Many Requests).
+///
+/// This occurs when the client sends too many requests in a given amount of time.
+/// It's highly recommended to handle this gracefully by showing a countdown
+/// or preventing the user from mashing buttons.
+class RateLimitFailure extends NetworkFailure {
+  /// The duration the client should wait before making another request.
+  /// Often parsed from the `Retry-After` HTTP header.
+  final Duration? retryAfter;
+
+  /// Creates an immutable [RateLimitFailure].
+  const RateLimitFailure({
+    required super.message,
+    super.statusCode = 429,
+    this.retryAfter,
+  });
+}
+
+/// Represents a network timeout failure.
+///
+/// This differentiates from a generic offline state. The user has an internet
+/// connection, but the server took too long to respond, or the connection dropped mid-flight.
+class TimeoutFailure extends NetworkFailure {
+  /// Creates an immutable [TimeoutFailure] with a user-friendly default message.
+  const TimeoutFailure({
+    super.message = 'The connection timed out. Please try again later.',
+    super.statusCode,
+  });
+}
