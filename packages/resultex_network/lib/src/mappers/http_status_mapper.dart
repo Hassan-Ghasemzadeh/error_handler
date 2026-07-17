@@ -67,6 +67,16 @@ abstract class HttpStatusMapper {
           message: serverMessage ??
               'Service Temporarily Unavailable. The server is undergoing scheduled maintenance.',
         );
+      // 429 Too Many Requests:
+      // When the user hits the API rate limits.
+      // NOTE: If you need to parse the 'Retry-After' header, you would need
+      // to pass the full Response object into this mapper, rather than just the data.
+      // For now, we provide a clean, generic message.
+      case 429:
+        return RateLimitFailure(
+          message: serverMessage ??
+              'Too many requests. Please slow down and try again in a few moments.',
+        );
 
       // Default fallback:
       // Catches any unexpected HTTP anomalies (e.g., 409 Conflict, 502 Bad Gateway)
