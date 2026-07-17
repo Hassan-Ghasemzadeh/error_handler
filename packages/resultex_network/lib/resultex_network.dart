@@ -28,3 +28,7 @@ export 'package:resultex/resultex.dart';
 /// Exports the [ResultexRetryInterceptor] which automatically retries failed
 /// network requests using an exponential backoff strategy.
 export 'src/interceptors/resultex_retry_interceptor.dart';
+
+/// Exports the [ResultexConnectivityInterceptor] which intercepts requests
+/// before they are sent and aborts them if the device is offline.
+export 'src/interceptors/resultex_connectivity_interceptor.dart';
