@@ -5,7 +5,6 @@ import '../failures/network_failures.dart';
 /// Extension methods on [Future<Response>] to streamline integration
 /// between raw Dio network calls and the Resultex functional paradigm.
 extension DioResultExtension<T> on Future<Response<T>> {
-
   /// Guards a Dio execution block, maps successful responses,
   /// and automatically resolves any intercepted network failures.
   ///
@@ -25,7 +24,6 @@ extension DioResultExtension<T> on Future<Response<T>> {
 
       // Handle standard successful responses.
       return Result.success(mapper(data));
-
     } on DioException catch (dioError) {
       // Inspect if our custom interceptor has pre-packaged a structured NetworkFailure.
       // This is crucial for correctly bubbling up errors like OfflineFailure or TimeoutFailure.
