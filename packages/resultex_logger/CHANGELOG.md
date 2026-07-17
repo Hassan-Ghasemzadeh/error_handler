@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.4
+
+### Fixed
+
+- Fixed potential initialization conflicts when multiple loggers were instantiated.
+- Improved ANSI color handling for cleaner terminal output.
+
 ## 1.1.3
 
 ### Added
