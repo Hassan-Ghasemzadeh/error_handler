@@ -51,9 +51,8 @@ class ResultSwitch<S> extends StatelessWidget {
     // to a terminal Result subtype for precise type handling.
     return switch (result!) {
       SuccessResult<S>(success: Success(:final value)) =>
-          onSuccess(context, value),
-      FailureResult<S>(failure: final failure) =>
-          onFailure(context, failure),
+        onSuccess(context, value),
+      FailureResult<S>(failure: final failure) => onFailure(context, failure),
     };
   }
 }
