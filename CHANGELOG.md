@@ -3,6 +3,23 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## [3.0.0] - 2026-07-18
+
+### Breaking Changes
+
+- Refactored `ResultExecutor` and `FlutterErrorHandler` to use Constructor Injection. The implicit
+  dependency on `GetIt` has been completely removed.
+
+### Refactoring & Improvements
+
+- **State Management:** Hardened `ResultNotifier` with execution tokens to prevent race conditions
+  and added dispose-safety checks.
+- **UI Builders:** Optimized `ResultBuilder` and `ResultSwitch` for better performance and stricter
+  separation of concerns. Exchanged manual checks for Dart 3 exhaustive pattern matching.
+- **Form Controls:** Improved `ResultTextController` performance by caching validation results.
+- **Testing:** Replaced custom `Matcher` classes with Dart's native `isA<T>().having()` for greater
+  test stability and prevention of unhandled exceptions.
+
 ## [2.7.0] - 2026-07-16
 
 ### Added
