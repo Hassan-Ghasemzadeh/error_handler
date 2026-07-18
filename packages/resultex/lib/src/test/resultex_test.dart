@@ -6,25 +6,17 @@ import 'package:resultex/resultex.dart';
 /// If [valueMatcher] is provided, it additionally evaluates whether the encapsulated
 /// success value satisfies the given matcher or exact value.
 Matcher isSuccess<T>([dynamic valueMatcher]) {
+  final typeMatcher = isA<SuccessResult<T>>();
+
   if (valueMatcher == null) {
-    return isA<SuccessResult<T>>();
+    return typeMatcher;
   }
-  return _IsSuccess<T>(valueMatcher);
-}
 
-class _IsSuccess<T> extends CustomMatcher {
-  _IsSuccess(dynamic matcher)
-      : super('SuccessResult with value that is', 'value', matcher);
-
-  @override
-  Object? featureValueOf(dynamic actual) {
-    if (actual is! SuccessResult<T>) {
-      throw Exception(
-          'Expected SuccessResult<$T> but got ${actual.runtimeType}');
-    }
-    // Assumes the SuccessResult class exposes its encapsulated payload via a `.value` property
-    return actual.success.value;
-  }
+  return typeMatcher.having(
+    (result) => result.success.value,
+    'value',
+    valueMatcher,
+  );
 }
 
 /// Asserts that the actual value is a [FailureResult].
@@ -32,23 +24,17 @@ class _IsSuccess<T> extends CustomMatcher {
 /// If [messageMatcher] is provided, it additionally evaluates whether the encapsulated
 /// failure message satisfies the given matcher or string.
 Matcher isFailure([dynamic messageMatcher]) {
+  final typeMatcher = isA<FailureResult>();
+
   if (messageMatcher == null) {
-    return isA<FailureResult>();
+    return typeMatcher;
   }
-  return _IsFailure(messageMatcher);
-}
 
-class _IsFailure extends CustomMatcher {
-  _IsFailure(dynamic matcher)
-      : super('FailureResult with failure message that is', 'message', matcher);
-
-  @override
-  Object? featureValueOf(dynamic actual) {
-    if (actual is! FailureResult) {
-      throw Exception('Expected FailureResult but got ${actual.runtimeType}');
-    }
-    return actual.failure.message;
-  }
+  return typeMatcher.having(
+    (result) => result.failure.message,
+    'failure message',
+    messageMatcher,
+  );
 }
 
 /// Asserts that the actual value is a [FailureResult] wrapping a specific subclass of [Failure] (e.g., NetworkFailure).
