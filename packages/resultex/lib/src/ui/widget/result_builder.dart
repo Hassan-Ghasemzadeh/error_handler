@@ -1,40 +1,42 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../../../resultex.dart';
 
-/// A reactive, declarative Flutter widget that listens to a [ResultNotifier]
-/// and automatically rebuilds its UI subtree whenever the underlying state changes.
+/// A reactive, declarative Flutter widget that listens to a [ResultNotifier].
 ///
-/// This widget delegates its rendering logic directly to [ResultSwitch] to enforce
-/// a strict separation of concerns between state observation and state representation.
+/// It automatically rebuilds its UI subtree whenever the underlying state of the
+/// notifier changes. This widget acts as a bridge between the reactive state
+/// management ([ResultNotifier]) and the UI rendering layer.
+///
+/// By delegating rendering logic to [ResultSwitch], this widget maintains a
+/// strict separation of concerns, allowing for cleaner code and easier testing.
 ///
 /// Example:
 /// ```dart
 /// ResultBuilder<User>(
 ///   notifier: _userNotifier,
-///   onLoading: (context) => CircularProgressIndicator(),
+///   onLoading: (context) => const CircularProgressIndicator(),
 ///   onFailure: (context, failure) => Text('Error: ${failure.message}'),
 ///   onSuccess: (context, user) => Text('Hello, ${user.name}'),
 /// )
 /// ```
 class ResultBuilder<S> extends StatelessWidget {
-  /// The active [ResultNotifier] instance whose state changes drive this widget's rebuilds.
+  /// The active [ResultNotifier] instance driving the UI rebuilds.
   final ResultNotifier<S> notifier;
 
-  /// Builder callback executed when the notifier's value is `null`, typically
-  /// representing an uninitialized, idle, or loading state.
+  /// Builder invoked when the state is `null` (typically idle, uninitialized, or loading).
   final Widget Function(BuildContext context) onLoading;
 
-  /// Builder callback executed when the notifier emits a [SuccessResult].
+  /// Builder invoked when the state emits a [SuccessResult].
   ///
-  /// Yields the unpacked success payload of type [S] to the UI tree.
+  /// Provides the unpacked success payload of type [S] to the UI.
   final Widget Function(BuildContext context, S data) onSuccess;
 
-  /// Builder callback executed when the notifier emits a [FailureResult].
+  /// Builder invoked when the state emits a [FailureResult].
   ///
-  /// Yields the encapsulated [Failure] payload to safely render error feedback.
+  /// Provides the encapsulated [Failure] object to render error feedback.
   final Widget Function(BuildContext context, Failure failure) onFailure;
 
-  /// Creates a highly reactive and isolated [ResultBuilder] linked to the specified [notifier].
+  /// Creates a [ResultBuilder] linked to the provided [notifier].
   const ResultBuilder({
     super.key,
     required this.notifier,
@@ -45,13 +47,13 @@ class ResultBuilder<S> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // We wrap the execution inside a ValueListenableBuilder to handle micro-optimizations
-    // and automatically trigger rebuilds upon notifier emissions.
+    // We use ValueListenableBuilder to listen for state updates in the ResultNotifier.
+    // This ensures granular rebuilds specifically when the result state changes.
     return ValueListenableBuilder<Result<S>?>(
       valueListenable: notifier,
       builder: (context, result, _) {
-        // Delegate the presentation/structural rendering task directly to the static ResultSwitch,
-        // maintaining a single source of truth for the presentation layer logic.
+        // We delegate the rendering decision to ResultSwitch.
+        // This ensures a single source of truth for UI mapping logic.
         return ResultSwitch<S>(
           result: result,
           onLoading: onLoading,
