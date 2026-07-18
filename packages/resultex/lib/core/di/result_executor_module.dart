@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:resultex/src/error/flutter_error_handler.dart';
 import 'package:resultex_logger/resultex_logger.dart';
 import '../../resultex.dart';
 import 'di_module.dart';
@@ -17,7 +18,10 @@ class ResultExecutorModule extends DIModule {
     // Register ResultExecutor as a lazy singleton.
     // The dependency container provides the AppLogger instance at runtime.
     injector.registerLazySingleton<ResultExecutor>(
-      () => ResultExecutor(logger: injector.get<ResultexLogger>()),
+      () => ResultExecutor(
+        logger: injector.get<ResultexLogger>(),
+        errorHandler: injector.get<FlutterErrorHandler>(),
+      ),
     );
   }
 }
