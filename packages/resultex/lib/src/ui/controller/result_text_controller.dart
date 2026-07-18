@@ -27,7 +27,7 @@ class ResultTextController<T> extends TextEditingController {
     required Result<T> Function(String text) validator,
     super.text,
   }) : _validator = validator {
-    _currentResult = _validator(this.text);
+    _currentResult = _validator(text);
 
     // Register a listener to re-validate whenever the user inputs text.
     addListener(_onTextChanged);
