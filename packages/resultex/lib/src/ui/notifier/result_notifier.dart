@@ -1,72 +1,120 @@
 import 'package:flutter/widgets.dart';
-
 import '../../../resultex.dart';
 
-/// A specialized [ValueNotifier] that manages and exposes a [Result] state to the UI.
+/// A specialized [ValueNotifier] that manages and exposes a reactive [Result] state to the UI.
 ///
-/// It acts as a lightweight reactive state manager, holding either a successful data state,
-/// a structured failure state, or `null` to represent an idle/loading state.
+/// It acts as a lightweight, production-ready state manager, holding either a successful
+/// data state, a structured failure state, or `null` to represent an idle/loading state.
 ///
-/// Example:
-/// ```dart
-/// final userNotifier = ResultNotifier<User>();
-///
-/// // In your UI:
-/// ValueListenableBuilder(
-///   valueListenable: userNotifier,
-///   builder: (context, state, _) { ... }
-/// );
-/// ```
+/// This class includes built-in safeguards against common Flutter async pitfalls:
+/// - **Memory Leaks:** Safely ignores state updates if the widget is disposed.
+/// - **Race Conditions:** Automatically drops outdated asynchronous responses if a newer
+///   request is triggered before the previous one completes.
 class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
+  /// Internal flag to track the lifecycle and prevent "used after dispose" exceptions.
+  bool _isDisposed = false;
+
+  /// A unique identifier to track the latest execution sequence.
+  /// Prevents older, delayed async operations from overriding newer state updates.
+  int _executionToken = 0;
+
   /// Creates a [ResultNotifier] with an optional [initialValue].
   ///
-  /// If no initial value is provided, it defaults to `null`, which typically
-  /// signifies an uninitialized or idle state.
+  /// If no initial value is provided, it defaults to `null` (idle/loading state).
   ResultNotifier([super.initialValue]);
 
-  /// Resets the current state to `null`.
+  // ---------------------------------------------------------------------------
+  // UI Helper Getters (DX Improvements)
+  // ---------------------------------------------------------------------------
+
+  /// Returns `true` if the state is currently idle or loading (represented by `null`).
+  bool get isLoading => value == null;
+
+  /// Returns `true` if the current state holds a successful data payload.
+  bool get hasData => value is SuccessResult<S>;
+
+  /// Returns `true` if the current state holds a failure or error.
+  bool get hasError => value is FailureResult;
+
+  /// Safely extracts and returns the underlying success data if available.
+  /// Returns `null` if the state is loading or has an error.
+  S? get data => value is SuccessResult<S>
+      ? (value as SuccessResult<S>).success.value
+      : null;
+
+  /// Safely extracts and returns the failure message if an error occurred.
+  /// Returns `null` if the state is loading or successful.
+  String? get errorMessage =>
+      value is FailureResult ? (value as FailureResult).failure.message : null;
+
+  // ---------------------------------------------------------------------------
+  // State Mutators
+  // ---------------------------------------------------------------------------
+
+  /// Resets the current state back to `null` (idle/loading).
   ///
-  /// This is useful for clearing previous data or manually transitioning the UI
-  /// back into a loading/idle condition.
+  /// Calling this will also invalidate any currently running asynchronous operations
+  /// triggered via [track], preventing them from updating the state once they finish.
   void reset() {
+    if (_isDisposed) return;
+    _executionToken++; // Invalidate any pending async operations
     value = null;
   }
 
-  /// Updates the state with a successful outcome containing [data].
+  /// Manually updates the state with a successful outcome containing [data].
   ///
-  /// Notifies all listeners to rebuild and handle the new [SuccessResult].
+  /// Safely aborts if the notifier has already been disposed.
   void emitSuccess(S data) {
+    if (_isDisposed) return;
     value = Result.success(data);
   }
 
-  /// Updates the state with a structured [failure].
+  /// Manually updates the state with a structured [failure].
   ///
-  /// Notifies all listeners to rebuild and handle the new [FailureResult].
+  /// Safely aborts if the notifier has already been disposed.
   void emitFailure(Failure failure) {
+    if (_isDisposed) return;
     value = Result.failure(failure);
   }
 
   /// Automatically tracks and updates the state based on an asynchronous [operation].
   ///
-  /// 1. Immediately sets the state to `null` to trigger a loading indicator in the UI.
+  /// Lifecycle:
+  /// 1. Immediately sets the state to `null` (triggering loading indicators).
   /// 2. Awaits the [operation] to resolve its [Result].
-  /// 3. Emits either the resolved [SuccessResult]/[FailureResult], or catches any unhandled
-  ///    unexpected runtime exceptions, safely wrapping them into a managed [Failure].
+  /// 3. Emits the resolved outcome, or catches unhandled exceptions as a [Failure].
   ///
-  /// Example:
-  /// ```dart
-  /// _userNotifier.track(repository.getUserProfile(id));
-  /// ```
+  /// **Safety Feature:** If [track] is called multiple times in rapid succession,
+  /// only the result of the *latest* call will update the UI. Older results are safely discarded.
   Future<void> track(Future<Result<S>> operation) async {
+    // Generate a unique token for this specific execution thread
+    final currentToken = ++_executionToken;
+
+    if (!_isDisposed) {
+      value = null; // Transition to loading state
+    }
+
     try {
-      value = null;
       final result = await operation;
+
+      // Drop the state update if the class was disposed or a newer operation was started
+      if (_isDisposed || currentToken != _executionToken) return;
+
       value = result;
     } catch (e, stackTrace) {
+      // Handle unexpected runtime crashes safely
+      if (_isDisposed || currentToken != _executionToken) return;
+
       value = Result.failure(Failure(
         message: e.toString(),
         stackTrace: stackTrace,
       ));
     }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 }
