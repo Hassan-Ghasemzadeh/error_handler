@@ -3,20 +3,21 @@ import '../../../resultex.dart';
 
 /// A pure presentation widget that maps a static [Result] state straight to the UI.
 ///
-/// This widget is ideal for scenarios where the [Result] state is already resolved
-/// (e.g., passed down from a parent widget, fetched from local cache, or mapped
-/// via standard state-management builders like [FutureBuilder] or [StreamBuilder]).
+/// Unlike [ResultBuilder], which is tied to a reactive source, this widget is
+/// "stateless" regarding data sources. It is ideal for:
+/// - Mapping results from [FutureBuilder] or [StreamBuilder].
+/// - Rendering results passed down from parent widgets.
+/// - Building decoupled UI components that don't need to know about [ResultNotifier].
 ///
-/// It strictly decouples the rendering logic from active state-observation layers.
+/// It strictly decouples rendering logic from active state-observation layers.
 class ResultSwitch<S> extends StatelessWidget {
   /// The static, nullable [Result] state to evaluate and render.
   ///
-  /// If this is `null`, the widget transitions into the uninitialized or loading state
+  /// If this is `null`, the widget transitions into the loading state
   /// and executes the [onLoading] builder.
   final Result<S>? result;
 
-  /// Builder callback invoked when [result] is `null`, representing an active loading
-  /// or uninitialized/idle operation.
+  /// Builder callback invoked when [result] is `null` (active loading or idle state).
   final Widget Function(BuildContext context) onLoading;
 
   /// Builder callback executed when [result] resolves to a [SuccessResult].
@@ -40,17 +41,19 @@ class ResultSwitch<S> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Gracefully intercept null values to render the transitional loading UI
+    // 1. Gracefully intercept null values to render the transitional loading UI.
     if (result == null) {
       return onLoading(context);
     }
 
     // 2. Leverage Dart 3+ exhaustive pattern matching to map the terminal states.
-    // By asserting non-nullability (result!), we safely promote the variable to a terminal Result subtype.
+    // By asserting non-nullability (result!), we safely promote the variable
+    // to a terminal Result subtype for precise type handling.
     return switch (result!) {
       SuccessResult<S>(success: Success(:final value)) =>
-        onSuccess(context, value),
-      FailureResult<S>(failure: final failure) => onFailure(context, failure),
+          onSuccess(context, value),
+      FailureResult<S>(failure: final failure) =>
+          onFailure(context, failure),
     };
   }
 }
