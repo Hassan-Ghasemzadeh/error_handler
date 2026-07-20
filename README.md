@@ -1,16 +1,31 @@
+<div align="center" style="text-align: center;">
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/header.svg" alt="Resultex Ecosystem Banner" width="100%">
+    <a href="https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main" align="center">
+        <img src="https://github.com/Hassan-Ghasemzadeh/error_handler/blob/main/docs/assets/resultex.png?raw=true" width="250px">
+    </a>
 </p>
 
-# Resultex
+## Robust, type-safe error handling for Dart and Flutter
+<br>
 
-A robust, type-safe error handling ecosystem for Dart and Flutter that implements the Result pattern
-for clean, predictable error handling without exceptions.
+Log your app actions, catch and handle exceptions, and implement clean, predictable error handling without using exceptions.
+Show some ❤️ and [star the repo](https://github.com/Hassan-Ghasemzadeh/error_handler) to support the project!
 
-[![pub package](https://img.shields.io/pub/v/resultex)](https://pub.dev/packages/resultex)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/header.png" alt="Resultex Ecosystem Banner" width="100%">
 
-📦 Overview
+<br>  
+<p align="center">
+  <a href="https://pub.dev/packages/resultex"><img src="https://img.shields.io/pub/v/resultex" alt="resultex"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License: MIT"></a>
+
+  <br>
+  <a href="https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex"><img src="https://img.shields.io/badge/resultex-passing-brightgreen"  alt="resultex"></a>
+  <a href="https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex_network"><img src="https://img.shields.io/badge/resultex__network-passing-brightgreen" alt="resultex_network"></a>
+  <a href="https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex_logger"><img src="https://img.shields.io/badge/resultex__logger-passing-brightgreen" alt="resultex_logger"></a>
+</p>
+</div>
+
+## Overview
 -------------
 `resultex` brings a functional programming approach to error handling by wrapping your operational
 outcomes in a type-safe container. Instead of throwing heavy exceptions and messing up your call
@@ -19,17 +34,28 @@ stack, every function returns a `Result` that is either a `SuccessResult` wrappi
 
 ### Why Resultex?
 
-* 🛡️ **Zero Try-Catch Boilerplate** - Handle operational errors exactly where they matter.
-* 🔒 **Type-Safe Destructuring** - The Dart compiler ensures you handle both success and failure
+* ✅ **Zero Try-Catch Boilerplate** - Handle operational errors exactly where they matter.
+* ✅ **Type-Safe Destructuring** - The Dart compiler ensures you handle both success and failure
   states.
-* 🧩 **Pattern Matching** - Fully optimized for Dart 3+ exhaustive switch expressions.
-* 🚂 **Composable Pipelines** - Chain complex operations effortlessly with `map` and `flatMap`.
-* 🧪 **Highly Testable** - Predictable control flow, making Unit Testing a breeze without unexpected
+* ✅ **Pattern Matching** - Fully optimized for Dart 3+ exhaustive switch expressions.
+* ✅ **Composable Pipelines** - Chain complex operations effortlessly with `map` and `flatMap`.
+* ✅ **Highly Testable** - Predictable control flow, making Unit Testing a breeze without unexpected
   runtime crashes.
-* 💎 **Clean Architecture Approved** - Follows SOLID principles, separating business logic outcomes
+* ✅ **Clean Architecture Approved** - Follows SOLID principles, separating business logic outcomes
   from presentation layers.
 
-🚀 Installation
+## Packages
+
+Resultex provides a robust, type-safe, and boilerplate-free way to handle operations in Dart and Flutter.
+
+| Package | Version | Description |
+| :--- | :--- | :--- |
+| [resultex](https://pub.dev/packages/resultex) | [![pub](https://img.shields.io/pub/v/resultex.svg)](https://pub.dev/packages/resultex) | Main dart package for error handling |
+| [resultex_logger](https://pub.dev/packages/resultex_logger) | [![pub](https://img.shields.io/pub/v/resultex_logger.svg)](https://pub.dev/packages/resultex_logger) | Customizable logger for resultex |
+| [resultex_network](https://pub.dev/packages/resultex_network) | [![pub](https://img.shields.io/pub/v/resultex_network.svg)](https://pub.dev/packages/resultex_network) | Network error handling for Resultex |
+
+
+## Installation
 ----------------
 
 ### Prerequisites
@@ -46,7 +72,7 @@ resultex: ^3.0.0
 
 ### **Core Concepts**
 
-1. Successful Result
+1. **Successful Result**
 
 ```Dart
 
@@ -54,7 +80,7 @@ final result = Result.success(User(id: 1, name: "Hassan"));
 // Contains a SuccessResult wrapping a Success<User> container
 ```
 
-2. Failure Result
+2. **Failure Result**
 
 ```Dart
 
@@ -62,15 +88,15 @@ final result = Result.failure(Failure(message: "Network request timeout"));
 // Contains a FailureResult with messages, codes, and optional stackTraces
 ```
 
-3. Exhaustive Pattern Matching (Dart 3+)
+3. **Exhaustive Pattern Matching (Dart 3+)**
 
-```Dart
-switch (result) {
-case SuccessResult<User>(success: Success(:final value)):
-print('Welcome back, ${value.name}!');
-case FailureResult<User>(failure: final fail):
-print('Error occurred: ${fail.message}');
-}
+```Dart 
+  switch (result) {
+    case SuccessResult<User>(success: Success(:final value)):
+      print('Welcome back, ${value.name}!');
+    case FailureResult<User>(failure: final fail):
+      print('Error occurred: ${fail.message}');
+  } 
 ```
 
 ### (Unit Testing Matchers)
@@ -150,20 +176,19 @@ Sometimes you need to intercept data midway through a functional stream for anal
 caching, or debugging without modifying the wrapped payload state. Use .inspectSuccess and
 .inspectFailure to execute clean passive telemetry.
 
-```Dart
-
-final profileResult = await
-authRepository.getProfile
-().inspectSuccess
-(
-(user) => firebaseAnalytics.logUserLogin(user.id))
-    .inspectFailure((fail) => appLogger.critical('Telemetry crash: ${fail.message}'))
-    .map((user) => user
-.
-toSummary
-(
-)
-); // The user object travels downstream completely unaltered!
+```Dart 
+  final profileResult = await
+  authRepository.getProfile
+    ().inspectSuccess
+    (
+          (user) => firebaseAnalytics.logUserLogin(user.id))
+      .inspectFailure((fail) => appLogger.critical('Telemetry crash: ${fail.message}'))
+      .map((user) => user
+      .
+  toSummary
+    (
+  )
+  ); 
 ```
 
 **Fluent Pipeline Constraints (.ensure)**  
@@ -171,14 +196,13 @@ Enforce atomic operational rules instantly downstream using .ensure. If the pred
 it automatically short-circuits the pipeline into a structured FailureResult.
 
 ```Dart
-
-final Result<User> adultUserResult = await
-authRepository.getProfile
-().ensure
-(
-(user) => user.age >= 18,
-(user) => Failure(message: "Access Forbidden: ${user.name} is underaged."),
-);
+  final Result<User> adultUserResult = await
+  authRepository.getProfile
+    ().ensure
+    (
+        (user) => user.age >= 18,
+        (user) => Failure(message: "Access Forbidden: ${user.name} is underaged."),
+  );
 ```
 
 **Crash-Proof Reactive Flows (.toResultStream())**  
@@ -186,20 +210,20 @@ Raw asynchronous Streams (like WebSockets, Location trackers, or Firebase listen
 prone to unhandled runtime leaks that crash the UI stack. Safely encapsulate them into stable
 error-boundary streams.
 
-```Dart
-// Transforms Stream<T> natively into a stable Stream<Result<T>>
-Stream<Result<LocationData>> safeCoordinates = locationService
-    .listenToCoordinates()
-    .toResultStream();
+```Dart 
+  // Transforms Stream<T> natively into a stable Stream<Result<T>>
+  Stream<Result<LocationData>> safeCoordinates = locationService
+      .listenToCoordinates()
+      .toResultStream();
 
-safeCoordinates.listen
-(
-(result) {
-result.when(
-onSuccess: (coords) => updateMapPin(coords),
-onFailure: (fail) => showNetworkAlert(fail.message),
-);
-});
+  safeCoordinates.listen
+    (
+          (result) {
+        result.when(
+          onSuccess: (coords) => updateMapPin(coords),
+          onFailure: (fail) => showNetworkAlert(fail.message),
+        );
+      }); 
 ```
 
 **Zero-Data Expressive Closures (VoidResult)**  
@@ -224,19 +248,18 @@ State Management via ResultNotifier
 A lightweight, lifecycle-aware alternative to heavy state management boilerplate. Track any
 asynchronous operation safely inside your controllers or state classes.
 
-```dart
-
-final userNotifier = ResultNotifier<User>();
+```dart 
+  final userNotifier = ResultNotifier<User>();
 
 // Automatically handles loading state, catches unexpected errors, and updates the UI
-userNotifier.track
-(
-repository
-.
-fetchUserProfile
-(
-)
-);
+  userNotifier.track
+    (
+      repository
+          .
+      fetchUserProfile
+        (
+      )
+  );
 ```
 
 **Declarative Layouts via ResultBuilder**  
@@ -297,14 +320,13 @@ void dispose() {
    the first successful response and ignores the rest. It only returns a failure if ALL operations
    fail.
 
-```Dart
-
-final Result<AppConfig> configResult = await
-Result.race
-([api.fetchFromPrimaryServer(),
-api.fetchFromBackupCDN(),
-localDatabase.getCachedConfig(),
-]);
+```Dart 
+  final Result<AppConfig> configResult = await
+  Result.race
+    ([api.fetchFromPrimaryServer(),
+    api.fetchFromBackupCDN(),
+    localDatabase.getCachedConfig(),
+  ]);
 ```
 
 3. Concurrent Request Memoization (Result.memoizeAsync)
@@ -402,15 +424,15 @@ final uiResult = apiResult.mapFailure(
 Attach configurable recovery retries to any transient network dispatch with support for exponential
 backoff.
 
-```Dart
-
+```Dart 
 final networkResult = await
-Result.guardAsync
-(
-() => (() => http.get(uri)).withRetry(
-const RetryOptions(maxAttempts: 3, delay: Duration(seconds: 2), backoffFactor: 2.0),
-),
-);
+  Result.guardAsync
+    (
+        () => (() => http.get(uri)).withRetry(
+      const RetryOptions(
+          maxAttempts: 3, delay: Duration(seconds: 2), backoffFactor: 2.0),
+    ),
+  ); 
 ```
 
 ### **Advanced Features & Extensions**
@@ -436,29 +458,27 @@ Widget build(BuildContext context) {
    If any operation fails, it aggregates all intercepted errors into a unified MultiFailure contract
    instead of short-circuiting on the first error.
 
-```Dart
-import 'package:resultex/core/utils/result_utils.dart';
+```Dart 
+  final Result<List<dynamic>> dashboardResult = await
+  ResultUtils.combineAll
+    ([repository.fetchUserProfile(),
+    repository.fetchNotifications(),
+    repository.fetchCryptoWallet(),
+  ]);
 
-final Result<List<dynamic>> dashboardResult = await
-ResultUtils.combineAll
-([repository.fetchUserProfile(), // Future<Result<User>>
-repository.fetchNotifications(), // Future<Result<List<Notif>>>
-repository.fetchCryptoWallet(), // Future<Result<Wallet>>
-]);
-
-dashboardResult.when(
-onSuccess: (data) {
-final user = data[0] as User;
-final wallet = data[2] as CryptoWallet;
-// Render your screen using safely casted data
-},
-onFailure: (failure) {
-if (failure is MultiFailure) {
-print('${failure.failures.length} operations failed concurrently.');
-}
-},
-);
+  dashboardResult.when(
+      onSuccess: (data) {
+        final user = data[0] as User;
+        final wallet = data[2] as CryptoWallet;
+      },
+      onFailure: (failure) {
+        if (failure is MultiFailure) {
+          print('${failure.failures.length} operations failed concurrently.');
+        }
+      }
+  ); 
 ```
+
 
 3. Operational Recovery Path (.recover())
    Intercept an operational Failure and route it through an alternative backup execution pipeline
@@ -466,10 +486,7 @@ print('${failure.failures.length} operations failed concurrently.');
 
 ```Dart
 
-Result<User> userResult = await
-authRepository.fetchRemoteUser
-();
-
+Result<User> userResult = await authRepository.fetchRemoteUser();
 Result<User> finalizedResult = userResult.recover((failure) {
   print('Remote fetch failed: ${failure.message}. Falling back to local cache...');
   return Result.success(localDatabase.getCachedUser());
@@ -482,16 +499,8 @@ Automatically intercept synchronous or asynchronous unexpected exceptions and en
 safe Result variants.
 
 ```dart
-// Synchronous parsing guard
 final result = Result.guard(() => jsonDecode(rawJsonString));
-// Asynchronous API call guard
-final networkResult = await
-Result.guardAsync
-(
-() => http.get(Uri.parse(url
-)
-)
-);
+final networkResult = await Result.guardAsync(() => http.get(Uri.parse(url)));
 ```
 
 **Functional Chaining (map & flatMap)**  
@@ -499,16 +508,10 @@ Transform successful values or sequentially chain multiple business operations w
 blocks.
 
 ```Dart
-// Map values on success
 final nameResult = result.map((user) => user.name); // Result<String>
-
-// Chain dependencies flatly
-final ordersResult = await
-repository.getUser
-(1)
-.then((res) => res.flatMap((user) => orderRepository.getOrders(user.id)
-)
-);
+final ordersResult = await repository
+    .getUser(1)
+.then((res) => res.flatMap((user) => orderRepository.getOrders(user.id)));
 ```
 
 **Advanced ResultExecutor Architecture**  
@@ -516,19 +519,11 @@ Wrap execution scopes into monitored contexts complete with automated structured
 tracking capabilities.
 
 ```Dart
-
 final executor = ResultExecutor(logger: AppLogger());
-final result = await
-executor.executeAsync
-(
-() async {
-`final data = await api.fetchData();
-`return processData(data);
-},
-context
-:
-fetchAndProcessDashboardData
-);
+final result = await executor.executeAsync(() async {
+final data = await api.fetchData();
+return processData(data);
+}, context: fetchAndProcessDashboardData);
 ```
 
 ### **Best Practices**
