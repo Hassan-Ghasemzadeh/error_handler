@@ -46,7 +46,8 @@ class ResultSwitch<S> extends StatelessWidget {
     // This entirely eliminates the need for early returns and the non-null assertion operator (!).
     return switch (result) {
       null => onLoading(context),
-      SuccessResult<S>(success: Success(:final value)) => onSuccess(context, value),
+      SuccessResult<S>(success: Success(:final value)) =>
+        onSuccess(context, value),
       FailureResult<S>(failure: final failure) => onFailure(context, failure),
     };
   }
