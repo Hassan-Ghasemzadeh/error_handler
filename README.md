@@ -26,7 +26,7 @@ Show some ❤️ and [star the repo](https://github.com/Hassan-Ghasemzadeh/error
 </div>
 
 ## Overview
--------------
+
 `resultex` brings a functional programming approach to error handling by wrapping your operational
 outcomes in a type-safe container. Instead of throwing heavy exceptions and messing up your call
 stack, every function returns a `Result` that is either a `SuccessResult` wrapping your value or a
