@@ -41,17 +41,12 @@ class ResultSwitch<S> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Gracefully intercept null values to render the transitional loading UI.
-    if (result == null) {
-      return onLoading(context);
-    }
-
-    // 2. Leverage Dart 3+ exhaustive pattern matching to map the terminal states.
-    // By asserting non-nullability (result!), we safely promote the variable
-    // to a terminal Result subtype for precise type handling.
-    return switch (result!) {
-      SuccessResult<S>(success: Success(:final value)) =>
-        onSuccess(context, value),
+    // Leveraging Dart 3 exhaustive pattern matching to handle both the null (loading)
+    // state and the terminal (Success/Failure) states in a single, declarative expression.
+    // This entirely eliminates the need for early returns and the non-null assertion operator (!).
+    return switch (result) {
+      null => onLoading(context),
+      SuccessResult<S>(success: Success(:final value)) => onSuccess(context, value),
       FailureResult<S>(failure: final failure) => onFailure(context, failure),
     };
   }
