@@ -2,6 +2,8 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+## 3.0.1
+*   **Documentation:** Updated README.md with package table and improved installation guides.
 
 ## [3.0.0] - 2026-07-18
 
