@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Simulating ecosystem lifecycle initialization
-  Resultex.init();
+  await Resultex.init();
 
   // Run legacy dashboards and collection utilities examples
   await _loadDashboardData();
