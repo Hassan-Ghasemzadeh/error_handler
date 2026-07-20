@@ -3,12 +3,9 @@ import '../../../resultex.dart';
 
 /// A reactive, declarative Flutter widget that listens to a [ResultNotifier].
 ///
-/// It automatically rebuilds its UI subtree whenever the underlying state of the
-/// notifier changes. This widget acts as a bridge between the reactive state
-/// management ([ResultNotifier]) and the UI rendering layer.
-///
-/// By delegating rendering logic to [ResultSwitch], this widget maintains a
-/// strict separation of concerns, allowing for cleaner code and easier testing.
+/// It automatically triggers UI rebuilds whenever the underlying state of the
+/// notifier changes. By bypassing extra wrapper widgets like [ValueListenableBuilder],
+/// it flattens the widget tree and directly delegates structural UI mapping to [ResultSwitch].
 ///
 /// Example:
 /// ```dart
@@ -19,24 +16,24 @@ import '../../../resultex.dart';
 ///   onSuccess: (context, user) => Text('Hello, ${user.name}'),
 /// )
 /// ```
-class ResultBuilder<S> extends StatelessWidget {
-  /// The active [ResultNotifier] instance driving the UI rebuilds.
+class ResultBuilder<S> extends StatefulWidget {
+  /// The active [ResultNotifier] instance driving the reactive UI updates.
   final ResultNotifier<S> notifier;
 
-  /// Builder invoked when the state is `null` (typically idle, uninitialized, or loading).
+  /// A builder function invoked when the state is null, idle, or actively loading.
   final Widget Function(BuildContext context) onLoading;
 
-  /// Builder invoked when the state emits a [SuccessResult].
+  /// A builder function invoked when the state successfully resolves to a [SuccessResult].
   ///
-  /// Provides the unpacked success payload of type [S] to the UI.
+  /// Extracts and provides the unpacked success payload of type [S] to the widget subtree.
   final Widget Function(BuildContext context, S data) onSuccess;
 
-  /// Builder invoked when the state emits a [FailureResult].
+  /// A builder function invoked when the state resolves to a [FailureResult].
   ///
-  /// Provides the encapsulated [Failure] object to render error feedback.
+  /// Provides the encapsulated [Failure] domain object to safely render error UI feedback.
   final Widget Function(BuildContext context, Failure failure) onFailure;
 
-  /// Creates a [ResultBuilder] linked to the provided [notifier].
+  /// Creates a [ResultBuilder] seamlessly bound to the provided [notifier].
   const ResultBuilder({
     super.key,
     required this.notifier,
@@ -46,21 +43,49 @@ class ResultBuilder<S> extends StatelessWidget {
   });
 
   @override
+  State<ResultBuilder<S>> createState() => _ResultBuilderState<S>();
+}
+
+class _ResultBuilderState<S> extends State<ResultBuilder<S>> {
+  @override
+  void initState() {
+    super.initState();
+    // Attach the reactive state listener immediately upon widget insertion into the element tree.
+    widget.notifier.addListener(_handleStateChange);
+  }
+
+  @override
+  void didUpdateWidget(covariant ResultBuilder<S> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If the parent widget rebuilds with a new notifier instance, safely migrate the listener
+    // to prevent memory leaks, outdated state tracking, or missing updates.
+    if (oldWidget.notifier != widget.notifier) {
+      oldWidget.notifier.removeListener(_handleStateChange);
+      widget.notifier.addListener(_handleStateChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Crucial cleanup: detach the listener to prevent memory leaks when the widget is permanently removed.
+    widget.notifier.removeListener(_handleStateChange);
+    super.dispose();
+  }
+
+  /// Triggers a local framework frame rebuild whenever the observed [ResultNotifier] emits a new state.
+  void _handleStateChange() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // We use ValueListenableBuilder to listen for state updates in the ResultNotifier.
-    // This ensures granular rebuilds specifically when the result state changes.
-    return ValueListenableBuilder<Result<S>?>(
-      valueListenable: notifier,
-      builder: (context, result, _) {
-        // We delegate the rendering decision to ResultSwitch.
-        // This ensures a single source of truth for UI mapping logic.
-        return ResultSwitch<S>(
-          result: result,
-          onLoading: onLoading,
-          onSuccess: onSuccess,
-          onFailure: onFailure,
-        );
-      },
+    // Directly delegate the rendering strategy to ResultSwitch using the latest snapshot value.
+    // This maintains a clean separation of concerns and guarantees single-source-of-truth mapping.
+    return ResultSwitch<S>(
+      result: widget.notifier.value,
+      onLoading: widget.onLoading,
+      onSuccess: widget.onSuccess,
+      onFailure: widget.onFailure,
     );
   }
 }
