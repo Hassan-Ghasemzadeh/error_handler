@@ -79,9 +79,8 @@ your application with a simple and concise syntax.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
  
-  final resultex = Resultex();
-  final executor = resultex.executor;
-  await resultex.init();
+  await Resultex.init();
+  final executor = Resultex.executor; 
 }
 ```
 ### **Core Concepts**
