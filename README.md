@@ -98,7 +98,7 @@ final result = Result.failure(Failure(message: "Network request timeout"));
   } 
 ```
 
-### (Unit Testing Matchers)
+## (Unit Testing Matchers)
 
 ### Fluent Unit Testing (`resultex_test.dart`)
 
