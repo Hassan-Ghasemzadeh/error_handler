@@ -55,8 +55,7 @@ Resultex provides a robust, type-safe, and boilerplate-free way to handle operat
 | [resultex_network](https://pub.dev/packages/resultex_network) | [![pub](https://img.shields.io/pub/v/resultex_network.svg)](https://pub.dev/packages/resultex_network) | Network error handling for Resultex |
 
 
-## Installation
-----------------
+## Installation 
 
 ### Prerequisites
 
