@@ -473,8 +473,9 @@ void main() {
 
 - Don't force-extract values without evaluating state via pattern matching or explicit folds.
 - Don't catch generic raw exceptions manually inside execution blocks managed by guard hooks.
-<br>
-For deep-dive documentation and all available features, please refer to the [GitHub repository.](https://github.com/Hassan-Ghasemzadeh/error_handler/).
+----
+For deep-dive documentation and all available features,
+please refer to the [GitHub repository.](https://github.com/Hassan-Ghasemzadeh/error_handler/).
 
 **📄 License**
 ---------------
