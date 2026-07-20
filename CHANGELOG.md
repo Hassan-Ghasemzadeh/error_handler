@@ -3,6 +3,18 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## [3.0.3] - 2026-07-20
+
+### Improved
+
+- **Performance:** Refactored `ResultBuilder` to a `StatefulWidget` to reduce widget tree depth and
+  optimize reactive UI updates.
+- **Syntax:** Enhanced `ResultSwitch` to utilize Dart 3 exhaustive pattern matching for unified
+  null/state evaluations.
+- **Architecture:** Converted `Resultex` coordinator into a static namespace and modernized the main
+  library export structure.
+- **Documentation:** Added comprehensive DartDoc comments across core widgets and utilities.
+
 ## [3.0.2] - 2026-07-20
 
 * **Documentation:** Updated README.md with package table and improved installation guides.
