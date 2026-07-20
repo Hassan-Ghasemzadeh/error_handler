@@ -54,26 +54,41 @@ Resultex provides a robust, type-safe, and boilerplate-free way to handle operat
 | [resultex_logger](https://pub.dev/packages/resultex_logger) | [![pub](https://img.shields.io/pub/v/resultex_logger.svg)](https://pub.dev/packages/resultex_logger) | Customizable logger for resultex |
 | [resultex_network](https://pub.dev/packages/resultex_network) | [![pub](https://img.shields.io/pub/v/resultex_network.svg)](https://pub.dev/packages/resultex_network) | Network error handling for Resultex |
 
+## Get Started
 
 ## Installation 
 
 ### Prerequisites
+```yaml
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
 
-* **Dart SDK:** `>=3.0.0 <4.0.0`
-* **Flutter SDK:** `>=3.10.0`
+```
 
 Add `resultex` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-resultex: ^3.0.0
+resultex: ^3.0.2
 ```
-
+### Easy to use
+You can access the `Resultex` instance throughout  
+your application with a simple and concise syntax.
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+ 
+  final resultex = Resultex();
+  final executor = resultex.executor;
+  await resultex.init();
+}
+```
 ### **Core Concepts**
 
 1. **Successful Result**
 
-```Dart
+```dart
 
 final result = Result.success(User(id: 1, name: "Hassan"));
 // Contains a SuccessResult wrapping a Success<User> container
@@ -81,7 +96,7 @@ final result = Result.success(User(id: 1, name: "Hassan"));
 
 2. **Failure Result**
 
-```Dart
+```dart
 
 final result = Result.failure(Failure(message: "Network request timeout"));
 // Contains a FailureResult with messages, codes, and optional stackTraces
@@ -89,127 +104,62 @@ final result = Result.failure(Failure(message: "Network request timeout"));
 
 3. **Exhaustive Pattern Matching (Dart 3+)**
 
-```Dart 
+```dart 
   switch (result) {
     case SuccessResult<User>(success: Success(:final value)):
-      print('Welcome back, ${value.name}!');
+      resultexLogger.info('Welcome back, ${value.name}!');
     case FailureResult<User>(failure: final fail):
-      print('Error occurred: ${fail.message}');
+      resultexLogger.debug('Error occurred: ${fail.message}');
   } 
 ```
-
-## (Unit Testing Matchers)
-
-### Fluent Unit Testing (`resultex_test.dart`)
-
-Resultex provides first-class framework-level matchers to make your domain and data layer unit tests
-extremely expressive and readable.
-
-To keep your production builds lightweight, these utilities are isolated. Simply import the
-dedicated test entry point in your test files:
+## **ResultExecutor Architecture**  
+Wrap execution scopes into monitored contexts complete with automated structured logging and error
+tracking capabilities.
 
 ```dart
-import 'package:flutter_test/flutter_test.dart';
-import 'package:resultex/resultex.dart';
-import 'package:resultex/resultex_test.dart'; // Import custom matchers
-
-void main() {
-  group('User Repository Tests', () {
-    test('should return SuccessResult with accurate payload', () async {
-      final result = await repository.fetchUser(1);
-
-      expect(result, isSuccess<User>());
-      expect(result, isSuccess<User>(expectedUser)); // Verifies the internal payload
-    });
-
-    test('should gracefully intercept server errors', () async {
-      final result = await repository.fetchUser(500);
-
-      expect(result, isFailure());
-      expect(result, isFailure('Internal Server Error')); // Verifies the exact message
-    });
-
-    test('should match specific clean architecture failure types', () async {
-      final result = await repository.fetchUserWithoutInternet();
-
-      expect(result, isFailureType<NetworkFailure>()); // Asserts the exact subclass
-    });
-  });
-}
+final executor = ResultExecutor(logger: AppLogger());
+final result = await executor.executeAsync(() async {
+final data = await api.fetchData();
+return processData(data);
+}, context: 'fetchAndProcessDashboardData');
 ```
+You can see more features about `ResultexExecutor` [here](https://github.com/Hassan-Ghasemzadeh/error_handler/blob/main/packages/resultex/lib/src/result_executor/result_executor.dart).
 
-### Reactive UI Validation (`ResultTextController`)
-
-Stop writing custom stateful boilerplate or messy condition branches just to validate form fields.
-`ResultTextController` extends Flutter's native `TextEditingController` with a built-in functional
-error boundary.
-
-```dart
-// 1. Declare the controller with atomic business logic predicates
-final emailController = ResultTextController<String>(
-  validator: (text) {
-    if (text.isEmpty) return Result.failure(Failure(message: 'Email cannot be empty'));
-    if (!text.contains('@')) return Result.failure(Failure(message: 'Invalid email format'));
-    return Result.success(text.trim());
-  },
-);
-
-// 2. Evaluate instantly in your UI thread without boilerplate
-@override
-Widget build(BuildContext context) {
-  return TextField(
-    controller: emailController,
-    decoration: InputDecoration(
-      // Dynamic inline error reading!
-      errorText: emailController.validatedResult.when(
-        onSuccess: (_) => null,
-        onFailure: (fail) => fail.message,
-      ),
-    ),
-  );
-}
-```
-
-**Functional Side-Effect Interception (.inspect)**  
+## Logical Features
+### **Functional Side-Effect Interception (.inspect)**  
 Sometimes you need to intercept data midway through a functional stream for analytics, local
 caching, or debugging without modifying the wrapped payload state. Use .inspectSuccess and
 .inspectFailure to execute clean passive telemetry.
 
-```Dart 
-  final profileResult = await
-  authRepository.getProfile
-    ().inspectSuccess
-    (
-          (user) => firebaseAnalytics.logUserLogin(user.id))
-      .inspectFailure((fail) => appLogger.critical('Telemetry crash: ${fail.message}'))
-      .map((user) => user
-      .
-  toSummary
-    (
-  )
-  ); 
+```dart 
+final profileResult = await authRepository     
+    .getProfile()
+    .inspectSuccess((user) => firebaseAnalytics.logUserLogin(user.id))
+    .inspectFailure(
+      (fail) => appLogger.critical('Telemetry crash: ${fail.message}'))
+    .map((user) => user.toSummary());
 ```
 
-**Fluent Pipeline Constraints (.ensure)**  
+### **Fluent Pipeline Constraints (.ensure)**  
 Enforce atomic operational rules instantly downstream using .ensure. If the predicate yields false,
 it automatically short-circuits the pipeline into a structured FailureResult.
 
-```Dart
-  final Result<User> adultUserResult = await
-  authRepository.getProfile
-    ().ensure
-    (
-        (user) => user.age >= 18,
-        (user) => Failure(message: "Access Forbidden: ${user.name} is underaged."),
-  );
+```dart
+final Result<User> adultUserResult = await authRepository
+    .getProfile()
+    .ensure(
+      (user) => user.age >= 18,
+      (user) =>
+        Failure(message: "Access Forbidden: ${user.name} is underaged."),
+    );
 ```
 
-**Crash-Proof Reactive Flows (.toResultStream())**  
+### **Crash-Proof Reactive Flows (.toResultStream())**  
 Raw asynchronous Streams (like WebSockets, Location trackers, or Firebase listeners) are highly
 prone to unhandled runtime leaks that crash the UI stack. Safely encapsulate them into stable
 error-boundary streams.
 
-```Dart 
+```dart 
   // Transforms Stream<T> natively into a stable Stream<Result<T>>
   Stream<Result<LocationData>> safeCoordinates = locationService
       .listenToCoordinates()
@@ -225,12 +175,12 @@ error-boundary streams.
       }); 
 ```
 
-**Zero-Data Expressive Closures (VoidResult)**  
+### **Zero-Data Expressive Closures (VoidResult)**  
 In functional design, returning Result<void> or Result.success(null) is an anti-pattern. Use the
 robust, immutable VoidResult alias and Unit type to cleanly model operations that succeed with no
 return payload (like deleting database entities).
 
-```Dart
+```dart
 VoidResult logoutUser() {
   try {
     secureStorage.clearAllTokens();
@@ -240,128 +190,6 @@ VoidResult logoutUser() {
   }
 }
 ```
-
-### **Reactive UI Layer**
-
-State Management via ResultNotifier  
-A lightweight, lifecycle-aware alternative to heavy state management boilerplate. Track any
-asynchronous operation safely inside your controllers or state classes.
-
-```dart 
-  final userNotifier = ResultNotifier<User>();
-
-// Automatically handles loading state, catches unexpected errors, and updates the UI
-  userNotifier.track
-    (
-      repository
-          .
-      fetchUserProfile
-        (
-      )
-  );
-```
-
-**Declarative Layouts via ResultBuilder**  
-Eliminate bloated conditions inside your widget tree. Separate your UI cleanly into three
-predictable layout paths.
-
-```Dart
-@override
-Widget build(BuildContext context) {
-  return ResultBuilder<User>(
-    notifier: _userNotifier,
-    onLoading: (context) => const CircularProgressIndicator(),
-    onFailure: (context, failure) => Text('Error: ${failure.message}'),
-    onSuccess: (context, user) => Text('Hello, ${user.name}'),
-  );
-}
-```
-
-## Advanced Features (Enterprise Grade)
-
-Resultex is built to scale. For large, complex Flutter applications, the package offers advanced
-architectural tools to handle memory safety, concurrency, and global monitoring.
-
-1. Memory-Safe Operations (`CancellableResult`)
-
-Prevent memory leaks and the dreaded `setState() called after dispose()` error in Flutter. When a
-user navigates away from a screen, you can instantly abort any pending background operations.
-
-```dart
-late CancellableResult<UserProfile> profileRequest;
-
-@override
-void initState() {
-  super.initState();
-  profileRequest = Result.cancellable(() => api.fetchUserProfile());
-
-  profileRequest.value.then((result) {
-    result.when(
-      onSuccess: (profile) => setState(() => this.profile = profile),
-      onFailure: (failure) {
-        // Automatically ignores the failure if it was cancelled
-        if (failure is CancellationFailure) return;
-        showError(failure.message);
-      },
-    );
-  });
-}
-
-@override
-void dispose() {
-  profileRequest.cancel('Screen disposed'); // Instantly severs the pipeline
-  super.dispose();
-}
-```
-
-2. High-Availability Racing (Result.race)
-   Speed up your app by requesting data from multiple sources simultaneously. Result.race waits for
-   the first successful response and ignores the rest. It only returns a failure if ALL operations
-   fail.
-
-```Dart 
-  final Result<AppConfig> configResult = await
-  Result.race
-    ([api.fetchFromPrimaryServer(),
-    api.fetchFromBackupCDN(),
-    localDatabase.getCachedConfig(),
-  ]);
-```
-
-3. Concurrent Request Memoization (Result.memoizeAsync)
-   Optimize performance by ensuring a heavy process or network request is only executed once, even
-   if requested multiple times concurrently by different UI components.
-
-```Dart
-// The network request executes only once.
-final fetchDashboard = Result.memoizeAsync(() => api.getHeavyDashboardData());
-
-// Both widgets safely await the exact same process without duplicate API calls.
-final widgetOneData = await
-
-fetchDashboard();
-
-final widgetTwoData = await
-
-fetchDashboard();
-```
-
-4. Global Error Telemetry (ResultexObserver)
-   Stop writing repetitive logging boilerplate in your UI or Domain layers. Register a global
-   observer once to automatically catch and report every Failure instantiated in your app to your
-   telemetry service (like Sentry or Firebase).
-
-```Dart
-void main() {
-  ResultexObserver.initialize((failure, stackTrace) {
-// Automatically logs every failure across the entire app
-    FirebaseCrashlytics.instance.recordError(failure.message, stackTrace);
-  });
-  runApp(const MyApp());
-}
-```
-
-## **Advanced Functional Pipelines**
 
 ### Type-Safe Record Zipping (Dart 3+)
 
@@ -398,32 +226,32 @@ Future<void> loadDashboard() async {
 }
 ```
 
-**Asynchronous Chaining (asyncMap & asyncFlatMap)**  
+### **Asynchronous Chaining (asyncMap & asyncFlatMap)**  
 Chain multiple asynchronous dependencies sequentially without running into await callback hell.
 
-```Dart
+```dart
 // Streamline complex database/network pipelines elegantly
 Future<Result<Orders>> ordersResult = repository.getUser(1) // Future<Result<User>>
     .asyncMap((user) => user.id) // Future<Result<int>>
     .asyncFlatMap((id) => orderRepository.getOrders(id)); // Future<Result<Orders>>
 ```
 
-**Adapting Errors downstream (mapFailure)**  
+### **Adapting Errors downstream (mapFailure)**  
 Transform internal exceptions into localized or presentation-friendly error messages before hitting
 the UI.
 
-```Dart
+```dart
 
 final uiResult = apiResult.mapFailure(
       (fail) => Failure(message: 'Localized Error: ${fail.message}'),
 );
 ```
 
-**Resilient Operation Retries (withRetry)**  
+### **Resilient Operation Retries (withRetry)**  
 Attach configurable recovery retries to any transient network dispatch with support for exponential
 backoff.
 
-```Dart 
+```dart 
 final networkResult = await
   Result.guardAsync
     (
@@ -434,13 +262,119 @@ final networkResult = await
   ); 
 ```
 
-### **Advanced Features & Extensions**
+### **Fluid Usage Guide**  
+Safe Execution Closures (guard / guardAsync)
+Automatically intercept synchronous or asynchronous unexpected exceptions and encapsulate them into
+safe Result variants.
 
-1. UI Layer Clean Mapping (.when())
+```dart
+final result = Result.guard(() => jsonDecode(rawJsonString));
+final networkResult = await Result.guardAsync(() => http.get(Uri.parse(url)));
+```
+
+### **Functional Chaining (map & flatMap)**  
+Transform successful values or sequentially chain multiple business operations without nesting
+blocks.
+
+```dart
+final nameResult = result.map((user) => user.name); // Result<String>
+final ordersResult = await repository
+    .getUser(1)
+.then((res) => res.flatMap((user) => orderRepository.getOrders(user.id)));
+```
+
+### Concurrent Parallel Execution (ResultUtils.combineAll)
+   When executing multiple operations simultaneously, ResultUtils.combineAll fires them in parallel.
+   If any operation fails, it aggregates all intercepted errors into a unified MultiFailure contract
+   instead of short-circuiting on the first error.
+
+```dart 
+  final Result<List<dynamic>> dashboardResult = await
+  ResultUtils.combineAll
+    ([repository.fetchUserProfile(),
+    repository.fetchNotifications(),
+    repository.fetchCryptoWallet(),
+  ]); 
+```
+
+
+### Operational Recovery Path (.recover())
+   Intercept an operational Failure and route it through an alternative backup execution pipeline
+   smoothly.
+
+```dart
+
+Result<User> userResult = await authRepository.fetchRemoteUser();
+Result<User> finalizedResult = userResult.recover((failure) {
+  print('Remote fetch failed: ${failure.message}. Falling back to local cache...');
+  return Result.success(localDatabase.getCachedUser());
+});
+```
+## UI features
+### Reactive UI Validation (`ResultTextController`)
+
+Stop writing custom stateful boilerplate or messy condition branches just to validate form fields.
+`ResultTextController` extends Flutter's native `TextEditingController` with a built-in functional
+error boundary.
+
+```dart
+// 1. Declare the controller with atomic business logic predicates
+final emailController = ResultTextController<String>(
+  validator: (text) {
+    if (text.isEmpty) return Result.failure(Failure(message: 'Email cannot be empty'));
+    if (!text.contains('@')) return Result.failure(Failure(message: 'Invalid email format'));
+    return Result.success(text.trim());
+  },
+);
+
+// 2. Evaluate instantly in your UI thread without boilerplate
+@override
+Widget build(BuildContext context) {
+  return TextField(
+    controller: emailController,
+    decoration: InputDecoration(
+      // Dynamic inline error reading!
+      errorText: emailController.validatedResult.when(
+        onSuccess: (_) => null,
+        onFailure: (fail) => fail.message,
+      ),
+    ),
+  );
+}
+```
+
+### **Reactive UI Layer**
+
+State Management via ResultNotifier  
+A lightweight, lifecycle-aware alternative to heavy state management boilerplate. Track any
+asynchronous operation safely inside your controllers or state classes.
+
+```dart 
+  final userNotifier = ResultNotifier<User>();
+  userNotifier.track(repository.fetchUserProfile());
+```
+
+#### **Declarative Layouts via ResultBuilder**  
+Eliminate bloated conditions inside your widget tree. Separate your UI cleanly into three
+predictable layout paths.
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return ResultBuilder<User>(
+    notifier: _userNotifier,
+    onLoading: (context) => const CircularProgressIndicator(),
+    onFailure: (context, failure) => Text('Error: ${failure.message}'),
+    onSuccess: (context, user) => Text('Hello, ${user.name}'),
+  );
+}
+```
+
+### UI Layer Clean Mapping (.when())
    The package provides a tailored Flutter extension to directly map your Result states into widgets
    inside the build method without bloated conditions.
 
-```Dart
+```dart
 import 'package:resultex/core/utils/result_flutterx_extension.dart';
 
 @override
@@ -451,78 +385,80 @@ Widget build(BuildContext context) {
   );
 }
 ```
+### CancellableResult
 
-2. Concurrent Parallel Execution (ResultUtils.combineAll)
-   When executing multiple operations simultaneously, ResultUtils.combineAll fires them in parallel.
-   If any operation fails, it aggregates all intercepted errors into a unified MultiFailure contract
-   instead of short-circuiting on the first error.
+Resultex is built to scale. For large, complex Flutter applications, the package offers advanced
+architectural tools to handle memory safety, concurrency, and global monitoring.
 
-```Dart 
-  final Result<List<dynamic>> dashboardResult = await
-  ResultUtils.combineAll
-    ([repository.fetchUserProfile(),
-    repository.fetchNotifications(),
-    repository.fetchCryptoWallet(),
-  ]);
+1. Memory-Safe Operations (`CancellableResult`)
 
-  dashboardResult.when(
-      onSuccess: (data) {
-        final user = data[0] as User;
-        final wallet = data[2] as CryptoWallet;
-      },
-      onFailure: (failure) {
-        if (failure is MultiFailure) {
-          print('${failure.failures.length} operations failed concurrently.');
-        }
-      }
-  ); 
-```
-
-
-3. Operational Recovery Path (.recover())
-   Intercept an operational Failure and route it through an alternative backup execution pipeline
-   smoothly.
-
-```Dart
-
-Result<User> userResult = await authRepository.fetchRemoteUser();
-Result<User> finalizedResult = userResult.recover((failure) {
-  print('Remote fetch failed: ${failure.message}. Falling back to local cache...');
-  return Result.success(localDatabase.getCachedUser());
-});
-```
-
-**Fluid Usage Guide**  
-Safe Execution Closures (guard / guardAsync)
-Automatically intercept synchronous or asynchronous unexpected exceptions and encapsulate them into
-safe Result variants.
+Prevent memory leaks and the dreaded `setState() called after dispose()` error in Flutter. When a
+user navigates away from a screen, you can instantly abort any pending background operations.
 
 ```dart
-final result = Result.guard(() => jsonDecode(rawJsonString));
-final networkResult = await Result.guardAsync(() => http.get(Uri.parse(url)));
+late CancellableResult<UserProfile> profileRequest;
+
+@override
+void initState() {
+  super.initState();
+  profileRequest = Result.cancellable(() => api.fetchUserProfile());
+
+  profileRequest.value.then((result) {
+    result.when(
+      onSuccess: (profile) => setState(() => this.profile = profile),
+      onFailure: (failure) {
+        // Automatically ignores the failure if it was cancelled
+        if (failure is CancellationFailure) return;
+        showError(failure.message);
+      },
+    );
+  });
+}
+
+@override
+void dispose() {
+  profileRequest.cancel('Screen disposed'); // Instantly severs the pipeline
+  super.dispose();
+}
 ```
 
-**Functional Chaining (map & flatMap)**  
-Transform successful values or sequentially chain multiple business operations without nesting
-blocks.
+## (Unit Testing Matchers)
+### Fluent Unit Testing (`resultex_test.dart`)
 
-```Dart
-final nameResult = result.map((user) => user.name); // Result<String>
-final ordersResult = await repository
-    .getUser(1)
-.then((res) => res.flatMap((user) => orderRepository.getOrders(user.id)));
-```
+Resultex provides first-class framework-level matchers to make your domain and data layer unit tests
+extremely expressive and readable.
 
-**Advanced ResultExecutor Architecture**  
-Wrap execution scopes into monitored contexts complete with automated structured logging and error
-tracking capabilities.
+To keep your production builds lightweight, these utilities are isolated. Simply import the
+dedicated test entry point in your test files:
 
-```Dart
-final executor = ResultExecutor(logger: AppLogger());
-final result = await executor.executeAsync(() async {
-final data = await api.fetchData();
-return processData(data);
-}, context: fetchAndProcessDashboardData);
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:resultex/resultex.dart';
+import 'package:resultex/resultex_test.dart'; // Import custom matchers
+
+void main() {
+  group('User Repository Tests', () {
+    test('should return SuccessResult with accurate payload', () async {
+      final result = await repository.fetchUser(1);
+
+      expect(result, isSuccess<User>());
+      expect(result, isSuccess<User>(expectedUser)); // Verifies the internal payload
+    });
+
+    test('should gracefully intercept server errors', () async {
+      final result = await repository.fetchUser(500);
+
+      expect(result, isFailure());
+      expect(result, isFailure('Internal Server Error')); // Verifies the exact message
+    });
+
+    test('should match specific clean architecture failure types', () async {
+      final result = await repository.fetchUserWithoutInternet();
+
+      expect(result, isFailureType<NetworkFailure>()); // Asserts the exact subclass
+    });
+  });
+}
 ```
 
 ### **Best Practices**
