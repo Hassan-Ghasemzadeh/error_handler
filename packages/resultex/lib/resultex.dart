@@ -51,6 +51,14 @@ export 'src/ui/widget/result_builder.dart';
 /// static [Result] states directly to their visual counterparts.
 export 'src/ui/widget/result_switch.dart';
 
+/// Exports the [ResultListener] widget, designed for handling non-rebuilding
+/// side-effects (such as navigation, dialogs, or snackbars) on state changes.
+export 'src/ui/widget/result_listener.dart';
+
+/// Exports the [ResultConsumer] widget, combining [ResultListener] and [ResultBuilder]
+/// for unified side-effect execution and UI rebuilding.
+export 'src/ui/widget/result_consumer.dart';
+
 // ==========================================
 // UTILITIES & EXTENSIONS
 // ==========================================
