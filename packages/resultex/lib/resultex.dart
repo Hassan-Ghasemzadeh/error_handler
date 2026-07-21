@@ -59,6 +59,10 @@ export 'src/ui/widget/result_listener.dart';
 /// for unified side-effect execution and UI rebuilding.
 export 'src/ui/widget/result_consumer.dart';
 
+/// Exports the [MultiResultBuilder] widget, observing a dynamic list of
+/// [ResultNotifier] instances for combined UI rendering.
+export 'src/ui/widget/multi_result_builder.dart';
+
 // ==========================================
 // UTILITIES & EXTENSIONS
 // ==========================================
