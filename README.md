@@ -457,6 +457,28 @@ ResultConsumer<User>(
   onSuccess: (context, user) => Text('Welcome, ${user.name}!'),
 )
 ```
+### Combining Multiple Notifiers (`MultiResultBuilder`)
+
+To observe multiple `ResultNotifier` instances simultaneously without creating nested builder trees:
+
+```dart
+MultiResultBuilder(
+  notifiers: [_userNotifier, _ordersNotifier],
+    builder: (context, results) {
+      final userResult = results[0] as Result<User>?;
+      final ordersResult = results[1] as Result<List<Order>>?;
+
+      if (results.any((r) => r == null)) {
+      return const CircularProgressIndicator();
+      }
+
+      return DashboardView(
+        user: (userResult as SuccessResult).data,
+        orders: (ordersResult as SuccessResult).data,
+      );
+    },
+  )
+```
 ## (Unit Testing Matchers)
 ### Fluent Unit Testing (`resultex_test.dart`)
 
