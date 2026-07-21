@@ -308,6 +308,36 @@ Result<User> finalizedResult = userResult.recover((failure) {
   print('Remote fetch failed: ${failure.message}. Falling back to local cache...');
   return Result.success(localDatabase.getCachedUser());
 });
+``` 
+
+### Rate Limiting (`debounce` & `throttle`)
+
+Prevent excessive API calls or UI event spamming directly on your `ResultNotifier`:
+```dart
+searchNotifier.debounce(
+  const Duration(milliseconds: 500),
+  () => repository.searchUsers(query),
+);
+
+// Throttle button clicks (executes at most once every 1 second)
+submitNotifier.throttle(
+  const Duration(seconds: 1),
+  () => repository.submitOrder(),
+);
+```
+### Auto-Retry with Exponential Backoff
+Automatically retry failed asynchronous operations (e.g., unstable network requests) with exponentially increasing delays:
+```dart
+userNotifier.executeWithRetry(
+  () => repository.fetchUserProfile(),
+  maxAttempts: 3,
+  initialDelay: const Duration(seconds: 1),
+  backoffFactor: 2.0, // Delays: 1s -> 2s -> 4s
+  retryIf: (failure) => failure is NetworkFailure, // Optional filter
+  onRetry: (attempt, failure, nextDelay) {
+    print('Retry attempt $attempt after$nextDelay');
+  },
+);
 ```
 ## UI features
 ### Reactive UI Validation (`ResultTextController`)
