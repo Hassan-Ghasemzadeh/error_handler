@@ -82,3 +82,9 @@ export 'core/utils/result_collection.dart';
 /// Exports performance optimization utilities to cache and recall the outcomes
 /// of expensive or repetitive [Result]-yielding operations.
 export 'core/utils/result_memoizer.dart';
+
+/// Exports rate-limiting functional extensions (debounce & throttle) for [ResultNotifier].
+export 'core/extensions/result_notifier_fpx.dart';
+
+/// Exports auto-retry with exponential backoff mechanism for async result functions and notifiers.
+export 'core/extensions/future_retry_extensions.dart';
