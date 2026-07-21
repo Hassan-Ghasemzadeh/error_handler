@@ -435,7 +435,7 @@ ResultListener<User>(
     SnackBar(content: Text(failure.message)),
     );
   },
-  child: const UserProfileBody(), // Static child — never rebuilds on state changes
+  child: const UserProfileBody(),
 )
 ```
 ### Combined UI & Side-Effects (ResultConsumer)
@@ -451,8 +451,7 @@ ResultConsumer<User>(
   },
   onSuccessListener: (context, user) {
     print('User logged in: ${user.name}');
-  },
-  // --- UI Builder Callbacks ---
+  }, 
   onLoading: (context) => const CircularProgressIndicator(),
   onFailure: (context, failure) => Text('Error: ${failure.message}'),
   onSuccess: (context, user) => Text('Welcome, ${user.name}!'),
