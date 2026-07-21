@@ -426,16 +426,16 @@ Use `ResultListener` when you want to execute side-effects (such as showing Snac
 
 ```dart
 ResultListener<User>(
-notifier: _userNotifier,
-onSuccessListener: (context, user) {
-Navigator.of(context).pushNamed('/profile');
-},
-onFailureListener: (context, failure) {
-ScaffoldMessenger.of(context).showSnackBar(
-SnackBar(content: Text(failure.message)),
-);
-},
-child: const UserProfileBody(), // Static child — never rebuilds on state changes
+    notifier: _userNotifier,
+    onSuccessListener: (context, user) {
+    Navigator.of(context).pushNamed('/profile');
+  },
+    onFailureListener: (context, failure) {
+    ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(failure.message)),
+    );
+  },
+  child: const UserProfileBody(), // Static child — never rebuilds on state changes
 )
 ```
 ### Combined UI & Side-Effects (ResultConsumer)
