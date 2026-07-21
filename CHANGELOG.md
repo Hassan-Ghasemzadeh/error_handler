@@ -3,6 +3,26 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## 3.1.0
+
+### Added
+
+* **`ResultListener`**: Added a dedicated widget for non-rebuilding side-effects (e.g., SnackBars,
+  Dialogs, Navigation).
+* **`ResultConsumer`**: Added a combined widget merging UI building and side-effect execution in a
+  single component.
+* **`MultiResultBuilder`**: Added a reactive widget to observe multiple `ResultNotifier` instances
+  simultaneously without creating nested builder trees.
+* **Rate-Limiting Extensions (`debounce` & `throttle`)**: Added functional programming extensions on
+  `ResultNotifier` to control action execution frequency for inputs and button taps.
+* **Auto-Retry Extensions (`retryWithBackoff` & `executeWithRetry`)**: Added exponential backoff
+  auto-retry capabilities for asynchronous operations and `ResultNotifier`.
+
+### Documentation
+
+* Updated `README.md` with comprehensive usage examples for all new reactive UI components and
+  functional extensions.
+
 ## [3.0.3] - 2026-07-20
 
 ### Improved
