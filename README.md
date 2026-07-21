@@ -420,7 +420,44 @@ void dispose() {
   super.dispose();
 }
 ```
+### Handling Side-Effects (`ResultListener`)
 
+Use `ResultListener` when you want to execute side-effects (such as showing SnackBars, displaying Dialogs, or triggering Navigation) **without rebuilding the UI subtree**.
+
+```dart
+ResultListener<User>(
+notifier: _userNotifier,
+onSuccessListener: (context, user) {
+Navigator.of(context).pushNamed('/profile');
+},
+onFailureListener: (context, failure) {
+ScaffoldMessenger.of(context).showSnackBar(
+SnackBar(content: Text(failure.message)),
+);
+},
+child: const UserProfileBody(), // Static child — never rebuilds on state changes
+)
+```
+### Combined UI & Side-Effects (ResultConsumer)
+Use ResultConsumer when a single component needs to both rebuild the UI and execute side-effects in response to state changes. It cleanly merges ResultBuilder and ResultListener.
+```dart
+ResultConsumer<User>(
+  notifier: _userNotifier,
+  // --- Side-Effect Callbacks ---
+  onFailureListener: (context, failure) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(failure.message)),
+    );
+  },
+  onSuccessListener: (context, user) {
+    print('User logged in: ${user.name}');
+  },
+  // --- UI Builder Callbacks ---
+  onLoading: (context) => const CircularProgressIndicator(),
+  onFailure: (context, failure) => Text('Error: ${failure.message}'),
+  onSuccess: (context, user) => Text('Welcome, ${user.name}!'),
+)
+```
 ## (Unit Testing Matchers)
 ### Fluent Unit Testing (`resultex_test.dart`)
 
