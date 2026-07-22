@@ -69,22 +69,22 @@ export 'src/ui/widget/multi_result_builder.dart';
 
 /// Exports generic functional helper utilities and extension methods (such as map,
 /// then, and combine) to streamline [Result] manipulation.
-export 'core/utils/result_utils.dart';
+export 'src/core/utils/result_utils.dart';
 
 /// Exports utilities for managing asynchronous operations that can be cancelled
 /// mid-flight, returning a graceful cancellation state.
-export 'core/utils/cancellable_result.dart';
+export 'src/core/utils/cancellable_result.dart';
 
 /// Exports collection helpers to safely process, filter, and manage lists or
 /// groups of independent [Result] objects.
-export 'core/utils/result_collection.dart';
+export 'src/core/utils/result_collection.dart';
 
 /// Exports performance optimization utilities to cache and recall the outcomes
 /// of expensive or repetitive [Result]-yielding operations.
-export 'core/utils/result_memoizer.dart';
+export 'src/core/utils/result_memoizer.dart';
 
 /// Exports rate-limiting functional extensions (debounce & throttle) for [ResultNotifier].
-export 'core/extensions/result_notifier_fpx.dart';
+export 'src/core/extensions/result_notifier_fpx.dart';
 
 /// Exports auto-retry with exponential backoff mechanism for async result functions and notifiers.
-export 'core/extensions/future_retry_extensions.dart';
+export 'src/core/extensions/future_retry_extensions.dart';

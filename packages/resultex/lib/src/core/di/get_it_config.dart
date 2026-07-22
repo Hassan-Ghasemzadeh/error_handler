@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:resultex/core/di/result_executor_module.dart';
+import 'package:resultex/src/core/di/result_executor_module.dart';
 import 'flutter_error_handler_module.dart';
 
 /// A configuration class responsible for initializing the application's dependency injection container.

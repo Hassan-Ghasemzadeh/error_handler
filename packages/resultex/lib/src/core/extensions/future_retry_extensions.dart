@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:resultex/src/model/retry_options.dart';
 
-import '../../resultex.dart';
+import '../../../resultex.dart';
 
 /// Extension on [Future] functions to transparently intercept runtime execution
 /// and perform recovery retries before wrapping the final outcome into a Result pipeline.

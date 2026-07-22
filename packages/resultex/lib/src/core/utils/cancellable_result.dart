@@ -1,6 +1,7 @@
 import 'dart:async';
-import '../../resultex.dart';
-import '../../src/model/cancellation_failure.dart';
+
+import '../../../resultex.dart';
+import '../../model/cancellation_failure.dart';
 
 /// A reactive wrapper for asynchronous operations that can be manually aborted.
 class CancellableResult<T> {

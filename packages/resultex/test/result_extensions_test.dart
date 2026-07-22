@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:resultex/core/extensions/result_recovery_extension.dart';
-import 'package:resultex/core/extensions/result_unwrap_x.dart';
 import 'package:resultex/resultex.dart';
+import 'package:resultex/src/core/extensions/result_recovery_extension.dart';
+import 'package:resultex/src/core/extensions/result_unwrap_x.dart';
 
 void main() {
   group('ResultExtensions - recover', () {
@@ -29,10 +29,10 @@ void main() {
 
       // Act: Intercept the failure and recover with an alternate success state
       final finalResult = result.recover((failure) {
-        if (failure.message == 'server_error') {
+        if (failure.toString() == 'server_error') {
           return Result.success('recovered_data');
         }
-        return Result.failure(failure);
+        return Result.failure(Failure(message: failure.toString()));
       });
 
       // Assert: Verify that the fallback execution successfully altered the result pipeline

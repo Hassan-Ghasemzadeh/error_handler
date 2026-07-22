@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:resultex/src/error/flutter_error_handler.dart';
 import 'package:resultex_logger/resultex_logger.dart';
-import '../../resultex.dart';
+import '../../../resultex.dart';
 import 'di_module.dart';
 
 /// A dependency injection module responsible for registering the [ResultExecutor].

@@ -1,5 +1,6 @@
 import 'dart:async';
-import '../../resultex.dart';
+
+import '../../../resultex.dart';
 
 /// Architectural utility for caching functional evaluations.
 class ResultMemoizer {

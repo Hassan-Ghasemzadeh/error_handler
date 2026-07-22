@@ -1,5 +1,6 @@
 import 'dart:async';
-import '../../resultex.dart';
+
+import '../../../resultex.dart';
 
 /// Provides safe, declarative error-boundary interception pipelines over native Dart Streams.
 extension ResultStreamX<T> on Stream<T> {

@@ -1,4 +1,4 @@
-import '../../resultex.dart';
+import '../../../resultex.dart';
 
 /// Presentation-layer bridge extensions for declarative state emission.
 extension ResultBlocBridgeX<T> on Result<T> {

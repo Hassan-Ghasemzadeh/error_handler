@@ -1,4 +1,5 @@
-import '../../resultex.dart';
+
+import '../../../resultex.dart';
 
 /// Core conversion extensions on [Result] to enhance developer experience
 /// and interoperability with standard Dart API structures.

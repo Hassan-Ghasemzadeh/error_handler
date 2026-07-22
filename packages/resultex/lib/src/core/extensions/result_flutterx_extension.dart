@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../resultex.dart';
+import '../../../resultex.dart';
 
 /// Flutter UI layer extensions for the [Result] type.
 extension ResultFlutterX<T> on Result<T> {

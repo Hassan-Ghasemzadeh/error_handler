@@ -1,4 +1,5 @@
-import '../../resultex.dart';
+
+import '../../../resultex.dart';
 
 /// Extension on a 2-element Record of [Result] instances to allow direct,
 /// non-static zipping syntax.

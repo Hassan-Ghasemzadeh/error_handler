@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../../resultex.dart';
+import '../../../resultex.dart';
 
 /// Extension on [Future<Result<S>>] to enable fluent, asynchronous functional chaining.
 ///

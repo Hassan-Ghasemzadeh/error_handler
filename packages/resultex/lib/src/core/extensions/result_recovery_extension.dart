@@ -1,4 +1,4 @@
-import '../../resultex.dart';
+import '../../../resultex.dart';
 
 /// Monadic recovery extensions for the [Result] ecosystem.
 extension ResultRecoveryX<T> on Result<T> {

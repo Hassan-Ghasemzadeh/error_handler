@@ -1,7 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:resultex/src/result_executor/result_executor.dart';
-
-import '../../core/di/get_it_config.dart';
+import 'core/di/get_it_config.dart';
 import 'error/flutter_error_handler.dart';
 
 /// A bootstrapping coordinator responsible for orchestrating the application's global error tracking lifecycle.

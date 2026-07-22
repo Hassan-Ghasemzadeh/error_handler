@@ -1,4 +1,4 @@
-import '../../resultex.dart';
+import '../../../resultex.dart';
 
 /// Represents a type with only one singular value.
 ///
