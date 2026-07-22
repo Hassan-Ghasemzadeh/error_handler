@@ -130,12 +130,12 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   ///
   /// Incorporates concurrency guards to ignore duplicate invocations while a refresh is active.
   Future<Result<S>> refresh(Future<Result<S>> Function() action) async {
-    // 1. Concurrency Guard: Prevent multiple overlapping refresh triggers
+    // Concurrency Guard: Prevent multiple overlapping refresh triggers
     if (_isRefreshing) {
       return value ?? await action();
     }
 
-    // 2. Set refreshing flag and inform listeners (UI shows subtle loading indicator)
+    // Set refreshing flag and inform listeners (UI shows subtle loading indicator)
     _isRefreshing = true;
     notifyListeners();
 
@@ -145,7 +145,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
 
       _isRefreshing = false;
 
-      // 3. Handle ValueNotifier notification edge-case:
+      // Handle ValueNotifier notification edge-case:
       // ValueNotifier only invokes notifyListeners() if `value != previousValue`.
       // If the fetched data is identical to current data, we must manually notify
       // listeners to ensure UI hides the refreshing indicator.
@@ -158,7 +158,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
 
       return newResult;
     } catch (error) {
-      // 4. Guarantee state recovery in case of unexpected unhandled exceptions
+      // Guarantee state recovery in case of unexpected unhandled exceptions
       _isRefreshing = false;
       notifyListeners();
       rethrow;
