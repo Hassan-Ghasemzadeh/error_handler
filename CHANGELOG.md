@@ -13,15 +13,22 @@ adheres to Semantic Versioning.
   single component.
 * **`MultiResultBuilder`**: Added a reactive widget to observe multiple `ResultNotifier` instances
   simultaneously without creating nested builder trees.
+* **Stale-While-Revalidate (SWR) Support**: Added `isRefreshing` property and `refresh()` method to
+  `ResultNotifier` for background data revalidation while retaining stale UI data.
 * **Rate-Limiting Extensions (`debounce` & `throttle`)**: Added functional programming extensions on
   `ResultNotifier` to control action execution frequency for inputs and button taps.
 * **Auto-Retry Extensions (`retryWithBackoff` & `executeWithRetry`)**: Added exponential backoff
   auto-retry capabilities for asynchronous operations and `ResultNotifier`.
 
+### Changed
+
+* **Package Architecture**: Restructured internal directories to strictly follow Dart package
+  guidelines (enforced encapsulation by moving core modules inside `src/`).
+
 ### Documentation
 
-* Updated `README.md` with comprehensive usage examples for all new reactive UI components and
-  functional extensions.
+* Updated `README.md` with comprehensive usage examples for new reactive UI components, SWR pattern,
+  and functional extensions.
 
 ## [3.0.3] - 2026-07-20
 
