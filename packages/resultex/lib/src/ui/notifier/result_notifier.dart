@@ -18,6 +18,15 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   /// Prevents older, delayed async operations from overriding newer state updates.
   int _executionToken = 0;
 
+  bool _isRefreshing = false;
+
+  /// Indicates whether a background refresh operation is currently in progress.
+  ///
+  /// Unlike setting [value] to `null` (which signals an initial full-page loading state),
+  /// [isRefreshing] keeps the current [value] intact so the UI can render stale data
+  /// with a subtle refresh indicator.
+  bool get isRefreshing => _isRefreshing;
+
   /// Creates a [ResultNotifier] with an optional [initialValue].
   ///
   /// If no initial value is provided, it defaults to `null` (idle/loading state).
@@ -58,6 +67,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   void reset() {
     if (_isDisposed) return;
     _executionToken++; // Invalidate any pending async operations
+    _isRefreshing = false;
     value = null;
   }
 
@@ -109,6 +119,49 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
         message: e.toString(),
         stackTrace: stackTrace,
       ));
+    }
+  }
+
+  /// Executes an asynchronous background [action] to update state without clearing existing data.
+  ///
+  /// 1. Sets [isRefreshing] to `true` and notifies listeners.
+  /// 2. Awaits the [action] execution.
+  /// 3. Updates [value] with the newly fetched [Result] and sets [isRefreshing] back to `false`.
+  ///
+  /// Incorporates concurrency guards to ignore duplicate invocations while a refresh is active.
+  Future<Result<S>> refresh(Future<Result<S>> Function() action) async {
+    // 1. Concurrency Guard: Prevent multiple overlapping refresh triggers
+    if (_isRefreshing) {
+      return value ?? await action();
+    }
+
+    // 2. Set refreshing flag and inform listeners (UI shows subtle loading indicator)
+    _isRefreshing = true;
+    notifyListeners();
+
+    try {
+      final newResult = await action();
+      final previousValue = value;
+
+      _isRefreshing = false;
+
+      // 3. Handle ValueNotifier notification edge-case:
+      // ValueNotifier only invokes notifyListeners() if `value != previousValue`.
+      // If the fetched data is identical to current data, we must manually notify
+      // listeners to ensure UI hides the refreshing indicator.
+      if (previousValue == newResult) {
+        notifyListeners();
+      } else {
+        value =
+            newResult; // Mutates value and automatically invokes notifyListeners()
+      }
+
+      return newResult;
+    } catch (error) {
+      // 4. Guarantee state recovery in case of unexpected unhandled exceptions
+      _isRefreshing = false;
+      notifyListeners();
+      rethrow;
     }
   }
 
