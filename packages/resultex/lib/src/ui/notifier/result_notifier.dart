@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
 import '../../../resultex.dart';
+import '../../core/utils/result_observer.dart';
 
 /// A specialized [ValueNotifier] that manages and exposes a reactive [Result] state to the UI.
 ///
-/// It acts as a lightweight, production-ready state manager, holding either a successful
+/// It acts as a lightweight, production-ready state manager holding either a successful
 /// data state, a structured failure state, or `null` to represent an idle/loading state.
 ///
 /// This class includes built-in safeguards against common Flutter async pitfalls:
@@ -11,26 +12,50 @@ import '../../../resultex.dart';
 /// - **Race Conditions:** Automatically drops outdated asynchronous responses if a newer
 ///   request is triggered before the previous one completes.
 class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
-  /// Internal flag to track the lifecycle and prevent "used after dispose" exceptions.
+  /// An optional custom identifier used for telemetry, crash reporting, and debug logging.
+  final String? name;
+
+  /// Returns the explicit [name] if provided; otherwise defaults to the runtime class name.
+  String get identifier => name ?? '$runtimeType';
+
+  /// Internal flag to track the widget lifecycle and prevent "used after dispose" exceptions.
   bool _isDisposed = false;
 
-  /// A unique identifier to track the latest execution sequence.
-  /// Prevents older, delayed async operations from overriding newer state updates.
+  /// A unique token to track execution sequences and discard out-of-order state updates.
   int _executionToken = 0;
 
+  /// Internal flag indicating whether a background refresh operation is active.
   bool _isRefreshing = false;
 
   /// Indicates whether a background refresh operation is currently in progress.
   ///
   /// Unlike setting [value] to `null` (which signals an initial full-page loading state),
   /// [isRefreshing] keeps the current [value] intact so the UI can render stale data
-  /// with a subtle refresh indicator.
+  /// with a subtle refresh indicator (SWR pattern).
   bool get isRefreshing => _isRefreshing;
 
-  /// Creates a [ResultNotifier] with an optional [initialValue].
+  /// Creates a [ResultNotifier] with an optional [initialValue] and an optional debug [name].
+  ResultNotifier([super.initialValue, this.name]);
+
+  // ---------------------------------------------------------------------------
+  // Centralized State Telemetry & Observer Dispatcher
+  // ---------------------------------------------------------------------------
+
+  /// Overrides the default [value] setter to provide a single, centralized entry point
+  /// for state transitions and telemetry dispatching.
   ///
-  /// If no initial value is provided, it defaults to `null` (idle/loading state).
-  ResultNotifier([super.initialValue]);
+  /// Every state mutation (from [reset], [emitSuccess], [emitFailure], [track], or [refresh])
+  /// flows through this setter, ensuring [ResultexObserver] receives updates cleanly without code duplication.
+  @override
+  set value(Result<S>? newValue) {
+    final previousValue = value;
+    super.value = newValue;
+
+    // Notify the global observer only when an actual state transition occurs
+    if (previousValue != newValue) {
+      ResultexObserver.notifyStateChange(identifier, newValue);
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // UI Helper Getters (DX Improvements)
@@ -62,57 +87,47 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
 
   /// Resets the current state back to `null` (idle/loading).
   ///
-  /// Calling this will also invalidate any currently running asynchronous operations
-  /// triggered via [track], preventing them from updating the state once they finish.
+  /// Involves invalidating any currently pending asynchronous operations triggered via [track].
   void reset() {
     if (_isDisposed) return;
-    _executionToken++; // Invalidate any pending async operations
+    _executionToken++; // Invalidate pending async responses
     _isRefreshing = false;
-    value = null;
+    value = null; // Dispatches state change to observer via centralized setter
   }
 
   /// Manually updates the state with a successful outcome containing [data].
-  ///
-  /// Safely aborts if the notifier has already been disposed.
   void emitSuccess(S data) {
     if (_isDisposed) return;
-    value = Result.success(data);
+    value = Result.success(
+        data); // Dispatches state change to observer via centralized setter
   }
 
   /// Manually updates the state with a structured [failure].
-  ///
-  /// Safely aborts if the notifier has already been disposed.
   void emitFailure(Failure failure) {
     if (_isDisposed) return;
-    value = Result.failure(failure);
+    value = Result.failure(
+        failure); // Dispatches state change to observer via centralized setter
   }
 
   /// Automatically tracks and updates the state based on an asynchronous [operation].
   ///
-  /// Lifecycle:
-  /// 1. Immediately sets the state to `null` (triggering loading indicators).
-  /// 2. Awaits the [operation] to resolve its [Result].
-  /// 3. Emits the resolved outcome, or catches unhandled exceptions as a [Failure].
-  ///
-  /// **Safety Feature:** If [track] is called multiple times in rapid succession,
-  /// only the result of the *latest* call will update the UI. Older results are safely discarded.
+  /// Safely handles race conditions by discarding outdated async responses.
   Future<void> track(Future<Result<S>> operation) async {
-    // Generate a unique token for this specific execution thread
     final currentToken = ++_executionToken;
 
     if (!_isDisposed) {
-      value = null; // Transition to loading state
+      value = null; // Transition to initial loading state
     }
 
     try {
       final result = await operation;
 
-      // Drop the state update if the class was disposed or a newer operation was started
+      // Ignore update if disposed or superseded by a newer operation
       if (_isDisposed || currentToken != _executionToken) return;
 
-      value = result;
+      value =
+          result; // Dispatches state change to observer via centralized setter
     } catch (e, stackTrace) {
-      // Handle unexpected runtime crashes safely
       if (_isDisposed || currentToken != _executionToken) return;
 
       value = Result.failure(Failure(
@@ -124,20 +139,15 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
 
   /// Executes an asynchronous background [action] to update state without clearing existing data.
   ///
-  /// 1. Sets [isRefreshing] to `true` and notifies listeners.
-  /// 2. Awaits the [action] execution.
-  /// 3. Updates [value] with the newly fetched [Result] and sets [isRefreshing] back to `false`.
-  ///
-  /// Incorporates concurrency guards to ignore duplicate invocations while a refresh is active.
+  /// Incorporates concurrency guards to prevent duplicate overlapping refreshes.
   Future<Result<S>> refresh(Future<Result<S>> Function() action) async {
     // Concurrency Guard: Prevent multiple overlapping refresh triggers
     if (_isRefreshing) {
       return value ?? await action();
     }
 
-    // Set refreshing flag and inform listeners (UI shows subtle loading indicator)
     _isRefreshing = true;
-    notifyListeners();
+    notifyListeners(); // Signal UI to render background refresh indicator
 
     try {
       final newResult = await action();
@@ -146,19 +156,19 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
       _isRefreshing = false;
 
       // Handle ValueNotifier notification edge-case:
-      // ValueNotifier only invokes notifyListeners() if `value != previousValue`.
-      // If the fetched data is identical to current data, we must manually notify
-      // listeners to ensure UI hides the refreshing indicator.
+      // If the newly fetched data is identical to the current value, super.value will not trigger
+      // notifyListeners() or the setter change check. We handle that edge case manually here.
       if (previousValue == newResult) {
         notifyListeners();
+        ResultexObserver.notifyStateChange(identifier, newResult);
       } else {
         value =
-            newResult; // Mutates value and automatically invokes notifyListeners()
+            newResult; // Dispatches state change to observer via centralized setter
       }
 
       return newResult;
     } catch (error) {
-      // Guarantee state recovery in case of unexpected unhandled exceptions
+      // Guarantee flag reset in case of unhandled runtime exceptions
       _isRefreshing = false;
       notifyListeners();
       rethrow;
