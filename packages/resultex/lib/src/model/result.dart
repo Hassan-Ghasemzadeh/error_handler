@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../core/utils/result_observer.dart';
 import 'failure.dart';
 import 'success.dart';
 
@@ -234,5 +235,7 @@ class FailureResult<T> extends Result<T> {
   final Failure failure;
 
   /// Allocates an immutable, constant private failure presentation.
-  const FailureResult(this.failure);
+  FailureResult(this.failure) {
+    ResultexObserver.notifyFailure(failure, failure.stackTrace);
+  }
 }
