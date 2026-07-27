@@ -13,6 +13,10 @@ library;
 /// for initializing dependency injection and global error handlers.
 export 'src/resultex_base.dart';
 
+/// Exports the [ResultexObserver] for global failure tracking and state telemetry,
+/// essential for integrating with Crashlytics, Sentry, or custom logging services.
+export 'src/core/utils/result_observer.dart';
+
 // ==========================================
 // MODELS & STATE WRAPPERS
 // ==========================================
