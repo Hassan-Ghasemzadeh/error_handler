@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import '../../../resultex.dart';
-import '../../core/utils/result_observer.dart';
 
 /// A specialized [ValueNotifier] that manages and exposes a reactive [Result] state to the UI.
 ///
