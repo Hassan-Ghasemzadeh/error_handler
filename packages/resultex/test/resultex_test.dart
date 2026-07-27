@@ -17,7 +17,7 @@ void main() {
     /// Verifies that an explicit [Result.failure] accurately instantiates, preserves
     /// the structured domain [Failure] object, and safely exposes error contexts.
     test('Failure should hold error', () {
-      final result = Result.failure(const Failure(message: 'Error occurred'));
+      final result = Result.failure(Failure(message: 'Error occurred'));
       expect(result.isSuccess, false);
       expect(result.isFailure, true);
       expect(result.failureOrNull?.message, 'Error occurred');
@@ -26,7 +26,7 @@ void main() {
     /// Assures that [getOrElse] bypasses evaluation fallbacks on success states,
     /// but gracefully returns the declared default value when facing a failure wrapper.
     test('getOrElse should return default on Failure', () {
-      final result = Result<int>.failure(const Failure(message: 'Error'));
+      final result = Result<int>.failure(Failure(message: 'Error'));
       expect(result.getOrElse(0), 0);
     });
 
@@ -41,7 +41,7 @@ void main() {
     /// Confirms that calling [map] on an existing error state safely bypasses mapping executions
     /// and transparently forwards the unchanged structural failure downstream.
     test('map should not transform Failure', () {
-      final result = Result<int>.failure(const Failure(message: 'Error'));
+      final result = Result<int>.failure(Failure(message: 'Error'));
       final mapped = result.map((value) => 'Value: $value');
       expect(mapped.isFailure, true);
     });
@@ -60,7 +60,7 @@ void main() {
     /// operational callbacks fire for both successful computations and domain failure exceptions.
     test('fold should handle both cases', () {
       final success = Result.success(42);
-      final failure = Result<int>.failure(const Failure(message: 'Error'));
+      final failure = Result<int>.failure(Failure(message: 'Error'));
 
       // Evaluate the healthy state branch execution path.
       final successResult = success.fold(
@@ -107,7 +107,7 @@ void main() {
     test('combine should return failure if any fails', () {
       final results = [
         Result.success(1),
-        Result.failure(const Failure(message: 'Error')),
+        Result.failure(Failure(message: 'Error')),
         Result.success(3),
       ];
       final combined = Result.combine(results);
@@ -117,7 +117,7 @@ void main() {
     /// Ensures that forcing value extraction via [getOrThrow] triggers a clean, descriptive
     /// runtime state exception if called on an invalid or failing result context.
     test('getOrThrow should throw on Failure', () {
-      final result = Result<int>.failure(const Failure(message: 'Error'));
+      final result = Result<int>.failure(Failure(message: 'Error'));
       expect(() => result.getOrThrow(), throwsException);
     });
 
