@@ -339,6 +339,20 @@ userNotifier.executeWithRetry(
   },
 );
 ```
+### Global Error & Crash Reporting (Sentry / Firebase)
+Track all application failures centrally without polluting your UI layer:
+
+```dart
+void main() {
+  ResultexObserver.initialize(
+    onFailure: (failure, stackTrace) {
+      FirebaseCrashlytics.instance.recordError(failure.message, stackTrace);
+    },
+  );
+  runApp(const MyApp());
+}
+```
+
 ## UI features
 ### Reactive UI Validation (`ResultTextController`)
 
