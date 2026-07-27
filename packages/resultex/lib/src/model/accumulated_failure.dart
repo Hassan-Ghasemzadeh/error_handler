@@ -8,7 +8,7 @@ class AccumulatedFailure extends Failure {
   /// The collection of all individual failures captured during execution.
   final List<Failure> errors;
 
-  const AccumulatedFailure({
+  AccumulatedFailure({
     required this.errors,
     super.message = 'Multiple validation errors occurred.',
   });
