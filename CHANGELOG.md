@@ -3,6 +3,30 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## 3.2.0
+
+### New Features
+
+* **Global Telemetry & Crash Reporting:** Introduced `ResultexObserver`, a globally accessible,
+  thread-safe observer for tracking state changes and failures. Easily integrate with tools like
+  Firebase Crashlytics, Sentry, or Datadog without polluting your UI or business logic.
+* **Auto-Dispatch Failures:** `FailureResult` now automatically notifies the global
+  `ResultexObserver` upon instantiation, ensuring no unhandled error goes unlogged.
+
+### Improvements & Refactors
+
+* **Centralized State Tracking:** Refactored `ResultNotifier` by overriding the `value` setter. This
+  ensures all state transitions (`reset`, `emitSuccess`, `track`, `refresh`) are automatically
+  dispatched to the `ResultexObserver` via a single, DRY entry point.
+* **Barrel File Updates:** Exported the newly added `ResultexObserver` and Network Failures in the
+  main `resultex.dart` library file for public access.
+
+### Testing
+
+* Added comprehensive unit tests for `ResultexObserver` to ensure proper delegate registration,
+  state resetting between tests, and safe exception swallowing (preventing third-party logger
+  crashes from impacting the main app thread).
+
 ## 3.1.0
 
 ### Added
