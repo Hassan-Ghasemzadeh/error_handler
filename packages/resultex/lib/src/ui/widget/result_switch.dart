@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:resultex/src/ui/widget/result_config.dart';
 import '../../../resultex.dart';
 
@@ -11,75 +11,98 @@ import '../../../resultex.dart';
 /// - Building decoupled UI components that don't need to know about [ResultNotifier].
 ///
 /// It strictly decouples rendering logic from active state-observation layers.
+
+/// A declarative pattern-matching UI widget for [Result].
+///
+/// Automatically handles UI transitions using [AnimatedSwitcher] if a duration is provided
+/// either locally or globally via [ResultexConfig].
 class ResultSwitch<S> extends StatelessWidget {
-  /// The static, nullable [Result] state to evaluate and render.
-  ///
-  /// If this is `null`, the widget transitions into the loading state
-  /// and executes the [onLoading] builder.
   final Result<S>? result;
-
-  /// Builder callback invoked when [result] is `null` (active loading or idle state).
-  final Widget Function(BuildContext context)? onLoading;
-
-  /// Builder callback executed when [result] resolves to a [SuccessResult].
-  ///
-  /// Provides the unpacked success payload of type [S] directly to the presentation tree.
   final Widget Function(BuildContext context, S data) onSuccess;
-
-  /// Builder callback executed when [result] resolves to a [FailureResult].
-  ///
-  /// Provides the encapsulated [Failure] instance to build descriptive error feedbacks.
+  final Widget Function(BuildContext context)? onLoading;
   final Widget Function(BuildContext context, Failure failure)? onFailure;
 
-  /// Creates a declarative [ResultSwitch] to map static states to their visual representations.
+  // --- Animation Properties ---
+  /// Duration of the transition animation. Overrides global config.
+  final Duration? transitionDuration;
+
+  /// The animation curve used when a new state widget is fading in.
+  final Curve? switchInCurve;
+
+  /// The animation curve used when the old state widget is fading out.
+  final Curve? switchOutCurve;
+
+  /// Custom transition builder (defaults to a standard Fade transition if null).
+  final AnimatedSwitcherTransitionBuilder? transitionBuilder;
+
   const ResultSwitch({
     super.key,
     required this.result,
-    this.onLoading,
     required this.onSuccess,
+    this.onLoading,
     this.onFailure,
+    this.transitionDuration,
+    this.switchInCurve,
+    this.switchOutCurve,
+    this.transitionBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Leveraging Dart 3 exhaustive pattern matching to handle both the null (loading)
-    // state and the terminal (Success/Failure) states in a single, declarative expression.
-    // This entirely eliminates the need for early returns and the non-null assertion operator (!).
-    return switch (result) {
-      null => _buildLoading(context),
-      SuccessResult<S>(success: Success(:final value)) =>
-        onSuccess(context, value),
-      FailureResult<S>(failure: final failure) =>
-        _buildFailure(context, failure),
+    // 1. Resolve the correct UI state and inject unique keys for AnimatedSwitcher.
+    // Keys are strictly required by Flutter to detect widget tree changes and trigger animations.
+    final Widget stateWidget = switch (result) {
+      SuccessResult<S>(success: final success) => KeyedSubtree(
+          key: const ValueKey('resultex_state_success'),
+          child: onSuccess(context, success.value),
+        ),
+      FailureResult<S>(failure: final failure) => KeyedSubtree(
+          key: const ValueKey('resultex_state_failure'),
+          child: _buildFailure(context, failure),
+        ),
+      null => KeyedSubtree(
+          key: const ValueKey('resultex_state_loading'),
+          child: _buildLoading(context),
+        ),
     };
+
+    // 2. Resolve animation duration (Local -> Global)
+    final duration =
+        transitionDuration ?? ResultexConfig.defaultTransitionDuration;
+
+    // 3. If no duration is configured, bypass the AnimatedSwitcher for maximum performance.
+    if (duration == null || duration == Duration.zero) {
+      return stateWidget;
+    }
+
+    // 4. Return the animated wrapper.
+    return AnimatedSwitcher(
+      duration: duration,
+      switchInCurve:
+          switchInCurve ?? ResultexConfig.defaultSwitchInCurve ?? Curves.linear,
+      switchOutCurve: switchOutCurve ??
+          ResultexConfig.defaultSwitchOutCurve ??
+          Curves.linear,
+      transitionBuilder: transitionBuilder ??
+          ResultexConfig.defaultTransitionBuilder ??
+          AnimatedSwitcher.defaultTransitionBuilder,
+      child: stateWidget,
+    );
   }
 
-  /// Resolves the loading UI using the fallback chain.
   Widget _buildLoading(BuildContext context) {
-    if (onLoading != null) {
-      return onLoading!(context);
-    }
+    if (onLoading != null) return onLoading!(context);
     if (ResultexConfig.defaultLoadingBuilder != null) {
       return ResultexConfig.defaultLoadingBuilder!(context);
     }
-    // Package minimal default fallback
-    return const Center(child: Text('Loading...'));
+    return const Center(child: CircularProgressIndicator.adaptive());
   }
 
-  /// Resolves the failure UI using the fallback chain.
   Widget _buildFailure(BuildContext context, Failure failure) {
-    if (onFailure != null) {
-      return onFailure!(context, failure);
-    }
+    if (onFailure != null) return onFailure!(context, failure);
     if (ResultexConfig.defaultFailureBuilder != null) {
       return ResultexConfig.defaultFailureBuilder!(context, failure);
     }
-    // Package minimal default fallback
-    return Center(
-      child: Text(
-        'Error: ${failure.message}',
-        style: const TextStyle(color: Color(0xFFD32F2F)),
-      ),
-    );
+    return Center(child: Text('Error: ${failure.message}'));
   }
 }
