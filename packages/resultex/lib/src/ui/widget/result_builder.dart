@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:resultex/src/ui/widget/result_config.dart';
 import '../../../resultex.dart';
 
 /// A reactive, declarative Flutter widget that listens to a [ResultNotifier].
@@ -7,12 +8,22 @@ import '../../../resultex.dart';
 /// notifier changes. By bypassing extra wrapper widgets like [ValueListenableBuilder],
 /// it flattens the widget tree and directly delegates structural UI mapping to [ResultSwitch].
 ///
-/// Example:
+/// Follows a strict UI fallback strategy for loading and failure states:
+/// Local Builder -> Global [ResultexConfig] -> Package Minimal Fallback.
+///
+/// Example with default global UI:
 /// ```dart
 /// ResultBuilder<User>(
 ///   notifier: _userNotifier,
-///   onLoading: (context) => const CircularProgressIndicator(),
-///   onFailure: (context, failure) => Text('Error: ${failure.message}'),
+///   onSuccess: (context, user) => Text('Hello, ${user.name}'),
+/// )
+/// ```
+///
+/// Example with local custom override:
+/// ```dart
+/// ResultBuilder<User>(
+///   notifier: _userNotifier,
+///   onLoading: (context) => const CustomLocalSpinner(),
 ///   onSuccess: (context, user) => Text('Hello, ${user.name}'),
 /// )
 /// ```
@@ -20,26 +31,28 @@ class ResultBuilder<S> extends StatefulWidget {
   /// The active [ResultNotifier] instance driving the reactive UI updates.
   final ResultNotifier<S> notifier;
 
-  /// A builder function invoked when the state is null, idle, or actively loading.
-  final Widget Function(BuildContext context) onLoading;
-
-  /// A builder function invoked when the state successfully resolves to a [SuccessResult].
+  /// A required builder function invoked when the state successfully resolves to a [SuccessResult].
   ///
   /// Extracts and provides the unpacked success payload of type [S] to the widget subtree.
   final Widget Function(BuildContext context, S data) onSuccess;
 
-  /// A builder function invoked when the state resolves to a [FailureResult].
+  /// An optional builder function invoked when the state is null, idle, or actively loading.
   ///
-  /// Provides the encapsulated [Failure] domain object to safely render error UI feedback.
-  final Widget Function(BuildContext context, Failure failure) onFailure;
+  /// If omitted, falls back to [ResultexConfig.defaultLoadingBuilder] or the package default.
+  final Widget Function(BuildContext context)? onLoading;
+
+  /// An optional builder function invoked when the state resolves to a [FailureResult].
+  ///
+  /// If omitted, falls back to [ResultexConfig.defaultFailureBuilder] or the package default.
+  final Widget Function(BuildContext context, Failure failure)? onFailure;
 
   /// Creates a [ResultBuilder] seamlessly bound to the provided [notifier].
   const ResultBuilder({
     super.key,
     required this.notifier,
-    required this.onLoading,
     required this.onSuccess,
-    required this.onFailure,
+    this.onLoading,
+    this.onFailure,
   });
 
   @override
@@ -77,15 +90,26 @@ class _ResultBuilderState<S> extends State<ResultBuilder<S>> {
     setState(() {});
   }
 
+  /// Resolves the loading builder following the fallback chain.
+  Widget Function(BuildContext context)? get _effectiveOnLoading {
+    return widget.onLoading ?? ResultexConfig.defaultLoadingBuilder;
+  }
+
+  /// Resolves the failure builder following the fallback chain.
+  Widget Function(BuildContext context, Failure failure)?
+      get _effectiveOnFailure {
+    return widget.onFailure ?? ResultexConfig.defaultFailureBuilder;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Directly delegate the rendering strategy to ResultSwitch using the latest snapshot value.
-    // This maintains a clean separation of concerns and guarantees single-source-of-truth mapping.
+    // Directly delegate the rendering strategy to ResultSwitch using the latest snapshot value
+    // and resolved fallback builders.
     return ResultSwitch<S>(
       result: widget.notifier.value,
-      onLoading: widget.onLoading,
       onSuccess: widget.onSuccess,
-      onFailure: widget.onFailure,
+      onLoading: _effectiveOnLoading,
+      onFailure: _effectiveOnFailure,
     );
   }
 }
