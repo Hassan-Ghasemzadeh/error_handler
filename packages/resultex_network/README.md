@@ -42,7 +42,7 @@ Add `resultex_network` to your `pubspec.yaml` dependencies.
 
 ```yaml
 dependencies:
-  resultex_network: ^1.2.0
+  resultex_network: ^1.2.1
 ``` 
 
 ### Easy to use
