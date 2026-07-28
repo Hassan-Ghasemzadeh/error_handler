@@ -9,33 +9,43 @@ codes, and wraps responses into functional `Result` monads.
 
 ---
 
-## Features ✨
+## Features
 
-* **Umbrella Exports:** No double-importing. Simply import `resultex_network` and get access to
+* ✅ **Umbrella Exports:** No double-importing. Simply import `resultex_network` and get access to
   both network helpers and the entire core `resultex` library.
-* **Robust Dio Interceptor:** An out-of-the-box `ResultexDioInterceptor` that captures network
+* ✅ **Robust Dio Interceptor:** An out-of-the-box `ResultexDioInterceptor` that captures network
   timeouts, socket issues, and server breakdowns.
-* ️ **Rich Failure Mapping:** Automatically translates raw responses and HTTP status codes into
+* ️✅ **Rich Failure Mapping:** Automatically translates raw responses and HTTP status codes into
   domain failures (e.g., `ValidationFailure`, `ServerFailure`, `UnauthorizedFailure`,
   `OfflineFailure`).
-* **Future Guard Extension:** Execute asynchronous network operations safely with `.guard()` and
+* ✅ **Future Guard Extension:** Execute asynchronous network operations safely with `.guard()` and
   transform them directly into a functional `Result<T, Failure>`.
-* ️ **Clean Architecture Aligned:** Keeps your Data Sources and Repositories decoupled, highly
+* ️✅ **Clean Architecture Aligned:** Keeps your Data Sources and Repositories decoupled, highly
   testable, and pure.
 
 ---
 
+## Get Started
+
 ## Installation
 
-Add `resultex_network` to your `pubspec.yaml` dependencies. (Note: You do **not** need to add
-`resultex` separately, as this package re-exports it).
+### Prerequisites
+
+```yaml
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+```
+
+Add `resultex_network` to your `pubspec.yaml` dependencies.
 
 ```yaml
 dependencies:
   resultex_network: ^1.0.0
-```
+``` 
 
-## **Getting Started 🚀**
+### Easy to use
 
 1. **Setup the Dio Client & InterceptorRegister**  
    the ResultexDioInterceptor in your Dio instance. This
@@ -102,6 +112,47 @@ void fetchAndRender(UserRemoteDataSource dataSource) async {
 }
 ```
 
+## Caching & Offline Strategies
+
+If your application requires robust offline support and smart data synchronization, you can leverage
+the built-in caching policies to control data flow seamlessly.
+
+### Supported Cache Policies
+
+- **`CachePolicy.cacheFirst`**: Checks the local cache first. If data exists, it returns immediately
+  and skips the network call. Ideal for static or infrequently updated data.
+- **`CachePolicy.networkFirst`**: Always attempts to fetch fresh data from the network first. If the
+  network call fails (e.g., offline mode), it gracefully falls back to the last cached version.
+- **`CachePolicy.swr` (Stale-While-Revalidate)**: Instantly emits cached data for immediate UI
+  rendering, then fetches fresh data from the network in the background to update the cache.
+
+### Usage Example
+
+```dart
+// 1. Initialize Hive (Usually done in main.dart)
+await Hive.initFlutter();
+
+// 2. Create the Hive Cache Provider instance
+// For standard types like String, Map, or int. For custom models, register adapters first.
+final myCacheProvider = HiveCacheProvider<String>(boxName: 'user_data_cache');
+
+// 3. Initialize the Offline-First Handler
+final handler = ResultexOfflineFirstHandler<String>(
+  cacheProvider: myCacheProvider,
+  policy: CachePolicy.swr, // Stale-While-Revalidate
+);
+
+// 4. Execute the request
+await handler.execute(
+  key: 'user_profile_123',
+  fetcher: () => apiService.fetchUserProfile(), // Your network call
+  onEmit: (state) {
+  // Here you update the resultex state!
+  // Example: resultState.value = state;
+  print('Current UI State: $state');
+  },
+);
+```
 ### **License 📄**
 
 This project is licensed under the MIT License - see the LICENSE
