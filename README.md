@@ -523,6 +523,57 @@ MultiResultBuilder(
     },
   )
 ```
+## Global Configuration (`ResultexConfig`)
+
+Tired of passing the same loading spinner and error widget to every single screen? `resultex` allows you to define your UI fallbacks and state transition animations **once**, globally!
+
+### 1. Initialize Globally
+Call `ResultexConfig.initialize()` in your `main.dart` before running the app.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:resultex/resultex.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure global UI components and animations for resultex
+  ResultexConfig.initialize(
+    // Global UI Builders
+    loadingBuilder: (context) => const Center(child: CircularProgressIndicator.adaptive()),
+    failureBuilder: (context, failure) => Center(
+      child: Text('Oops: ${failure.message}', style: const TextStyle(color: Colors.red)),
+    ),
+
+    // Global Animation Transitions (Powered by AnimatedSwitcher)
+    transitionDuration: const Duration(milliseconds: 300),
+    switchInCurve: Curves.easeIn,
+    switchOutCurve: Curves.easeOut,
+  );
+
+  runApp(const MyApp());
+}
+```
+2. Enjoy Zero Boilerplate
+   Now, your ResultBuilder and ResultSwitch widgets become incredibly clean. They will automatically inherit the global loading UI, error UI, and the smooth 300ms fade transition!
+```dart
+// Completely clean! Automatically uses global loaders, errors, and animations.
+ResultBuilder<User>(
+  notifier: _userNotifier,
+  onSuccess: (context, user) => UserProfileCard(user: user),
+);
+```
+3. Local Overrides
+   Need a specific loading indicator or a different animation just for one screen? You can always override the global configuration by providing local parameters. The fallback chain strictly follows: Local Builder ➡️ Global Config ➡️ Package Default.
+```dart
+ResultBuilder<User>(
+  notifier: _userNotifier,
+  // Overriding global config locally for this specific widget:
+  transitionDuration: const Duration(milliseconds: 500), 
+  onLoading: (context) => const CustomSkeletonLoader(),
+  onSuccess: (context, user) => UserProfileCard(user: user),
+)
+```
 ## (Unit Testing Matchers)
 ### Fluent Unit Testing (`resultex_test.dart`)
 
