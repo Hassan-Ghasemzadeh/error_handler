@@ -1,6 +1,8 @@
 # Changelog
 
 All notable changes to the `resultex_network` package will be documented in this file.
+## 1.2.1 - 2026-07-28
+* **Documentation:** Fixed markdown table formatting issues for interceptors in `README.md`.
 
 ## 1.2.0 - 2026-07-28
 
