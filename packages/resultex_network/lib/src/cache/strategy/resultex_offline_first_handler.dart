@@ -14,7 +14,7 @@ class ResultexOfflineFirstHandler<T> {
   /// Executes the request based on the provided caching strategy.
   ///
   /// [key] is the unique identifier for the cache entry.
-  /// [fetcher] is the actual network call returning Future<T>.
+  /// [fetcher] is the actual network call returning `Future<T>`.
   /// [onEmit] is a callback to update the UI state (e.g., loading, success, error).
   Future<void> execute({
     required String key,
