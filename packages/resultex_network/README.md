@@ -42,7 +42,7 @@ Add `resultex_network` to your `pubspec.yaml` dependencies.
 
 ```yaml
 dependencies:
-  resultex_network: ^1.0.0
+  resultex_network: ^1.2.0
 ``` 
 
 ### Easy to use
@@ -111,6 +111,12 @@ void fetchAndRender(UserRemoteDataSource dataSource) async {
   );
 }
 ```
+| Interceptors | Description |
+|:--------------------------------------------------------------| :-- | :--- |
+| ResultexConnectivityInterceptor     | A Dio Interceptor that prevents network requests from being sent if there is no active internet connection. |
+| ResultexDioInterceptor | A custom Dio [Interceptor] that catches low-level network errors, |
+| ResultexLoggerInterceptor | An interceptor that automatically logs network activity using [ResultexLogger]. |
+| ResultexRetryInterceptor | A Dio interceptor that automatically retries failed network requests. |
 
 ## Caching & Offline Strategies
 
