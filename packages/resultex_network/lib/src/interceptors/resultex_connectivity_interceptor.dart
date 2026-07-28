@@ -30,7 +30,7 @@ class ResultexConnectivityInterceptor extends Interceptor {
       // so it can be gracefully caught by the .guard() extension or other interceptors.
       final offlineException = DioException(
         requestOptions: options,
-        error: const OfflineFailure(),
+        error: OfflineFailure(),
         type: DioExceptionType.unknown,
       );
 

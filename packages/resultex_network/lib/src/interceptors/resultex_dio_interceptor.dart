@@ -25,12 +25,12 @@ class ResultexDioInterceptor extends Interceptor {
         case DioExceptionType.connectionTimeout:
         case DioExceptionType.sendTimeout:
         case DioExceptionType.receiveTimeout:
-          domainFailure = const TimeoutFailure();
+          domainFailure = TimeoutFailure();
           break;
 
         // Connection error usually means DNS failure or airplane mode
         case DioExceptionType.connectionError:
-          domainFailure = const OfflineFailure();
+          domainFailure = OfflineFailure();
           break;
 
         // Bad response means the server replied, but with an error status (4xx, 5xx)
