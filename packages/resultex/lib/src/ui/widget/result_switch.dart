@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:resultex/src/ui/widget/result_config.dart';
 import '../../../resultex.dart';
 
 /// A pure presentation widget that maps a static [Result] state straight to the UI.
@@ -18,7 +19,7 @@ class ResultSwitch<S> extends StatelessWidget {
   final Result<S>? result;
 
   /// Builder callback invoked when [result] is `null` (active loading or idle state).
-  final Widget Function(BuildContext context) onLoading;
+  final Widget Function(BuildContext context)? onLoading;
 
   /// Builder callback executed when [result] resolves to a [SuccessResult].
   ///
@@ -28,15 +29,15 @@ class ResultSwitch<S> extends StatelessWidget {
   /// Builder callback executed when [result] resolves to a [FailureResult].
   ///
   /// Provides the encapsulated [Failure] instance to build descriptive error feedbacks.
-  final Widget Function(BuildContext context, Failure failure) onFailure;
+  final Widget Function(BuildContext context, Failure failure)? onFailure;
 
   /// Creates a declarative [ResultSwitch] to map static states to their visual representations.
   const ResultSwitch({
     super.key,
     required this.result,
-    required this.onLoading,
+    this.onLoading,
     required this.onSuccess,
-    required this.onFailure,
+    this.onFailure,
   });
 
   @override
@@ -45,10 +46,40 @@ class ResultSwitch<S> extends StatelessWidget {
     // state and the terminal (Success/Failure) states in a single, declarative expression.
     // This entirely eliminates the need for early returns and the non-null assertion operator (!).
     return switch (result) {
-      null => onLoading(context),
+      null => _buildLoading(context),
       SuccessResult<S>(success: Success(:final value)) =>
         onSuccess(context, value),
-      FailureResult<S>(failure: final failure) => onFailure(context, failure),
+      FailureResult<S>(failure: final failure) =>
+        _buildFailure(context, failure),
     };
+  }
+
+  /// Resolves the loading UI using the fallback chain.
+  Widget _buildLoading(BuildContext context) {
+    if (onLoading != null) {
+      return onLoading!(context);
+    }
+    if (ResultexConfig.defaultLoadingBuilder != null) {
+      return ResultexConfig.defaultLoadingBuilder!(context);
+    }
+    // Package minimal default fallback
+    return const Center(child: Text('Loading...'));
+  }
+
+  /// Resolves the failure UI using the fallback chain.
+  Widget _buildFailure(BuildContext context, Failure failure) {
+    if (onFailure != null) {
+      return onFailure!(context, failure);
+    }
+    if (ResultexConfig.defaultFailureBuilder != null) {
+      return ResultexConfig.defaultFailureBuilder!(context, failure);
+    }
+    // Package minimal default fallback
+    return Center(
+      child: Text(
+        'Error: ${failure.message}',
+        style: const TextStyle(color: Color(0xFFD32F2F)),
+      ),
+    );
   }
 }
