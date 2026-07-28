@@ -112,12 +112,11 @@ void fetchAndRender(UserRemoteDataSource dataSource) async {
 }
 ```
 | Interceptors | Description |
-|:--------------------------------------------------------------| :-- | :--- |
-| ResultexConnectivityInterceptor     | A Dio  _[Interceptor]_ that prevents network requests from being sent if there is no active internet connection. |
-| ResultexDioInterceptor | A custom Dio _[Interceptor]_ that catches low-level network errors, |
-| ResultexLoggerInterceptor | An  _[Interceptor]_  that automatically logs network activity using [ResultexLogger]. |
-| ResultexRetryInterceptor | A Dio  _[Interceptor]_  that automatically retries failed network requests. |
-
+|:---|:---|
+| `ResultexConnectivityInterceptor` | A Dio *[Interceptor]* that prevents network requests from being sent if there is no active internet connection. |
+| `ResultexDioInterceptor` | A custom Dio *[Interceptor]* that catches low-level network errors. |
+| `ResultexLoggerInterceptor` | An *[Interceptor]* that automatically logs network activity using [ResultexLogger]. |
+| `ResultexRetryInterceptor` | A Dio *[Interceptor]* that automatically retries failed network requests. |
 ## Caching & Offline Strategies
 
 If your application requires robust offline support and smart data synchronization, you can leverage
