@@ -1,9 +1,11 @@
+import 'package:resultex/resultex.dart';
+
 /// Core interface for caching mechanisms in resultex.
 /// Developers can implement this interface using Hive, SharedPreferences, or SQLite.
 abstract interface class ResultexCacheProvider<T> {
   /// Reads data from the cache using a unique [key].
   /// Returns null if the data does not exist or has expired.
-  Future<T?> read(String key);
+  Future<Result<T?>> read(String key);
 
   /// Writes [data] to the cache assigned to the [key].
   Future<void> write(String key, T data);
