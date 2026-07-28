@@ -59,7 +59,7 @@ class ResultexOfflineFirstHandler<T> {
     // Try to read from cache and emit immediately if available
     await executor.executeAsync(
       () async {
-        final cachedData = await cacheProvider!.read(key);
+        final cachedData = await cacheProvider?.read(key);
         if (cachedData != null) {
           hasCachedData = true;
           // Emit cached data. You can flag it as 'isCached: true' in your Result class.
@@ -91,7 +91,6 @@ class ResultexOfflineFirstHandler<T> {
         return FailureResult(
           Failure(
             message: error.toString(),
-            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
           ),
         );
       },
@@ -111,7 +110,7 @@ class ResultexOfflineFirstHandler<T> {
     await executor.executeAsync(
       () async {
         // Try to read from cache first
-        final cachedData = await cacheProvider!.read(key);
+        final cachedData = await cacheProvider?.read(key);
 
         if (cachedData != null) {
           // Cache hit: Emit cached data and terminate early (No network call)
@@ -138,7 +137,6 @@ class ResultexOfflineFirstHandler<T> {
         return FailureResult(
           Failure(
             message: error.toString(),
-            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
           ),
         );
       },
@@ -169,7 +167,7 @@ class ResultexOfflineFirstHandler<T> {
       },
     ).catchError(
       (error) async {
-        final cachedData = await cacheProvider!.read(key);
+        final cachedData = await cacheProvider?.read(key);
 
         if (cachedData != null) {
           // Cache hit after network failure (Offline mode)
@@ -181,7 +179,6 @@ class ResultexOfflineFirstHandler<T> {
         return FailureResult(
           Failure(
             message: error.toString(),
-            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
           ),
         );
       },
@@ -205,7 +202,6 @@ class ResultexOfflineFirstHandler<T> {
         return FailureResult(
           Failure(
             message: error.toString(),
-            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
           ),
         );
       },

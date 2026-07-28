@@ -34,12 +34,6 @@ class HiveCacheProvider<T> implements ResultexCacheProvider<T> {
         final box = await _getBox();
         return box.get(key);
       },
-    ).catchError(
-      (error) {
-        // NOTE: Here you can integrate resultex_logger to log cache read failures silently.
-        // Returning null ensures the OfflineFirstHandler gracefully falls back to network fetch.
-        return null;
-      },
     );
   }
 
