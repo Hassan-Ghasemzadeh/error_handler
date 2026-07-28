@@ -2,6 +2,15 @@
 
 All notable changes to the `resultex_network` package will be documented in this file.
 
+## 1.2.0 - 2026-07-28
+
+* **New Feature:** Added robust offline-first and smart caching policies (`CachePolicy.swr`,
+  `CachePolicy.cacheFirst`, `CachePolicy.networkFirst`).
+* **New Class:** Introduced `ResultexOfflineFirstHandler` to seamlessly manage request caching,
+  background revalidation, and network fallbacks.
+* **Refactoring & Fixes:** Fixed Linter warnings regarding HTML tags in documentation comments (
+  `unintended_html_in_doc_comment`).
+
 ## [1.1.0] - 2026-07-17
 
 ### Added
