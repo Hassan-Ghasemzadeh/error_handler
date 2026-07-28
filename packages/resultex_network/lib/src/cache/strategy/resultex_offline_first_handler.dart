@@ -1,3 +1,5 @@
+import 'package:resultex/resultex.dart';
+
 import '../policy/cache_policy.dart';
 import '../provider/resultex_cache_provider.dart';
 
@@ -5,11 +7,13 @@ import '../provider/resultex_cache_provider.dart';
 class ResultexOfflineFirstHandler<T> {
   final ResultexCacheProvider<T>? cacheProvider;
   final CachePolicy policy;
+  final ResultExecutor executor;
 
-  const ResultexOfflineFirstHandler({
+  ResultexOfflineFirstHandler({
     this.cacheProvider,
     this.policy = CachePolicy.swr,
-  });
+    ResultExecutor? executor,
+  }) : executor = executor ?? Resultex.executor;
 
   /// Executes the request based on the provided caching strategy.
   ///
@@ -53,37 +57,45 @@ class ResultexOfflineFirstHandler<T> {
     bool hasCachedData = false;
 
     // Try to read from cache and emit immediately if available
-    try {
-      final cachedData = await cacheProvider!.read(key);
-      if (cachedData != null) {
-        hasCachedData = true;
-        // Emit cached data. You can flag it as 'isCached: true' in your Result class.
-        onEmit('SUCCESS_STATE_CACHED: $cachedData');
-      }
-    } catch (e) {
-      // Log cache read errors silently (e.g., using resultex_logger)
-      // Do not interrupt the flow; proceed to network fetch.
-    }
+    await executor.executeAsync(
+      () async {
+        final cachedData = await cacheProvider!.read(key);
+        if (cachedData != null) {
+          hasCachedData = true;
+          // Emit cached data. You can flag it as 'isCached: true' in your Result class.
+          onEmit('SUCCESS_STATE_CACHED: $cachedData');
+        }
+      },
+    );
 
     // Fetch fresh data from the network
-    try {
-      final freshData = await fetcher();
+    await executor.executeAsync(
+      () async {
+        final freshData = await fetcher();
 
-      // Update the cache with fresh data
-      await cacheProvider!.write(key, freshData);
+        // Update the cache with fresh data
+        await cacheProvider!.write(key, freshData);
 
-      // Emit the fresh network data
-      onEmit('SUCCESS_STATE_NETWORK: $freshData');
-    } catch (error) {
-      // Handle network failure
-      if (!hasCachedData) {
-        // If there was no cache, emit the error to the UI
-        onEmit('ERROR_STATE: $error');
-      } else {
-        // If we already showed cached data, you might want to silently log the network error
-        // or emit a specific state like Result.success(cachedData, networkError: error).
-      }
-    }
+        // Emit the fresh network data
+        onEmit('SUCCESS_STATE_NETWORK: $freshData');
+      },
+    ).catchError(
+      (error) {
+        if (!hasCachedData) {
+          // If there was no cache, emit the error to the UI
+          onEmit('ERROR_STATE: $error');
+        } else {
+          // If we already showed cached data, you might want to silently log the network error
+          // or emit a specific state like Result.success(cachedData, networkError: error).
+        }
+        return FailureResult(
+          Failure(
+            message: error.toString(),
+            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
+          ),
+        );
+      },
+    );
   }
 
   /// Implements Cache-First logic.
@@ -96,33 +108,41 @@ class ResultexOfflineFirstHandler<T> {
   ) async {
     // Emit loading state
     onEmit('LOADING_STATE');
+    await executor.executeAsync(
+      () async {
+        // Try to read from cache first
+        final cachedData = await cacheProvider!.read(key);
 
-    try {
-      // Try to read from cache first
-      final cachedData = await cacheProvider!.read(key);
-
-      if (cachedData != null) {
-        // Cache hit: Emit cached data and terminate early (No network call)
-        onEmit('SUCCESS_STATE_CACHED: $cachedData');
-        return;
-      }
-    } catch (e) {
-      // Log cache read errors silently. Proceed to network fallback.
-    }
+        if (cachedData != null) {
+          // Cache hit: Emit cached data and terminate early (No network call)
+          onEmit('SUCCESS_STATE_CACHED: $cachedData');
+          return;
+        }
+      },
+    );
 
     // Cache miss: Fallback to network fetch
-    try {
-      final freshData = await fetcher();
+    await executor.executeAsync(
+      () async {
+        final freshData = await fetcher();
 
-      // Save the newly fetched data to cache for next time
-      await cacheProvider!.write(key, freshData);
+        // Save the newly fetched data to cache for next time
+        await cacheProvider!.write(key, freshData);
 
-      // Emit fresh network data
-      onEmit('SUCCESS_STATE_NETWORK: $freshData');
-    } catch (error) {
-      // Network fails and cache was empty -> Emit error
-      onEmit('ERROR_STATE: $error');
-    }
+        // Emit fresh network data
+        onEmit('SUCCESS_STATE_NETWORK: $freshData');
+      },
+    ).catchError(
+      (error) {
+        onEmit('ERROR_STATE: $error');
+        return FailureResult(
+          Failure(
+            message: error.toString(),
+            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
+          ),
+        );
+      },
+    );
   }
 
   /// Implements Network-First logic.
@@ -136,18 +156,19 @@ class ResultexOfflineFirstHandler<T> {
     // Emit loading state
     onEmit('LOADING_STATE');
 
-    try {
-      // Attempt network fetch first
-      final freshData = await fetcher();
+    await executor.executeAsync(
+      () async {
+        // Attempt network fetch first
+        final freshData = await fetcher();
 
-      // Network success: Update the cache with the latest data
-      await cacheProvider!.write(key, freshData);
+        // Network success: Update the cache with the latest data
+        await cacheProvider!.write(key, freshData);
 
-      // Emit fresh network data
-      onEmit('SUCCESS_STATE_NETWORK: $freshData');
-    } catch (networkError) {
-      // Network fails: Attempt to fallback to cache
-      try {
+        // Emit fresh network data
+        onEmit('SUCCESS_STATE_NETWORK: $freshData');
+      },
+    ).catchError(
+      (error) async {
         final cachedData = await cacheProvider!.read(key);
 
         if (cachedData != null) {
@@ -155,13 +176,16 @@ class ResultexOfflineFirstHandler<T> {
           onEmit('SUCCESS_STATE_CACHED: $cachedData');
         } else {
           // Network failed AND cache is empty -> Emit the network error
-          onEmit('ERROR_STATE: $networkError');
+          onEmit('ERROR_STATE: $error');
         }
-      } catch (cacheError) {
-        // If reading cache also throws an error, emit the original network error
-        onEmit('ERROR_STATE: $networkError');
-      }
-    }
+        return FailureResult(
+          Failure(
+            message: error.toString(),
+            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
+          ),
+        );
+      },
+    );
   }
 
   /// Standard network execution without cache.
@@ -169,12 +193,22 @@ class ResultexOfflineFirstHandler<T> {
     Future<T> Function() fetcher,
     void Function(dynamic state) onEmit,
   ) async {
-    try {
-      onEmit('LOADING_STATE');
-      final data = await fetcher();
-      onEmit('SUCCESS_STATE: $data');
-    } catch (error) {
-      onEmit('ERROR_STATE: $error');
-    }
+    await executor.executeAsync(
+      () async {
+        onEmit('LOADING_STATE');
+        final data = await fetcher();
+        onEmit('SUCCESS_STATE: $data');
+      },
+    ).catchError(
+      (error) {
+        onEmit('ERROR_STATE: $error');
+        return FailureResult(
+          Failure(
+            message: error.toString(),
+            // اگر exception یا stackTrace هم نیاز دارد اینجا پاس بده
+          ),
+        );
+      },
+    );
   }
 }
