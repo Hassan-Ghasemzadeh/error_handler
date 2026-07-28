@@ -523,11 +523,11 @@ MultiResultBuilder(
     },
   )
 ```
-## Global Configuration (`ResultexConfig`)
+### Global Configuration (`ResultexConfig`)
 
 Tired of passing the same loading spinner and error widget to every single screen? `resultex` allows you to define your UI fallbacks and state transition animations **once**, globally!
 
-### 1. Initialize Globally
+#### 1. Initialize Globally
 Call `ResultexConfig.initialize()` in your `main.dart` before running the app.
 
 ```dart
@@ -554,7 +554,7 @@ void main() {
   runApp(const MyApp());
 }
 ```
-2. Enjoy Zero Boilerplate
+#### 2. Enjoy Zero Boilerplate  
    Now, your ResultBuilder and ResultSwitch widgets become incredibly clean. They will automatically inherit the global loading UI, error UI, and the smooth 300ms fade transition!
 ```dart
 // Completely clean! Automatically uses global loaders, errors, and animations.
@@ -563,7 +563,7 @@ ResultBuilder<User>(
   onSuccess: (context, user) => UserProfileCard(user: user),
 );
 ```
-3. Local Overrides
+#### 3. Local Overrides  
    Need a specific loading indicator or a different animation just for one screen? You can always override the global configuration by providing local parameters. The fallback chain strictly follows: Local Builder ➡️ Global Config ➡️ Package Default.
 ```dart
 ResultBuilder<User>(
