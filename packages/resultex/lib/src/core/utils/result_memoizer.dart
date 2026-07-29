@@ -60,7 +60,7 @@ abstract class ResultMemoizer {
         // Defensive safety: Ensure unexpected unhandled exceptions
         // also complete the completer so the queue doesn't hang forever.
         final failureResult = FailureResult<T>(
-          Failure(message: error.toString()),
+          Failure(message: error.toString(), stackTrace: stackTrace),
         );
 
         if (!activeOperation!.isCompleted) {
