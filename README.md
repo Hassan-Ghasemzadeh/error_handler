@@ -343,12 +343,14 @@ userNotifier.executeWithRetry(
 Track all application failures centrally without polluting your UI layer:
 
 ```dart
+class MyConsoleObserver extends ResultexObserver {
+  @override
+  void onFailure(Failure failure, StackTrace? stackTrace) {
+    FirebaseCrashlytics.instance.recordError(failure.message, stackTrace);
+  }
+}
 void main() {
-  ResultexObserver.initialize(
-    onFailure: (failure, stackTrace) {
-      FirebaseCrashlytics.instance.recordError(failure.message, stackTrace);
-    },
-  );
+  ResultexObserverManager.addObserver(MyConsoleObserver());
   runApp(const MyApp());
 }
 ```
