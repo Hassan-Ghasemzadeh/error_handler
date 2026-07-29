@@ -3,6 +3,7 @@
 /// This file categorizes and exports various utility extensions to enhance 
 /// the functionality, readability, and integration capabilities of the [Result] 
 /// type across different domains.
+library;
 
 // ==========================================
 // ASYNC & CONCURRENCY EXTENSIONS
