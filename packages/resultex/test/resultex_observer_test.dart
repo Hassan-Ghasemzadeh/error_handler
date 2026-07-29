@@ -3,30 +3,30 @@ import 'package:resultex/resultex.dart';
 
 void main() {
   tearDown(() {
-    ResultexObserver.reset();
+    ResultexObserverManager.clear();
   });
 
   test('should trigger onFailure callback when failure is notified', () {
     Failure? capturedFailure;
 
-    ResultexObserver.initialize(
-      onFailure: (failure, _) => capturedFailure = failure,
-    );
+    ResultexObserverManager.addObserver(MyConsoleObserver());
 
     final testFailure = Failure(message: 'Connection timeout');
-    ResultexObserver.notifyFailure(testFailure);
+    ResultexObserverManager.notifyFailure(testFailure);
 
     expect(capturedFailure, equals(testFailure));
   });
 
   test('should not crash if observer throws an exception', () {
-    ResultexObserver.initialize(
-      onFailure: (_, __) => throw Exception('Firebase Crash!'),
-    );
-
-    expect(
-      () => ResultexObserver.notifyFailure(Failure(message: 'Error')),
-      returnsNormally,
+    ResultexObserverManager.addObserver(
+      throw Exception('Firebase Crash!'),
     );
   });
+}
+
+class MyConsoleObserver extends ResultexObserver {
+  @override
+  void onFailure(Failure failure, StackTrace? stackTrace) {
+    print('🚨 ERROR: ${failure.message}');
+  }
 }

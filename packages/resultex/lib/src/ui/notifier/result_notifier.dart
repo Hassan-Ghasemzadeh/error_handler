@@ -52,7 +52,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
 
     // Notify the global observer only when an actual state transition occurs
     if (previousValue != newValue) {
-      ResultexObserver.notifyStateChange(identifier, newValue);
+      ResultexObserverManager.notifyStateChange(identifier, newValue);
     }
   }
 
@@ -159,7 +159,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
       // notifyListeners() or the setter change check. We handle that edge case manually here.
       if (previousValue == newResult) {
         notifyListeners();
-        ResultexObserver.notifyStateChange(identifier, newResult);
+        ResultexObserverManager.notifyStateChange(identifier, newResult);
       } else {
         value =
             newResult; // Dispatches state change to observer via centralized setter

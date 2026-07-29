@@ -1,82 +1,68 @@
 import '../../../resultex.dart';
 
-/// Callback signature for intercepting global failures.
-typedef FailureObserverCallback = void Function(
-  Failure failure,
-  StackTrace? stackTrace,
-);
-
-/// Callback signature for tracking global state or data updates (optional).
-typedef StateObserverCallback = void Function(
-  String identifier,
-  dynamic data,
-);
-
-/// A globally accessible, thread-safe observer for tracking [Failure] instances
-/// and state changes across the application lifecycle.
+/// An interface for observing state changes and failures globally.
 ///
-/// Designed for centralized error logging, telemetry, and crash reporting
-/// (e.g., Firebase Crashlytics, Sentry, Datadog) without polluting business logic
-/// or UI layers with repetitive logging code.
+/// Implement this class to create custom telemetry observers
+/// (e.g., [SentryObserver], [ConsoleObserver], [CrashlyticsObserver]).
+///
+/// Methods have empty default implementations so you only need to
+/// override the ones you actually care about.
 abstract class ResultexObserver {
-  // Private constructor to prevent instantiation (Static Utility Pattern).
-  ResultexObserver._();
+  /// Called whenever a [Failure] is created or intercepted.
+  void onFailure(Failure failure, StackTrace? stackTrace) {}
 
-  static FailureObserverCallback? _failureDelegate;
-  static StateObserverCallback? _stateDelegate;
+  /// Called whenever a significant state change occurs.
+  void onStateChange(String identifier, dynamic data) {}
+}
 
-  /// Returns `true` if at least one observer delegate is active.
-  static bool get isInitialized =>
-      _failureDelegate != null || _stateDelegate != null;
+/// A globally accessible, thread-safe manager for dispatching events
+/// to all registered [ResultexObserver] instances.
+abstract class ResultexObserverManager {
+  // Private constructor to prevent instantiation.
+  ResultexObserverManager._();
 
-  /// Registers global observer delegates.
-  ///
-  /// Should typically be called once during app initialization inside `main()`.
-  ///
-  /// [onFailure] Intercepts all created [Failure] instances for crash reporting.
-  /// [onStateChange] Optional listener for state transition telemetry/logging.
-  static void initialize({
-    FailureObserverCallback? onFailure,
-    StateObserverCallback? onStateChange,
-  }) {
-    _failureDelegate = onFailure;
-    _stateDelegate = onStateChange;
-  }
+  // Maintains a list of active observers (Broadcast Pattern)
+  static final List<ResultexObserver> _observers = [];
 
-  /// Resets all registered delegates.
-  ///
-  /// Useful for clearing state between unit/integration test executions.
-  static void reset() {
-    _failureDelegate = null;
-    _stateDelegate = null;
-  }
+  /// Returns `true` if at least one observer is actively registered.
+  static bool get hasObservers => _observers.isNotEmpty;
 
-  /// Silently dispatches a failure to the registered failure observer.
-  ///
-  /// Automatically catches exceptions inside the delegate to guarantee that
-  /// telemetry errors (e.g., network failure in Sentry/Firebase) will never
-  /// crash the main application thread.
-  static void notifyFailure(Failure failure, [StackTrace? stackTrace]) {
-    // Local variable snapshot ensures thread-safety and smart casting in Dart
-    final delegate = _failureDelegate;
-    if (delegate == null) return;
-
-    try {
-      delegate(failure, stackTrace);
-    } catch (_) {
-      // Defensive programming: Prevents telemetry crashes from impacting UI
+  /// Registers a new [observer] to receive global telemetry events.
+  static void addObserver(ResultexObserver observer) {
+    if (!_observers.contains(observer)) {
+      _observers.add(observer);
     }
   }
 
-  /// Silently dispatches state updates to the registered state observer.
-  static void notifyStateChange(String identifier, dynamic data) {
-    final delegate = _stateDelegate;
-    if (delegate == null) return;
+  /// Removes a previously registered [observer].
+  static void removeObserver(ResultexObserver observer) {
+    _observers.remove(observer);
+  }
 
-    try {
-      delegate(identifier, data);
-    } catch (_) {
-      // Defensive programming: Silently swallow observer logging exceptions
+  /// Clears all registered observers. Useful for testing environments.
+  static void clear() {
+    _observers.clear();
+  }
+
+  /// Silently dispatches a failure to all registered observers.
+  static void notifyFailure(Failure failure, [StackTrace? stackTrace]) {
+    for (final observer in _observers) {
+      try {
+        observer.onFailure(failure, stackTrace);
+      } catch (_) {
+        // Defensive programming: Prevents telemetry crashes from impacting UI
+      }
+    }
+  }
+
+  /// Silently dispatches state updates to all registered observers.
+  static void notifyStateChange(String identifier, dynamic data) {
+    for (final observer in _observers) {
+      try {
+        observer.onStateChange(identifier, data);
+      } catch (_) {
+        // Defensive programming: Silently swallow observer logging exceptions
+      }
     }
   }
 }

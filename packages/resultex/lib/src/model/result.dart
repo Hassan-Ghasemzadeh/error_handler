@@ -236,6 +236,6 @@ class FailureResult<T> extends Result<T> {
 
   /// Allocates an immutable, constant private failure presentation.
   FailureResult(this.failure) {
-    ResultexObserver.notifyFailure(failure, failure.stackTrace);
+    ResultexObserverManager.notifyFailure(failure, failure.stackTrace);
   }
 }
