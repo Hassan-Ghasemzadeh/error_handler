@@ -3,7 +3,52 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
-## 3.2.0
+## [4.0.0] - 2026-07-29
+
+### Breaking Changes
+
+* **Observer System Redesign:** Removed the restricted static `ResultexObserver.initialize` method
+  and introduced a new **Broadcast** architecture via `ResultexObserverManager.addObserver()` to
+  allow simultaneous registration of multiple observers (e.g., Sentry, Firebase).
+
+### Architecture & Directory Restructuring
+
+* **Extensions Folder Restructuring:** Reorganized and categorized extension files into dedicated
+  domain-specific subdirectories (`async`, `collections`, `integrations`, and `transform`).
+* **Naming Convention Standardization:** Standardized all extension file names with the consistent
+  `_extension.dart` suffix.
+* **Centralized Barrel File:** Created a comprehensive `extensions.dart` file to manage all exports
+  centrally and keep the main package file (`resultex.dart`) clean from scattered imports.
+
+### Refactored & Fluent APIs
+
+* **Converted `ResultUtils.combineAll` to Extension:** Migrated the aggregation logic to
+  `ResultIterableExtension` on `Iterable<Future<Result<T>>>` and completely removed the obsolete
+  `ResultUtils` class.
+* **Converted `ResultCollection` to `mapResult` Extension:** Migrated list-mapping logic (supporting
+  both Strict and Lenient strategies) into a fluent `.mapResult()` extension method on `Iterable<I>`
+  and removed the old class.
+
+### Widget Enhancements & Animations
+
+* **Animated `ResultSwitch`:** Upgraded `ResultSwitch` to support smooth, fluid state transitions
+  with built-in animations (`AnimatedResultSwitch`).
+* **Dedicated Configuration Support:** Introduced a dedicated configuration file/class for
+  `ResultBuilder` and `ResultSwitch` to cleanly manage properties, transition settings, and UI
+  behaviors.
+* **Refactored UI Components:** Enhanced performance, clean code architecture, and API ergonomics
+  for both `ResultBuilder` and `ResultSwitch`.
+
+### Enhancements & Safety
+
+* **`ResultMemoizer` Safety Optimization:** Preserved the class-based structure (required for state
+  and cache persistence) and added a robust `try-finally` safety net to prevent gateway deadlocks on
+  unexpected exceptions.
+* **Pub.dev Analyzer Compliance:** Refactored platform error dispatching to utilize
+  `WidgetsBinding.instance` instead of direct `dart:ui` imports, ensuring 100% clean analyzer
+  reports and pure package compliance.
+
+## [3.2.0] - 2026-07-27
 
 ### New Features
 
