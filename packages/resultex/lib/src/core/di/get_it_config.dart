@@ -34,7 +34,8 @@ class GetItConfiguration {
   /// ```
   static Future<void> init({
     GetIt? injector,
-    List<dynamic> additionalModules = const [], // TIP: Replace 'dynamic' with your actual module interface (e.g., DIModule)
+    List<dynamic> additionalModules =
+        const [], // TIP: Replace 'dynamic' with your actual module interface (e.g., DIModule)
   }) async {
     // 1. Resolve the target injector (Custom instance for testing vs. Global instance).
     final getIt = injector ?? GetIt.instance;

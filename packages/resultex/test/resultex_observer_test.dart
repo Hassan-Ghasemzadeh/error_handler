@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:resultex/resultex.dart';
 
@@ -27,6 +28,6 @@ void main() {
 class MyConsoleObserver extends ResultexObserver {
   @override
   void onFailure(Failure failure, StackTrace? stackTrace) {
-    print('🚨 ERROR: ${failure.message}');
+    debugPrint('🚨 ERROR: ${failure.message}');
   }
 }

@@ -1,12 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:resultex/resultex.dart';
-import 'package:resultex/src/core/extensions/async/future_result_extension.dart';
-import 'package:resultex/src/core/extensions/collections/result_iterable_mapping_extension.dart';
-import 'package:resultex/src/core/extensions/integrations/result_flutterx_extension.dart';
-import 'package:resultex/src/core/extensions/transform/result_zip_record_extension.dart';
 import 'package:resultex/src/model/multi_failure.dart';
 
 void main() async {

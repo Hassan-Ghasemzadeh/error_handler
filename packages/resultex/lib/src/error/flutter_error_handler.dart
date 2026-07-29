@@ -31,10 +31,10 @@ class FlutterErrorHandler {
   ///
   /// *Note: Marked as Future to support asynchronous network calls in the future.*
   Future<void> reportErrorToService(
-      Object error,
-      StackTrace stackTrace,
-      String? context,
-      ) async {
+    Object error,
+    StackTrace stackTrace,
+    String? context,
+  ) async {
     // Placeholder warning to track incomplete external telemetry integration.
     // TODO: Integrate Firebase Crashlytics / Sentry here in the future.
     _logger.warning('Error reporting not yet implemented. Context: $context');
@@ -66,7 +66,8 @@ class FlutterErrorHandler {
     // 2. Handle uncaught asynchronous errors outside the scope of the widget tree.
     // Instead of importing dart:ui directly, we access the platformDispatcher
     // cleanly through the standard Flutter WidgetsBinding instance.
-    WidgetsBinding.instance.platformDispatcher.onError = (Object exception, StackTrace stackTrace) {
+    WidgetsBinding.instance.platformDispatcher.onError =
+        (Object exception, StackTrace stackTrace) {
       logError(
         'Platform Dispatcher Error: ${exception.toString()}',
         exception,

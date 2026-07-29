@@ -20,7 +20,8 @@ class Failure extends Equatable {
   ///
   /// Requires a [message] and accepts optional [error] payloads or [stackTrace] details.
   Failure({required this.message, this.error, this.stackTrace}) {
-    ResultexObserverManager.notifyFailure(this, stackTrace ?? StackTrace.current);
+    ResultexObserverManager.notifyFailure(
+        this, stackTrace ?? StackTrace.current);
   }
 
   /// Accumulates all available failure properties into a comprehensive, multiline diagnostic string.
