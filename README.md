@@ -282,18 +282,19 @@ final ordersResult = await repository
 .then((res) => res.flatMap((user) => orderRepository.getOrders(user.id)));
 ```
 
-### Concurrent Parallel Execution (ResultUtils.combineAll)
-   When executing multiple operations simultaneously, ResultUtils.combineAll fires them in parallel.
+### Concurrent Parallel Execution (combineAll)
+   When executing multiple operations simultaneously, combineAll fires them in parallel.
    If any operation fails, it aggregates all intercepted errors into a unified MultiFailure contract
    instead of short-circuiting on the first error.
 
 ```dart 
-  final Result<List<dynamic>> dashboardResult = await
-  ResultUtils.combineAll
-    ([repository.fetchUserProfile(),
+
+final dashboardResult = await [
+repository.fetchUserProfile(), 
     repository.fetchNotifications(),
-    repository.fetchCryptoWallet(),
-  ]); 
+repository.fetchCryptoWallet(),
+].combineAll();
+
 ```
 
 
