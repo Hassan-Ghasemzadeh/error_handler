@@ -4,6 +4,13 @@ import '../../../resultex.dart';
 import '../../model/cancellation_failure.dart';
 
 /// A reactive wrapper for asynchronous operations that can be manually aborted.
+///
+/// **⚠️ Architectural Note on Dart Futures:**
+/// Unlike Kotlin Coroutines or Isolate streams, Dart [Future]s cannot be intrinsically
+/// aborted at the execution level. Calling [cancel] on this wrapper immediately resolves
+/// the downstream pipeline with a [CancellationFailure] (allowing the UI to unlock),
+/// but the underlying asynchronous background task will technically continue executing
+/// until completion. Its final outcome will simply be safely discarded.
 class CancellableResult<T> {
   final Completer<Result<T>> _completer = Completer<Result<T>>();
   bool _isCancelled = false;
@@ -26,11 +33,14 @@ class CancellableResult<T> {
       if (!_isCancelled && !_completer.isCompleted) {
         _completer.complete(result);
       }
-    } catch (error) {
+    } catch (error, stackTrace) {
       // Safety net for raw unhandled Dart exceptions
       if (!_isCancelled && !_completer.isCompleted) {
+        // NOTE: If your Failure class supports stackTrace, it's highly recommended to pass it here.
         _completer.complete(
-            Result.failure(Failure(message: 'Unhandled Exception: $error')));
+          Result.failure(Failure(
+              message: 'Unhandled Exception: $error', stackTrace: stackTrace)),
+        );
       }
     }
   }
@@ -38,7 +48,7 @@ class CancellableResult<T> {
   /// Instantly aborts the operational pipeline.
   ///
   /// The [value] future will immediately resolve with a [CancellationFailure].
-  /// Subsequent completions by the original computation are silently ignored.
+  /// Subsequent completions by the original computation are safely and silently ignored.
   void cancel([String? customMessage]) {
     if (_isCancelled || _completer.isCompleted) return;
 
