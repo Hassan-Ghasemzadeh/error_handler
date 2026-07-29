@@ -447,7 +447,7 @@ late CancellableResult<UserProfile> profileRequest;
 @override
 void initState() {
   super.initState();
-  profileRequest = Result.cancellable(() => api.fetchUserProfile());
+  profileRequest = result.cancellable(() => api.fetchUserProfile());
 
   profileRequest.value.then((result) {
     result.when(
