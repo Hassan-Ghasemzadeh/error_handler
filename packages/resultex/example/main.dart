@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:resultex/resultex.dart';
-import 'package:resultex/src/core/extensions/future_result.dart';
-import 'package:resultex/src/core/extensions/result_flutterx_extension.dart';
-import 'package:resultex/src/core/extensions/result_zip_record.dart';
+import 'package:resultex/src/core/extensions/async/future_result_extension.dart';
+import 'package:resultex/src/core/extensions/integrations/result_flutterx_extension.dart';
+import 'package:resultex/src/core/extensions/transform/result_zip_record_extension.dart';
 import 'package:resultex/src/model/multi_failure.dart';
 
 void main() async {

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:resultex/resultex.dart';
-import 'package:resultex/src/core/extensions/result_recovery_extension.dart';
-import 'package:resultex/src/core/extensions/result_unwrap_x.dart';
+import 'package:resultex/src/core/extensions/transform/result_recovery_extension.dart';
+import 'package:resultex/src/core/extensions/transform/result_unwrap_extension.dart';
 
 void main() {
   group('ResultExtensions - recover', () {

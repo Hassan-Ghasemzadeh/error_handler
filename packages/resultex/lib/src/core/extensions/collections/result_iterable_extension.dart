@@ -1,5 +1,5 @@
-import '../../../resultex.dart';
-import '../../model/multi_failure.dart';
+import '../../../../resultex.dart';
+import '../../../model/multi_failure.dart';
 
 /// Extension providing utility methods for aggregating multiple [Result] futures.
 extension ResultIterableExtension<T> on Iterable<Future<Result<T>>> {

@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../../../resultex.dart';
+import '../../../../resultex.dart';
 
 /// Internal Expando table to track active debounce timers attached to [ResultNotifier] instances.
 ///

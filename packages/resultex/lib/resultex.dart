@@ -88,7 +88,7 @@ export 'src/core/utils/result_collection.dart';
 export 'src/core/utils/result_memoizer.dart';
 
 /// Exports rate-limiting functional extensions (debounce & throttle) for [ResultNotifier].
-export 'src/core/extensions/result_notifier_fpx.dart';
+export 'src/core/extensions/integrations/result_notifier_extension.dart';
 
 /// Exports auto-retry with exponential backoff mechanism for async result functions and notifiers.
-export 'src/core/extensions/future_retry_extensions.dart';
+export 'src/core/extensions/async/future_retry_extensions.dart';
