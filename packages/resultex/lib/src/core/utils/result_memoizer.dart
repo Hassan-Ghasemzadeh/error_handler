@@ -1,17 +1,31 @@
 import 'dart:async';
-
 import '../../../resultex.dart';
 
-/// Architectural utility for caching functional evaluations.
-class ResultMemoizer {
-  /// Wraps an asynchronous computation, returning a memoized version of the function.
+/// An architectural utility for caching and memoizing asynchronous [Result] computations.
+abstract class ResultMemoizer {
+  /// Private constructor to prevent instantiation.
+  ResultMemoizer._();
+
+  /// Wraps an asynchronous [computation], returning a memoized version of the function.
   ///
-  /// - If the computation evaluates to a [SuccessResult], it caches the result and
-  ///   subsequent calls will return the cached payload instantly.
-  /// - If the computation is actively running, concurrent calls will await the same
-  ///   ongoing process instead of triggering duplicate parallel executions.
-  /// - If the computation evaluates to a [FailureResult], it does NOT cache the failure,
-  ///   allowing subsequent attempts to try again.
+  /// Behavioral guarantees:
+  /// - **Successful Cache**: If the computation evaluates to a [SuccessResult], it caches
+  ///   the result. Subsequent calls will return the cached payload instantly.
+  /// - **Concurrency Control**: If the computation is actively running, concurrent calls
+  ///   will join the existing active future instead of triggering duplicate parallel executions.
+  /// - **Failure Resilience**: If it evaluates to a [FailureResult], it does NOT cache
+  ///   the failure, allowing subsequent attempts to automatically retry.
+  ///
+  /// Example:
+  /// ```dart
+  /// final getCachedUser = ResultMemoizer.memoizeAsync(() => fetchUser());
+  ///
+  /// // First call triggers network request
+  /// final user1 = await getCachedUser();
+  ///
+  /// // Second call returns instantly from memory cache
+  /// final user2 = await getCachedUser();
+  /// ```
   static Future<Result<T>> Function() memoizeAsync<T>(
     Future<Result<T>> Function() computation,
   ) {
@@ -20,31 +34,43 @@ class ResultMemoizer {
 
     return () async {
       // 1. Fast path: Return immediately if already successfully resolved.
-      if (cachedSuccess is SuccessResult<T>) {
-        return cachedSuccess!;
+      if (cachedSuccess case SuccessResult<T> success) {
+        return success;
       }
 
-      // 2. Concurrency protection: If already fetching, join the existing awaitable queue.
+      // 2. Concurrency protection: Join the active execution queue if already running.
       if (activeOperation != null) {
         return activeOperation!.future;
       }
 
-      // 3. Execution path: Lock the gateway and execute.
+      // 3. Execution path: Initialize the gate lock.
       activeOperation = Completer<Result<T>>();
 
-      final result = await computation();
+      try {
+        final result = await computation();
 
-      // Only cache if the outcome was strictly successful.
-      if (result is SuccessResult<T>) {
-        cachedSuccess = result;
+        // Only cache if the outcome is strictly a success.
+        if (result is SuccessResult<T>) {
+          cachedSuccess = result;
+        }
+
+        activeOperation!.complete(result);
+        return result;
+      } catch (error, stackTrace) {
+        // Defensive safety: Ensure unexpected unhandled exceptions
+        // also complete the completer so the queue doesn't hang forever.
+        final failureResult = FailureResult<T>(
+          Failure(message: error.toString()),
+        );
+
+        if (!activeOperation!.isCompleted) {
+          activeOperation!.complete(failureResult);
+        }
+        return failureResult;
+      } finally {
+        // Always release the operation lock for future retry attempts.
+        activeOperation = null;
       }
-
-      activeOperation!.complete(result);
-
-      // Release the operation lock so failed attempts can be retried later.
-      activeOperation = null;
-
-      return result;
     };
   }
 }
