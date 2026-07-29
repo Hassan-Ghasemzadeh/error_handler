@@ -14,6 +14,7 @@ export 'async/future_result_extension.dart';
 export 'async/future_retry_extensions.dart';
 export 'async/result_concurrency_extension.dart';
 export 'async/result_stream_extension.dart';
+export 'async/result_cancellation_extension.dart';
 
 // ==========================================
 // COLLECTION EXTENSIONS
