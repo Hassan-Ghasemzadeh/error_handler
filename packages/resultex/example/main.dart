@@ -149,12 +149,11 @@ Future<void> _demonstrateStreamExecution() async {
 Future<void> _loadDashboardData() async {
   final repository = DashboardRepository();
 
-  // Fire all asynchronous requests concurrently to optimize execution time
-  final Result<List<dynamic>> dashboardResult = await ResultUtils.combineAll([
+  final dashboardResult = await [
     repository.fetchUserProfile(),
     repository.fetchNotifications(),
     repository.fetchCryptoWallet(),
-  ]);
+  ].combineAll();
 
   // Evaluates the aggregated result state and resolves it into a target Flutter Widget
   final Widget displayWidget = dashboardResult.when(

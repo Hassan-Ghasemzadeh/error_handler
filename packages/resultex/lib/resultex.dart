@@ -71,10 +71,6 @@ export 'src/ui/widget/multi_result_builder.dart';
 // UTILITIES & EXTENSIONS
 // ==========================================
 
-/// Exports generic functional helper utilities and extension methods (such as map,
-/// then, and combine) to streamline [Result] manipulation.
-export 'src/core/utils/result_utils.dart';
-
 /// Exports utilities for managing asynchronous operations that can be cancelled
 /// mid-flight, returning a graceful cancellation state.
 export 'src/core/utils/cancellable_result.dart';
