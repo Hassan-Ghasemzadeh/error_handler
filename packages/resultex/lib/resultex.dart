@@ -75,10 +75,6 @@ export 'src/ui/widget/multi_result_builder.dart';
 /// mid-flight, returning a graceful cancellation state.
 export 'src/core/utils/cancellable_result.dart';
 
-/// Exports collection helpers to safely process, filter, and manage lists or
-/// groups of independent [Result] objects.
-export 'src/core/utils/result_collection.dart';
-
 /// Exports performance optimization utilities to cache and recall the outcomes
 /// of expensive or repetitive [Result]-yielding operations.
 export 'src/core/utils/result_memoizer.dart';

@@ -1,7 +1,7 @@
 /// A centralized barrel file for all [Result] extensions in the `resultex` package.
 ///
-/// This file categorizes and exports various utility extensions to enhance 
-/// the functionality, readability, and integration capabilities of the [Result] 
+/// This file categorizes and exports various utility extensions to enhance
+/// the functionality, readability, and integration capabilities of the [Result]
 /// type across different domains.
 library;
 
@@ -21,6 +21,7 @@ export 'async/result_stream_extension.dart';
 /// Extensions for processing Iterables, list accumulations, and collections of Results.
 export 'collections/result_iterable_extension.dart';
 export 'collections/result_accumulator_extension.dart';
+export 'collections/result_iterable_mapping_extension.dart';
 
 // ==========================================
 // INTEGRATION EXTENSIONS

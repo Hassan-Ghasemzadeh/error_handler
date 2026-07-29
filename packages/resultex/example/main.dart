@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:resultex/resultex.dart';
 import 'package:resultex/src/core/extensions/async/future_result_extension.dart';
+import 'package:resultex/src/core/extensions/collections/result_iterable_mapping_extension.dart';
 import 'package:resultex/src/core/extensions/integrations/result_flutterx_extension.dart';
 import 'package:resultex/src/core/extensions/transform/result_zip_record_extension.dart';
 import 'package:resultex/src/model/multi_failure.dart';
@@ -214,7 +215,7 @@ Future<void> _loadZippedDashboardData() async {
 
 /// Demonstrates [ResultCollection.mapList] utilizing both Strict and Lenient fallback strategies.
 Future<void> _processBatchRawFeeds() async {
-  // A simulated list of incoming untrusted raw payloads from external providers
+// A simulated list of incoming untrusted raw payloads from external providers
   final List<Map<String, dynamic>> rawJsonFeed = [
     {'title': 'System Security Patch Released'},
     {'corrupted_key': null}, // Bad record that will throw during extraction
@@ -225,10 +226,9 @@ Future<void> _processBatchRawFeeds() async {
     print('\n--- Executing Collection Transformation Strategies ---');
   }
 
-  // Tactics A: Lenient Mode (strict: false) -> Filters out corrupt records gracefully, keeping the view alive
+// Tactics A: Lenient Mode (strict: false) -> Filters out corrupt records gracefully, keeping the view alive
   final Result<List<AppNotification>> lenientResult =
-      ResultCollection.mapList<Map<String, dynamic>, AppNotification>(
-    rawJsonFeed,
+      rawJsonFeed.mapResult<AppNotification>(
     (json) => Result.guard(() => AppNotification.fromMap(json)),
     strict: false,
   );
@@ -245,8 +245,7 @@ Future<void> _processBatchRawFeeds() async {
 
   // Tactics B: Strict Mode (strict: true) -> Instant short-circuits upon hitting the first structural error
   final Result<List<AppNotification>> strictResult =
-      ResultCollection.mapList<Map<String, dynamic>, AppNotification>(
-    rawJsonFeed,
+      rawJsonFeed.mapResult<AppNotification>(
     (json) => Result.guard(() => AppNotification.fromMap(json)),
     strict: true,
   );

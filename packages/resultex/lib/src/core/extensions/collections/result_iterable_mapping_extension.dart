@@ -1,7 +1,8 @@
-import '../../../resultex.dart';
+import '../../../../resultex.dart';
 
-class ResultCollection {
-  /// Iterates over a [list] of elements, applies a transformation function [mapper]
+/// Extension providing functional mapping and aggregation utilities for [Iterable] collections.
+extension ResultIterableMappingExtension<I> on Iterable<I> {
+  /// Iterates over the elements, applies a transformation function [mapper]
   /// that returns a [Result], and aggregates the outcomes based on the selected [strict] strategy.
   ///
   /// - If [strict] is `true` (Strict Strategy): The first encountered [FailureResult]
@@ -11,8 +12,7 @@ class ResultCollection {
   ///
   /// ### Strict Example:
   /// ```dart
-  /// final Result<List<User>> strictResult = ResultUtils.mapList<Map, User>(
-  ///   rawJsonList,
+  /// final Result<List<User>> strictResult = rawJsonList.mapResult<User>(
   ///   (json) => Result.guard(() => User.fromJson(json)),
   ///   strict: true,
   /// );
@@ -20,20 +20,19 @@ class ResultCollection {
   ///
   /// ### Lenient Example:
   /// ```dart
-  /// final Result<List<User>> lenientResult = ResultUtils.mapList<Map, User>(
-  ///   rawJsonList,
+  /// final Result<List<User>> lenientResult = rawJsonList.mapResult<User>(
   ///   (json) => Result.guard(() => User.fromJson(json)),
   ///   strict: false, // Safely drops corrupted rows
   /// );
   /// ```
-  static Result<List<O>> mapList<I, O>(
-    List<I> list,
+  Result<List<O>> mapResult<O>(
     Result<O> Function(I item) mapper, {
     bool strict = true,
   }) {
     final List<O> successfulItems = [];
 
-    for (final item in list) {
+    // 'this' refers to the Iterable instance being extended
+    for (final item in this) {
       final result = mapper(item);
 
       switch (result) {
