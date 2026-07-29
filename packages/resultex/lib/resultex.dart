@@ -87,8 +87,8 @@ export 'src/core/utils/result_collection.dart';
 /// of expensive or repetitive [Result]-yielding operations.
 export 'src/core/utils/result_memoizer.dart';
 
-/// Exports rate-limiting functional extensions (debounce & throttle) for [ResultNotifier].
-export 'src/core/extensions/integrations/result_notifier_extension.dart';
-
-/// Exports auto-retry with exponential backoff mechanism for async result functions and notifiers.
-export 'src/core/extensions/async/future_retry_extensions.dart';
+/// Core functional operations, async utilities, and ecosystem integrations (e.g., BLoC, Flutter).
+///
+/// This single export provides access to all extension methods (like combineAll, retry, debounce)
+/// to supercharge the [Result] type.
+export 'src/core/extensions/extensions.dart';
