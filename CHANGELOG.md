@@ -3,6 +3,11 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## [4.0.1] - 2026-07-30
+
+* **Refactor:** Complete code optimization and structural cleanup across the core logic.
+* **Documentation:** Updated and polished `README.md` to reflect version 4.0 updates.
+
 ## [4.0.0] - 2026-07-29
 
 ### Breaking Changes
