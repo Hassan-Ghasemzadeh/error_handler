@@ -1,6 +1,5 @@
 import 'package:resultex_logger/src/formatter/resultex_logger_formatter.dart';
 import '../model/log_detail.dart';
-import '../model/log_level.dart';
 import '../setting/resultex_logger_settings.dart';
 
 /// A symmetric box-style log formatter that wraps log messages inside a clean,
