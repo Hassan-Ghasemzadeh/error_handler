@@ -9,6 +9,7 @@ class HiveCacheProvider<T> implements ResultexCacheProvider<T> {
   /// The name of the Hive box used for caching.
   final String boxName;
 
+  // executor to use resultex package features
   final ResultExecutor executor;
 
   Box<T>? _box;
@@ -27,6 +28,7 @@ class HiveCacheProvider<T> implements ResultexCacheProvider<T> {
     return _box!;
   }
 
+  // Read from hive database
   @override
   Future<Result<T?>> read(String key) async {
     return executor.executeAsync<T>(
@@ -37,6 +39,7 @@ class HiveCacheProvider<T> implements ResultexCacheProvider<T> {
     );
   }
 
+  // Write to Hive Database
   @override
   Future<void> write(String key, T data) async {
     await executor.executeAsync(
@@ -47,6 +50,7 @@ class HiveCacheProvider<T> implements ResultexCacheProvider<T> {
     );
   }
 
+  // Delete from Hive database
   @override
   Future<void> delete(String key) async {
     await executor.executeAsync(
@@ -57,6 +61,7 @@ class HiveCacheProvider<T> implements ResultexCacheProvider<T> {
     );
   }
 
+  // Clears data from hive database
   @override
   Future<void> clear() async {
     await executor.executeAsync(
