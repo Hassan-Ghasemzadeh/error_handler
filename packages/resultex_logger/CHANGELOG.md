@@ -2,18 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-# 1.2.5
-
-## What's New & Refactored
-
-This major release focuses on deep performance optimizations, cleaner rendering structures, and
-cross-platform enhancements.
+# 1.1.6
 
 ### Core & Architecture Refactoring
-
-* **Cross-Platform Color Safety:** Implemented automated runtime detection using `kIsWeb` to
-  dynamically strip ANSI escape codes on Web platforms, preventing corrupted or unparsed character
-  rendering.
 * **Flexible Logger Pipeline:** Enhanced `ResultexLogger` with streamlined multi-line parsing,
   automated nested indentation depth tracking, and robust error/stack-trace recovery.
 
