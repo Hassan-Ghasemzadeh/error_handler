@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'package:resultex_logger/resultex_logger.dart';
 import '../../error/flutter_error_handler.dart';
 import 'di_module.dart';
 
