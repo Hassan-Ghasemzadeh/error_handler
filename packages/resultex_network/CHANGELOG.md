@@ -1,7 +1,14 @@
 # Changelog
 
 All notable changes to the `resultex_network` package will be documented in this file.
+
+## 1.2.2 - 2026-07-31
+
+* **Refactoring** Edited the ResultexLogger initializer in `ResultexLoggerInterceptor` to support
+  new changes in ResultexLogger
+
 ## 1.2.1 - 2026-07-28
+
 * **Documentation:** Fixed markdown table formatting issues for interceptors in `README.md`.
 
 ## 1.2.0 - 2026-07-28
