@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:resultex_logger/resultex_logger.dart';
+import 'package:get_it/get_it.dart';
+import 'package:resultex_logger/core/utils/logger_service.dart';
 
 /// A centralized coordinator for intercepting and logging application errors.
 ///
@@ -8,12 +9,14 @@ import 'package:resultex_logger/resultex_logger.dart';
 /// platform errors, ensuring they are consistently logged locally and eventually
 /// reported to external telemetry services.
 class FlutterErrorHandler {
-  final ResultexLogger _logger;
+  final LoggerService _logger;
 
   /// Creates a [FlutterErrorHandler] instance.
   ///
-  /// Requires a [ResultexLogger] implementation for local output.
-  FlutterErrorHandler({required ResultexLogger logger}) : _logger = logger;
+  /// Resolves [LoggerService] from [GetIt] by default if no explicit [logger] is provided,
+  /// ensuring global logger configuration (like custom line symbols) is respected.
+  FlutterErrorHandler({LoggerService? logger})
+      : _logger = logger ?? GetIt.I<LoggerService>();
 
   /// Routes the captured [error] and [stackTrace] to the appropriate logging level.
   void logError(String message, Object? error, StackTrace? stackTrace) {

@@ -4,10 +4,10 @@ import '../model/log_level.dart';
 import '../setting/resultex_logger_settings.dart';
 
 /// A symmetric box-style log formatter that wraps log messages inside a clean,
-/// geometrically aligned block.
+/// geometrically aligned structural block.
 ///
-/// This formatter dynamically calculates lengths to ensure borders and side walls
-/// align perfectly on a monospace grid terminal (e.g., Linux/Fedora environments).
+/// Dynamically calculates layout boundaries based on content length and
+/// applies configured border symbols, line widths, and ANSI color palettes.
 class SymmetricBoxFormatter implements LoggerFormatter {
   @override
   List<String> format(
@@ -18,67 +18,67 @@ class SymmetricBoxFormatter implements LoggerFormatter {
     final String stringMessage = details.message.toString();
     final String indent = '  ' * groupDepth;
 
-    // Split the message into multiple lines if it contains explicit newlines (\n)
-    // or if its total length exceeds the maximum allowed line width config.
-    final List<String> lines = stringMessage.contains('\n')
+    // 1. Deconstruct incoming message by explicit newlines (\n)
+    final List<String> rawLines = stringMessage.contains('\n')
         ? stringMessage.split('\n')
-        : _splitByLength(stringMessage, settings.maxLineWidth);
+        : [stringMessage];
 
-    // Box layouts are strictly enforced for high-priority or severe logs (Error, Critical, Warning).
-    final bool requiresBox = details.level == LogLevel.error ||
-        details.level == LogLevel.critical ||
-        details.level == LogLevel.warning;
+    // 2. Chunk long text segments according to configured maxLineWidth threshold
+    final List<String> lines = [];
+    for (final line in rawLines) {
+      if (line.length > settings.maxLineWidth) {
+        lines.addAll(_splitByLength(line, settings.maxLineWidth));
+      } else {
+        lines.add(line);
+      }
+    }
 
-    // Helper closure to inject ANSI escape color codes safely via LogDetails pen.
+    // Helper closure to wrap formatted string with ANSI color sequences when enabled
     String penText(String text) =>
         settings.enableColors ? details.pen(text) : text;
 
-    // If it's a single line and doesn't require high-severity framing, print it as a standard raw line.
-    if (lines.length == 1 && !requiresBox) {
-      return [indent + penText(stringMessage)];
-    } else {
-      // Step 1: Track down the longest text row to establish the baseline horizontal box width.
-      int maxLineLength = 0;
-      for (final line in lines) {
-        if (line.length > maxLineLength) maxLineLength = line.length;
-      }
-
-      // Maintain a sensible minimum width (40 chars) to prevent thin, ugly squashed boxes.
-      if (maxLineLength < 40) maxLineLength = 40;
-
-      // Using '│' (Unicode Box Drawing) instead of '|' (Standard Keyboard Pipe).
-      // This character has 0 vertical margins and automatically creates a solid, unbroken wall.
-      const String sideWall = '│';
-
-      // MATHEMATICAL ALIGNMENT FORMULA:
-      // A standard content row composition consists of:
-      // sideWall (1 char) + space padding (1 char) + content (maxLineLength) + space padding (1 char) + sideWall (1 char)
-      // Total visual footprint is exactly: maxLineLength + 4 characters.
-      // To keep corners completely flush and seamless, the ceiling/floor lines must match this length exactly.
-      final String horizontalBorder = settings.lineSymbol * (maxLineLength + 4);
-      final List<String> finalLines = [];
-
-      // 1. Build Top Border (100% seamless lineSymbol)
-      finalLines.add(indent + penText(horizontalBorder));
-
-      // 2. Build Content Rows with unbroken side walls and tracking spaces
-      for (final line in lines) {
-        final int paddingNeeded = maxLineLength - line.length;
-        final String padding = ' ' * paddingNeeded;
-
-        // Layout representation: │ [Message Content + Trailing Spaces] │
-        finalLines.add(indent + penText('$sideWall $line$padding $sideWall'));
-      }
-
-      // 3. Build Bottom Border (100% seamless lineSymbol)
-      finalLines.add(indent + penText(horizontalBorder));
-
-      return finalLines;
+    // 3. Determine maximum string length across all lines to set internal box width
+    int maxLineLength = 0;
+    for (final line in lines) {
+      if (line.length > maxLineLength) maxLineLength = line.length;
     }
+
+    // Clamp effective content width to defined maxLineWidth
+    final int boxContentWidth = maxLineLength > settings.maxLineWidth
+        ? settings.maxLineWidth
+        : maxLineLength;
+
+    const String sideWall = '│';
+
+    // Fallback to default horizontal line symbol if provided symbol is empty
+    final String symbol =
+        settings.lineSymbol.isEmpty ? '─' : settings.lineSymbol;
+
+    // 4. Build horizontal ceiling/floor border proportional to content padding
+    final int borderLength = boxContentWidth + 4;
+    final String horizontalBorder = symbol * borderLength;
+
+    final List<String> finalLines = [];
+
+    // Top structural frame
+    finalLines.add(indent + penText(horizontalBorder));
+
+    // Embedded message lines with dynamic right-hand padding
+    for (final line in lines) {
+      final int paddingNeeded = boxContentWidth - line.length;
+      final String padding = ' ' * (paddingNeeded < 0 ? 0 : paddingNeeded);
+
+      finalLines.add(indent + penText('$sideWall $line$padding $sideWall'));
+    }
+
+    // Bottom structural frame
+    finalLines.add(indent + penText(horizontalBorder));
+
+    return finalLines;
   }
 
-  /// Splits a continuous single-line string into smaller text chunks
-  /// bounded by the specified [chunkSize].
+  /// Iteratively slices continuous string data into uniform sub-chunks
+  /// matching the specified [chunkSize].
   List<String> _splitByLength(String text, int chunkSize) {
     final List<String> chunks = [];
     for (int i = 0; i < text.length; i += chunkSize) {

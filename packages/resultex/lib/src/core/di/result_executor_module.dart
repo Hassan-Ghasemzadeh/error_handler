@@ -19,7 +19,6 @@ class ResultExecutorModule extends DIModule {
     // The dependency container provides the AppLogger instance at runtime.
     injector.registerLazySingleton<ResultExecutor>(
       () => ResultExecutor(
-        logger: injector.get<ResultexLogger>(),
         errorHandler: injector.get<FlutterErrorHandler>(),
       ),
     );

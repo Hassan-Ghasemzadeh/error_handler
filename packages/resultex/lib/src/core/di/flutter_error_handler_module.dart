@@ -17,7 +17,7 @@ class FlutterErrorHandlerModule extends DIModule {
     // Register FlutterErrorHandler as a lazy singleton.
     // It retrieves the registered AppLogger instance dynamically using injector.get().
     injector.registerLazySingleton<FlutterErrorHandler>(
-      () => FlutterErrorHandler(logger: injector.get<ResultexLogger>()),
+      () => FlutterErrorHandler(),
     );
   }
 }

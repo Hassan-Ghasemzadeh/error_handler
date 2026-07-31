@@ -1,5 +1,6 @@
 // lib/src/core/result_executor.dart
 import 'dart:async';
+import 'package:get_it/get_it.dart';
 import 'package:resultex_logger/core/utils/logger_service.dart';
 import '../error/flutter_error_handler.dart';
 import '../model/failure.dart';
@@ -11,14 +12,14 @@ class ResultExecutor {
   final LoggerService _logger;
   final FlutterErrorHandler _errorHandler;
 
-  /// Creates a constant [ResultExecutor] instance.
+  /// Creates a [ResultExecutor] instance.
   ///
-  /// Requires concrete implementations of [LoggerService] and [FlutterErrorHandler]
-  /// to ensure dependency inversion and testability.
-  const ResultExecutor({
-    required LoggerService logger,
+  /// Uses the provided [logger] or falls back to resolving [LoggerService] from [GetIt]
+  /// if no explicit instance is supplied.
+  ResultExecutor({
+    LoggerService? logger,
     required FlutterErrorHandler errorHandler,
-  })  : _logger = logger,
+  })  : _logger = logger ?? GetIt.I<LoggerService>(),
         _errorHandler = errorHandler;
 
   /// Executes a standard synchronous [operation] closure block securely.
@@ -36,9 +37,9 @@ class ResultExecutor {
 
   /// Executes an asynchronous [operation] block tracking a standard Dart [Future] pipeline.
   Future<Result<T>> executeAsync<T>(
-    FutureOr<dynamic> Function() operation, {
-    String? context,
-  }) async {
+      FutureOr<dynamic> Function() operation, {
+        String? context,
+      }) async {
     final tag = context != null ? '[$context]' : '[ResultExecutor]';
     try {
       _logger.debug('$tag Async execution started.');
@@ -64,9 +65,9 @@ class ResultExecutor {
 
   /// Evaluates and wraps a multi-event data [streamFactory] pipeline asynchronously.
   Stream<Result<T>> executeStream<T>(
-    Stream<T> Function() streamFactory, {
-    String? context,
-  }) async* {
+      Stream<T> Function() streamFactory, {
+        String? context,
+      }) async* {
     final tag = context != null ? '[$context]' : '[ResultExecutor]';
     try {
       _logger.debug('$tag Stream pipeline subscription initialized.');
@@ -84,8 +85,9 @@ class ResultExecutor {
   Result<T> _handleError<T>(Object e, StackTrace stackTrace, String? context) {
     final tag = context != null ? '[$context]' : '[ResultExecutor]';
     final errorMessage =
-        context != null ? 'Error in $context: $e' : e.toString();
+    context != null ? 'Error in $context: $e' : e.toString();
 
+    // Logs the error with full SymmetricBoxFormatter options
     _logger.error('$tag Intercepted critical crash: $errorMessage');
 
     // Delegate the responsibility of logging and external reporting entirely to FlutterErrorHandler

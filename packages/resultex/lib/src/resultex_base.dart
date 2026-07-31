@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:resultex/src/result_executor/result_executor.dart';
+import 'package:resultex_logger/core/utils/logger_service.dart';
 import 'package:resultex_logger/resultex_logger.dart';
 import 'core/di/get_it_config.dart';
 import 'error/flutter_error_handler.dart';
@@ -36,6 +37,9 @@ class Resultex {
   /// **Usage:** Call this method at the very beginning of your application execution,
   /// typically inside `main()` before calling `runApp()`.
   static Future<void> init() async {
+    if (!GetIt.I.isRegistered<LoggerService>()) {
+      GetIt.I.registerResultexLogger();
+    }
     // 1. Boot up the core DI configuration to register all necessary singletons and factories.
     await GetItConfiguration.init();
     await ResultexLoggerBase.init();
