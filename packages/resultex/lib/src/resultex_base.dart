@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:resultex/src/result_executor/result_executor.dart';
+import 'package:resultex_logger/resultex_logger.dart';
 import 'core/di/get_it_config.dart';
 import 'error/flutter_error_handler.dart';
 
@@ -37,7 +38,7 @@ class Resultex {
   static Future<void> init() async {
     // 1. Boot up the core DI configuration to register all necessary singletons and factories.
     await GetItConfiguration.init();
-
+    await ResultexLoggerBase.init();
     // 2. Resolve the centralized FlutterErrorHandler instance from the Service Locator.
     final FlutterErrorHandler errorHandler = GetIt.I.get<FlutterErrorHandler>();
 
