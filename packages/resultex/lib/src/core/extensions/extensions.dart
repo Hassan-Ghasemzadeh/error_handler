@@ -43,3 +43,4 @@ export 'transform/result_transformation.dart';
 export 'transform/result_unwrap_extension.dart';
 export 'transform/unit_extension.dart';
 export 'transform/result_zip_record_extension.dart';
+export 'transform/resultex_get_it_extension.dart';
