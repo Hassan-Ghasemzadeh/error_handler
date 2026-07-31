@@ -3,6 +3,10 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## [4.0.2] - 2026-07-31
+
+* **Refactor and Fixed** refactored and added logger initializer to resultex init func
+
 ## [4.0.1] - 2026-07-30
 
 * **Refactor:** Complete code optimization and structural cleanup across the core logic.
