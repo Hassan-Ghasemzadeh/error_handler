@@ -98,10 +98,18 @@ class ResultexLogger implements LoggerService {
 
     // Flush lines independently to secure perfect prefix tag positioning on each string row
     for (final String line in formattedLines) {
-      _writeToConsole(line, name: name, level: details.level.value);
+      //Do not colorize the text in web and do it in others
+      final String finalLine = kIsWeb ? _stripAnsiCodes(line) : line;
+      _writeToConsole(finalLine, name: name, level: details.level.value);
     }
 
     _logTechnicalDetails(details);
+  }
+
+  // Remove ANSI code on web platform
+  String _stripAnsiCodes(String input) {
+    final ansiEscapeRegex = RegExp(r'\x1B\[[0-9;]*[mK]');
+    return input.replaceAll(ansiEscapeRegex, '');
   }
 
   /// Extracts embedded technical anomalies and automatically reapplies the pipeline configuration.
