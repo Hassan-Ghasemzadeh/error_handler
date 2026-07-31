@@ -6,9 +6,6 @@ All notable changes to this project will be documented in this file.
 
 ### Core & Architecture Refactoring
 
-* **Cross-Platform Color Safety:** Implemented automated runtime detection using `kIsWeb` to
-  dynamically strip ANSI escape codes on Web platforms, preventing corrupted or unparsed character
-  rendering.
 * **Flexible Logger Pipeline:** Enhanced `ResultexLogger` with streamlined multi-line parsing,
   automated nested indentation depth tracking, and robust error/stack-trace recovery.
 
