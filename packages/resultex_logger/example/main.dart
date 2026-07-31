@@ -3,14 +3,13 @@ import 'package:resultex_logger/resultex_logger.dart';
 
 void main() async {
   // Example initializing implementation
-  final loggerBase = ResultexLoggerBase();
+  await ResultexLoggerBase.init();
   final logger = ResultexLogger(
     settings: ResultexLoggerSettings(
       maxLineWidth: 40, // Slimmer boxes
       lineSymbol: '*', // Use hashes instead of solid lines
     ),
   );
-  await loggerBase.init();
   if (kDebugMode) {
     logger.info('Resultex Logger Example running...');
     logger.info('Application started successfully.');

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.5
+
+* **Refactoring** changed `ResultexLoggerBase` class to abstract class and it's function to static
+
 ## 1.1.4
 
 ### Fixed
