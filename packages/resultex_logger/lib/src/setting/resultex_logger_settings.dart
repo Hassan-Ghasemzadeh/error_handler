@@ -8,9 +8,9 @@ class ResultexLoggerSettings {
   /// Creates a final configuration instance with robust fallback defaults.
   const ResultexLoggerSettings({
     this.minLogLevel = LogLevel.verbose,
-    this.maxLineWidth = 100,
+    this.maxLineWidth = 40,
     this.enableColors = true,
-    this.lineSymbol = '─',
+    this.lineSymbol = '-',
   });
 
   /// The minimum severity threshold required for a log statement to be processed.
