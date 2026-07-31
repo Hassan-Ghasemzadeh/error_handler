@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+# 1.2.5
+
+## What's New & Refactored
+
+This major release focuses on deep performance optimizations, cleaner rendering structures, and
+cross-platform enhancements.
+
+### Core & Architecture Refactoring
+
+* **Cross-Platform Color Safety:** Implemented automated runtime detection using `kIsWeb` to
+  dynamically strip ANSI escape codes on Web platforms, preventing corrupted or unparsed character
+  rendering.
+* **Flexible Logger Pipeline:** Enhanced `ResultexLogger` with streamlined multi-line parsing,
+  automated nested indentation depth tracking, and robust error/stack-trace recovery.
+
+### Ecosystem & Integration Support
+
+* **GetIt Extension Support:** Introduced a dedicated `GetIt` extension (`registerResultexLogger`)
+  allowing seamless dependency injection configuration with custom loggers, settings, and formatters
+  while automatically managing instance lifecycles and collision conflicts.
+* **Configurable Logging Settings:** Added robust support for custom `ResultexLoggerSettings`
+  enabling fine-grained runtime threshold filters and flexible color controls.
+
 ## 1.1.5
 
 * **Refactoring** changed `ResultexLoggerBase` class to abstract class and it's function to static

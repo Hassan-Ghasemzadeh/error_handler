@@ -51,10 +51,10 @@ void main() async {
   // Initialize the logger base configuration
   final loggerBase = ResultexLoggerBase();
   // Initialize the concrete instance of AppLogger.
-  final logger = ResultexLogger(
+  GetIt.I.registerResultexLogger(
     settings: ResultexLoggerSettings(
-      maxLineWidth: 40, // Slimmer boxes
-      lineSymbol: '*', // Use hashes instead of solid lines
+      minLogLevel: LogLevel.debug,
+      enableColors: true,
     ),
   );
 
