@@ -3,6 +3,24 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## [4.1.2] - 2026-08-02
+
+### Refactored
+
+- **Dependency Injection (`GetIt` Integration)**: Updated `FlutterErrorHandler` to resolve
+  `LoggerService` directly from `GetIt` instead of accepting or instantiating direct
+  `ResultexLogger` fallback objects.
+- **Global Configuration Handling**: Ensured framework-level logs (such as error handler
+  bootstrapping) respect custom user logger settings (e.g., custom `lineSymbol`, line width, and
+  colors) defined in `main()`.
+- **`ResultExecutor` Cleanup**: Refactored `ResultExecutor` constructor and internal error routing
+  logic to seamlessly delegate logging and error context packaging without config shadowing.
+
+### Fixed
+
+- Fixed an issue where `Resultex.init()` and internal setup routines were resetting custom logger
+  configurations back to default settings.
+
 ## [4.0.2] - 2026-07-31
 
 * **Refactor and Fixed** refactored and added logger initializer to resultex init func

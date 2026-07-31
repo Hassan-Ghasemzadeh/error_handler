@@ -1,4 +1,4 @@
-# Resultex Logger 🚀
+# Resultex Logger
 
 A lightweight, powerful, and highly compatible logging system for Dart and Flutter. Built directly
 on top of native `developer.log`, it ensures seamless **cross-platform, Web, and WASM compatibility
@@ -9,18 +9,18 @@ on top of native `developer.log`, it ensures seamless **cross-platform, Web, and
 
 ---
 
-## ✨ Features
+## Features
 
 * **✅ Color Logs:** High-visibility ANSI escape sequences to colorize your terminal.
 * **✅ Comprehensive LogLevels:** Full support for `info`, `verbose`, `warning`, `debug`, `error`,
   `critical`, `fine`, and `good`.
-* **🚧 Logs Grouping (In Progress):** Visual nesting for hierarchical runtime operations.
-* **🚧 Collapsible Huge Logs (In Progress):** Smart multi-line layout to handle massive payloads and
+* **✅ Logs Grouping (In Progress):** Visual nesting for hierarchical runtime operations.
+* **✅ Collapsible Huge Logs (In Progress):** Smart multi-line layout to handle massive payloads and
   stack traces cleanly.
 
 ---
 
-## 📸 Preview 
+## Preview
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/screenshot-dash.png" alt="Resultex Standard Logs" width="48%" />
@@ -28,21 +28,22 @@ on top of native `developer.log`, it ensures seamless **cross-platform, Web, and
 </p>
 ---
 
-## 📦 Installation
+## **Getting Started**
+
+## Installation
 
 Since this package is tailored for internal/monorepo architectural designs, add it to your
 `pubspec.yaml` using a local path:
 
 ```yaml
 dependencies:
-  resultex_logger: ^1.1.3
+  resultex_logger: ^1.3.5
 ```
 
-**🛠️ Getting Started**
+### **Initialize Dependencies**
 
-1. **Initialize Dependencies**
-   Before using the logger, initialize its dependency injection layer. It is highly recommended to
-   do this in your main.dart before runApp:
+Before using the logger, initialize its dependency injection layer. It is highly recommended to
+do this in your main.dart before runApp:
 
 ```dart
 void main() async {
@@ -50,7 +51,7 @@ void main() async {
 
   // Initialize the logger base configuration
   final loggerBase = ResultexLoggerBase();
-  // Initialize the concrete instance of AppLogger.
+  // Initialize and register the global ResultexLogger instance into GetIt.
   GetIt.I.registerResultexLogger(
     settings: ResultexLoggerSettings(
       minLogLevel: LogLevel.debug,
@@ -64,9 +65,10 @@ void main() async {
 }
 ```
 
-2. **Basic Usage & Log Mapping**
-   Import the main entry point and start logging across your application. The logger automatically
-   maps colors, tags, and Syslog levels internally:
+### **Basic Usage & Log Mapping**
+
+Import the main entry point and start logging across your application. The logger automatically
+maps colors, tags, and Syslog levels internally:
 
 ```dart
 import 'package:resultex_logger/logger.dart';
@@ -81,6 +83,8 @@ void main() {
       lineSymbol: '*', // Use hashes instead of solid lines
     ),
   );
+  // Or you can get the logger from get_it di
+  final logger = GetIt.get<LoggerService>;
 
   await loggerBase.init();
   // Standard Logs 
@@ -102,7 +106,13 @@ void main() {
 }
 ```
 
-****🏗️ Architecture Note****
+## ****Architecture Note****
+
 This package adheres strictly to the Single Responsibility Principle. The AppLogger is decoupled
 from initialization lifecycles, preventing circular dependencies and making it extremely easy to
 mock during Unit Testing.
+
+## **📄 License**   
+This project is licensed under the MIT License - see the LICENSE file for details. Open Source
+development is respected; feel free to modify, distribute, and implement this package in both public
+repositories and enterprise closed-source commercial systems.

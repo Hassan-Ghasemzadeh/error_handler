@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-# 1.2.5
+## [1.3.5] - 2026-08-02
+
+### Fixed
+
+- Fixed singleton overwrite behavior in `registerResultexLogger()` extension to prevent replacing
+  actively configured user settings upon package initialization.
+
+### Improved
+
+- Standardized `LoggerService` abstraction binding to ensure consistent formatting rules across all
+  consumer packages and error interceptors.
+
+# [1.2.5]
 
 ### Core & Architecture Refactoring
 
@@ -17,18 +29,18 @@ All notable changes to this project will be documented in this file.
 * **Configurable Logging Settings:** Added robust support for custom `ResultexLoggerSettings`
   enabling fine-grained runtime threshold filters and flexible color controls.
 
-## 1.1.5
+## [1.1.5]
 
 * **Refactoring** changed `ResultexLoggerBase` class to abstract class and it's function to static
 
-## 1.1.4
+## [1.1.4]
 
 ### Fixed
 
 - Fixed potential initialization conflicts when multiple loggers were instantiated.
 - Improved ANSI color handling for cleaner terminal output.
 
-## 1.1.3
+## [1.1.3]
 
 ### Added
 
