@@ -19,3 +19,6 @@ export 'package:resultex_logger/src/model/log_level.dart';
 
 // Export logger base
 export 'src/resultex_logger_base.dart';
+
+/// Exports the [ResultexLogger] implementation and its custom configurations.
+export 'core/extensions/integrations/resultex_get_it_extension.dart';
