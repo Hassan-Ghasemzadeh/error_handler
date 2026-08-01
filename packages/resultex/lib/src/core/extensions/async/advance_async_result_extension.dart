@@ -11,8 +11,9 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
   ///
   /// If the current [Result] is a success, the [transform] function is applied
   /// to its value, wrapping the new value in a [SuccessResult].
-  /// If the current [Result] is already a failure, the [transform] step is skipped,
+  /// If the current [Result] is a failure, the [transform] step is skipped,
   /// and the failure is forwarded downstream.
+  /// If the current [Result] is a loading state, the loading state is forwarded downstream.
   ///
   /// Example:
   /// ```dart
@@ -23,8 +24,9 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
 
     return switch (result) {
       SuccessResult<S>(success: Success(:final value)) =>
-        Result.success(await transform(value)),
+          Result.success(await transform(value)),
       FailureResult<S>(failure: final failure) => Result.failure(failure),
+      LoadingResult<S>() => Result.loading(),
     };
   }
 
@@ -34,6 +36,7 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
   /// function, which returns a new [Result] (flattening the nested results).
   /// If the current [Result] is a failure, the operation short-circuits and
   /// returns the failure immediately.
+  /// If the current [Result] is a loading state, the loading state is forwarded downstream.
   ///
   /// Example:
   /// ```dart
@@ -41,14 +44,15 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
   ///     .asyncFlatMap((user) => repository.getOrders(user.id));
   /// ```
   Future<Result<T>> asyncFlatMap<T>(
-    FutureOr<Result<T>> Function(S value) transform,
-  ) async {
+      FutureOr<Result<T>> Function(S value) transform,
+      ) async {
     final result = await this;
 
     return switch (result) {
       SuccessResult<S>(success: Success(:final value)) =>
-        await transform(value),
+      await transform(value),
       FailureResult<S>(failure: final failure) => Result.failure(failure),
+      LoadingResult<S>() => Result.loading(),
     };
   }
 }

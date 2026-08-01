@@ -4,7 +4,7 @@ import '../../../resultex.dart';
 /// A specialized [ValueNotifier] that manages and exposes a reactive [Result] state to the UI.
 ///
 /// It acts as a lightweight, production-ready state manager holding either a successful
-/// data state, a structured failure state, or `null` to represent an idle/loading state.
+/// data state, a structured failure state, a loading state, or `null` to represent an idle state.
 ///
 /// This class includes built-in safeguards against common Flutter async pitfalls:
 /// - **Memory Leaks:** Safely ignores state updates if the widget is disposed.
@@ -28,7 +28,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
 
   /// Indicates whether a background refresh operation is currently in progress.
   ///
-  /// Unlike setting [value] to `null` (which signals an initial full-page loading state),
+  /// Unlike setting [value] to `null` or loading (which signals an initial full-page loading state),
   /// [isRefreshing] keeps the current [value] intact so the UI can render stale data
   /// with a subtle refresh indicator (SWR pattern).
   bool get isRefreshing => _isRefreshing;
@@ -43,7 +43,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   /// Overrides the default [value] setter to provide a single, centralized entry point
   /// for state transitions and telemetry dispatching.
   ///
-  /// Every state mutation (from [reset], [emitSuccess], [emitFailure], [track], or [refresh])
+  /// Every state mutation (from [reset], [emitSuccess], [emitFailure], [emitLoading], [track], or [refresh])
   /// flows through this setter, ensuring [ResultexObserver] receives updates cleanly without code duplication.
   @override
   set value(Result<S>? newValue) {
@@ -60,8 +60,11 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   // UI Helper Getters (DX Improvements)
   // ---------------------------------------------------------------------------
 
-  /// Returns `true` if the state is currently idle or loading (represented by `null`).
-  bool get isLoading => value == null;
+  /// Returns `true` if the state is currently idle (represented by `null`).
+  bool get isInitial => value == null;
+
+  /// Returns `true` if the state is currently in a loading/pending state.
+  bool get isLoading => value is LoadingResult<S>;
 
   /// Returns `true` if the current state holds a successful data payload.
   bool get hasData => value is SuccessResult<S>;
@@ -70,13 +73,13 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   bool get hasError => value is FailureResult;
 
   /// Safely extracts and returns the underlying success data if available.
-  /// Returns `null` if the state is loading or has an error.
+  /// Returns `null` if the state is loading, initial, or has an error.
   S? get data => value is SuccessResult<S>
       ? (value as SuccessResult<S>).success.value
       : null;
 
   /// Safely extracts and returns the failure message if an error occurred.
-  /// Returns `null` if the state is loading or successful.
+  /// Returns `null` if the state is loading, initial, or successful.
   String? get errorMessage =>
       value is FailureResult ? (value as FailureResult).failure.message : null;
 
@@ -84,7 +87,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   // State Mutators
   // ---------------------------------------------------------------------------
 
-  /// Resets the current state back to `null` (idle/loading).
+  /// Resets the current state back to `null` (idle state).
   ///
   /// Involves invalidating any currently pending asynchronous operations triggered via [track].
   void reset() {
@@ -97,15 +100,19 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   /// Manually updates the state with a successful outcome containing [data].
   void emitSuccess(S data) {
     if (_isDisposed) return;
-    value = Result.success(
-        data); // Dispatches state change to observer via centralized setter
+    value = Result.success(data); // Dispatches state change to observer via centralized setter
   }
 
   /// Manually updates the state with a structured [failure].
   void emitFailure(Failure failure) {
     if (_isDisposed) return;
-    value = Result.failure(
-        failure); // Dispatches state change to observer via centralized setter
+    value = Result.failure(failure); // Dispatches state change to observer via centralized setter
+  }
+
+  /// Manually updates the state to an active loading state.
+  void emitLoading() {
+    if (_isDisposed) return;
+    value = Result.loading(); // Dispatches state change to observer via centralized setter
   }
 
   /// Automatically tracks and updates the state based on an asynchronous [operation].
@@ -115,7 +122,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
     final currentToken = ++_executionToken;
 
     if (!_isDisposed) {
-      value = null; // Transition to initial loading state
+      value = Result.loading(); // Transition to loading state automatically
     }
 
     try {
@@ -124,8 +131,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
       // Ignore update if disposed or superseded by a newer operation
       if (_isDisposed || currentToken != _executionToken) return;
 
-      value =
-          result; // Dispatches state change to observer via centralized setter
+      value = result; // Dispatches state change to observer via centralized setter
     } catch (e, stackTrace) {
       if (_isDisposed || currentToken != _executionToken) return;
 
@@ -161,8 +167,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
         notifyListeners();
         ResultexObserverManager.notifyStateChange(identifier, newResult);
       } else {
-        value =
-            newResult; // Dispatches state change to observer via centralized setter
+        value = newResult; // Dispatches state change to observer via centralized setter
       }
 
       return newResult;

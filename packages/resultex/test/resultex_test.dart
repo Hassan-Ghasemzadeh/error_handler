@@ -66,6 +66,7 @@ void main() {
       final successResult = success.fold(
         onSuccess: (value) => 'Got: $value',
         onFailure: (failure) => 'Failed',
+        onLoading: () {},
       );
       expect(successResult, 'Got: 42');
 
@@ -73,6 +74,7 @@ void main() {
       final failureResult = failure.fold(
         onSuccess: (value) => 'Got: $value',
         onFailure: (failure) => 'Failed',
+        onLoading: () {},
       );
       expect(failureResult, 'Failed');
     });

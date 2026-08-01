@@ -26,8 +26,11 @@ class ResultListener<S> extends StatefulWidget {
   /// Side-effect callback invoked when the state emits a [FailureResult].
   final void Function(BuildContext context, Failure failure)? onFailure;
 
-  /// Side-effect callback invoked when the state becomes `null` or active loading.
+  /// Side-effect callback invoked when the state emits a [LoadingResult].
   final void Function(BuildContext context)? onLoading;
+
+  /// Side-effect callback invoked when the state becomes `null` (Initial state).
+  final void Function(BuildContext context)? onInitial;
 
   /// Optional condition predicate to evaluate whether the listener callbacks should execute.
   ///
@@ -43,6 +46,7 @@ class ResultListener<S> extends StatefulWidget {
     this.onSuccess,
     this.onFailure,
     this.onLoading,
+    this.onInitial,
     this.listenWhen,
   });
 
@@ -93,6 +97,12 @@ class _ResultListenerState<S> extends State<ResultListener<S>> {
       // 2. Dispatch granular side-effect callbacks using Dart 3 pattern matching
       switch (currentResult) {
         case null:
+          if (widget.onInitial != null) {
+            widget.onInitial?.call(context);
+          } else {
+            widget.onLoading?.call(context);
+          }
+        case LoadingResult<S>():
           widget.onLoading?.call(context);
         case SuccessResult<S>(success: Success(:final value)):
           widget.onSuccess?.call(context, value);

@@ -6,8 +6,8 @@ import '../../../../resultex.dart';
 extension ResultFailureMappingExtension<S> on Result<S> {
   /// Transforms the inner [Failure] details if the operational outcome is a failure state.
   ///
-  /// If the current [Result] is a success, the conversion step is short-circuited and the
-  /// original [SuccessResult] passes through untouched.
+  /// If the current [Result] is a success or loading state, the conversion step is short-circuited and the
+  /// original state passes through untouched.
   ///
   /// Example:
   /// ```dart
@@ -18,8 +18,9 @@ extension ResultFailureMappingExtension<S> on Result<S> {
   Result<S> mapFailure(Failure Function(Failure failure) transform) {
     return switch (this) {
       SuccessResult<S>() => this,
+      LoadingResult<S>() => this,
       FailureResult<S>(failure: final failure) =>
-        Result.failure(transform(failure)),
+          Result.failure(transform(failure)),
     };
   }
 }
@@ -37,14 +38,15 @@ extension AsyncResultFailureMappingExtension<S> on Future<Result<S>> {
   ///     .asyncMapFailure((networkFail) => Failure(message: 'Server unreachable.'));
   /// ```
   Future<Result<S>> asyncMapFailure(
-    FutureOr<Failure> Function(Failure failure) transform,
-  ) async {
+      FutureOr<Failure> Function(Failure failure) transform,
+      ) async {
     final result = await this;
 
     return switch (result) {
       SuccessResult<S>() => result,
+      LoadingResult<S>() => result,
       FailureResult<S>(failure: final failure) =>
-        Result.failure(await transform(failure)),
+          Result.failure(await transform(failure)),
     };
   }
 }

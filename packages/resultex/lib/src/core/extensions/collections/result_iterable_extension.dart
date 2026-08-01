@@ -9,13 +9,14 @@ extension ResultIterableExtension<T> on Iterable<Future<Result<T>>> {
   ///   containing a [List] of all unwrapped successful values.
   /// * **Partial/Total Failure**: If one or more operations fail, it returns a [FailureResult]
   ///   wrapping a [MultiFailure], which accumulates all intercepted failures.
+  /// * **Loading**: If any operation is in a loading state, it returns a [LoadingResult].
   ///
   /// Example:
   /// ```dart
   /// final result = await [
   ///   fetchUsers(),
   ///   fetchPosts(),
-  /// ].combineAll(); // 👈 Fluent API usage
+  /// ].combineAll(); // ? Fluent API usage
   /// ```
   Future<Result<List<T>>> combineAll() async {
     // Execute all futures concurrently. 'this' refers to the Iterable itself.
@@ -27,13 +28,17 @@ extension ResultIterableExtension<T> on Iterable<Future<Result<T>>> {
     // Categorize outcomes using Dart 3 pattern matching
     for (final result in results) {
       switch (result) {
-        // Destructures SuccessResult to extract the unwrapped value
+      // Destructures SuccessResult to extract the unwrapped value
         case SuccessResult<T>(success: Success(:final value)):
           successes.add(value);
 
-        // Collects any encountered failure details
+      // Collects any encountered failure details
         case FailureResult<T>(failure: final fail):
           failures.add(fail);
+
+      // If any operation is still loading, the aggregate result reflects loading
+        case LoadingResult<T>():
+          return Result.loading();
       }
     }
 

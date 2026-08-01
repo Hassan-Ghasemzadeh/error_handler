@@ -4,21 +4,22 @@ import '../../../resultex.dart';
 
 /// A reactive, declarative Flutter widget that listens to a [ResultNotifier].
 ///
-/// It automatically triggers UI rebuilds whenever the underlying state of the
-/// notifier changes. By delegating structural UI mapping to [ResultSwitch],
+/// It automatically wraps a [ValueListenableBuilder] to listen for state changes
+/// on the provided [notifier]. By delegating structural UI mapping to [ResultSwitch],
 /// it flattens the widget tree and supports automatic animated transitions
 /// and global fallback builders.
 ///
-/// Example with local animation override:
+/// Example:
 /// ```dart
 /// ResultBuilder<User>(
 ///   notifier: _userNotifier,
 ///   transitionDuration: const Duration(milliseconds: 300),
+///   onInitial: (context) => const Text('Tap fetch to start'),
 ///   onLoading: (context) => const CustomLocalSpinner(),
 ///   onSuccess: (context, user) => Text('Hello, ${user.name}'),
 /// )
 /// ```
-class ResultBuilder<S> extends StatefulWidget {
+class ResultBuilder<S> extends StatelessWidget {
   /// The active [ResultNotifier] instance driving the reactive UI updates.
   final ResultNotifier<S> notifier;
 
@@ -26,6 +27,12 @@ class ResultBuilder<S> extends StatefulWidget {
   ///
   /// Extracts and provides the unpacked success payload of type [S] to the widget subtree.
   final Widget Function(BuildContext context, S data) onSuccess;
+
+  /// An optional builder function invoked when the state is in its initial, un-triggered phase.
+  ///
+  /// Use this to render empty states, prompts, or skeleton loaders before any
+  /// asynchronous operation (like fetching data) has actually begun.
+  final Widget Function(BuildContext context)? onInitial;
 
   /// An optional builder function invoked when the state is null, idle, or actively loading.
   ///
@@ -61,6 +68,7 @@ class ResultBuilder<S> extends StatefulWidget {
     super.key,
     required this.notifier,
     required this.onSuccess,
+    this.onInitial,
     this.onLoading,
     this.onFailure,
     this.transitionDuration,
@@ -70,52 +78,24 @@ class ResultBuilder<S> extends StatefulWidget {
   });
 
   @override
-  State<ResultBuilder<S>> createState() => _ResultBuilderState<S>();
-}
-
-class _ResultBuilderState<S> extends State<ResultBuilder<S>> {
-  @override
-  void initState() {
-    super.initState();
-    // Attach the reactive state listener immediately upon widget insertion into the element tree.
-    widget.notifier.addListener(_handleStateChange);
-  }
-
-  @override
-  void didUpdateWidget(covariant ResultBuilder<S> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Safely migrate the listener if the parent rebuilds with a new notifier instance
-    // to prevent memory leaks and outdated state tracking.
-    if (oldWidget.notifier != widget.notifier) {
-      oldWidget.notifier.removeListener(_handleStateChange);
-      widget.notifier.addListener(_handleStateChange);
-    }
-  }
-
-  @override
-  void dispose() {
-    // Crucial cleanup: detach the listener to prevent memory leaks when the widget is permanently removed.
-    widget.notifier.removeListener(_handleStateChange);
-    super.dispose();
-  }
-
-  /// Triggers a local framework frame rebuild whenever the observed [ResultNotifier] emits a new state.
-  void _handleStateChange() {
-    setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Delegate state rendering and animation orchestration directly to ResultSwitch.
-    return ResultSwitch<S>(
-      result: widget.notifier.value,
-      onSuccess: widget.onSuccess,
-      onLoading: widget.onLoading,
-      onFailure: widget.onFailure,
-      transitionDuration: widget.transitionDuration,
-      switchInCurve: widget.switchInCurve,
-      switchOutCurve: widget.switchOutCurve,
-      transitionBuilder: widget.transitionBuilder,
+    // Automatically listens to the ResultNotifier and rebuilds only when the state changes.
+    return ValueListenableBuilder<Result<S>?>(
+      valueListenable: notifier,
+      builder: (context, result, child) {
+        // Delegate state rendering and animation orchestration directly to ResultSwitch.
+        return ResultSwitch<S>(
+          result: result,
+          onSuccess: onSuccess,
+          onInitial: onInitial,
+          onLoading: onLoading,
+          onFailure: onFailure,
+          transitionDuration: transitionDuration,
+          switchInCurve: switchInCurve,
+          switchOutCurve: switchOutCurve,
+          transitionBuilder: transitionBuilder,
+        );
+      },
     );
   }
 }

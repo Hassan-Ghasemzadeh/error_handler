@@ -62,7 +62,7 @@ void _demonstrateSyncExecution() {
         print('Sync Intercepted Crash Successfully!');
         print('Captured Error Message: ${failure.message}');
       }
-    },
+    }, onLoading: () {  },
   );
 }
 
@@ -100,7 +100,7 @@ Future<void> _demonstrateAsyncExecution() async {
       if (kDebugMode) {
         print('Async Executor Failure: ${fail.message}');
       }
-    },
+    }, onLoading: () {  },
   );
 }
 
@@ -136,7 +136,7 @@ Future<void> _demonstrateStreamExecution() async {
         if (kDebugMode) {
           print('Stream Intercepted Exception Safely: ${failure.message}');
         }
-      },
+      }, onLoading: () {  },
     );
   }
 }
@@ -235,7 +235,7 @@ Future<void> _processBatchRawFeeds() async {
             'Lenient MapList Success: Harvested ${notifications.length} functional records out of ${rawJsonFeed.length}.');
       }
     },
-    onFailure: (_) {},
+    onFailure: (_) {}, onLoading: () {  },
   );
 
   // Tactics B: Strict Mode (strict: true) -> Instant short-circuits upon hitting the first structural error
@@ -251,7 +251,7 @@ Future<void> _processBatchRawFeeds() async {
       if (kDebugMode) {
         print('Strict MapList Short-Circuited as expected: ${failure.message}');
       }
-    },
+    }, onLoading: () {  },
   );
 }
 

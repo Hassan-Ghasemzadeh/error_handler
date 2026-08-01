@@ -6,7 +6,7 @@ extension ResultIterableMappingExtension<I> on Iterable<I> {
   /// that returns a [Result], and aggregates the outcomes based on the selected [strict] strategy.
   ///
   /// - If [strict] is `true` (Strict Strategy): The first encountered [FailureResult]
-  ///   short-circuits the execution and is returned immediately as the global outcome.
+  ///   or [LoadingResult] short-circuits the execution and is returned immediately as the global outcome.
   /// - If [strict] is `false` (Lenient Strategy): Failed transformations are skipped,
   ///   and only successful unwrapped values are collected into the final list.
   ///
@@ -26,9 +26,9 @@ extension ResultIterableMappingExtension<I> on Iterable<I> {
   /// );
   /// ```
   Result<List<O>> mapResult<O>(
-    Result<O> Function(I item) mapper, {
-    bool strict = true,
-  }) {
+      Result<O> Function(I item) mapper, {
+        bool strict = true,
+      }) {
     final List<O> successfulItems = [];
 
     // 'this' refers to the Iterable instance being extended
@@ -45,6 +45,9 @@ extension ResultIterableMappingExtension<I> on Iterable<I> {
           }
           // In lenient mode, we just bypass the corrupted item and proceed
           continue;
+        case LoadingResult<O>():
+        // Immediate short-circuit if any item evaluation is pending/loading
+          return Result.loading();
       }
     }
 
