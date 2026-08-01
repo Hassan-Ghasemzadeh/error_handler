@@ -37,7 +37,7 @@ Since this package is tailored for internal/monorepo architectural designs, add 
 
 ```yaml
 dependencies:
-  resultex_logger: ^1.2.5
+  resultex_logger: ^1.3.5
 ```
 
 ### **Initialize Dependencies**

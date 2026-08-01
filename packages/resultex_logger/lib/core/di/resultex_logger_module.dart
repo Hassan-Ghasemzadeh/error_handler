@@ -14,6 +14,8 @@ class ResultexLoggerModule extends DIModule {
   void register(GetIt injector) {
     // Register AppLogger as a lazy singleton.
     // It will only be instantiated when it is requested for the first time.
-    injector.registerLazySingleton<ResultexLogger>(() => ResultexLogger());
+    if (!injector.isRegistered<ResultexLogger>()) {
+      injector.registerLazySingleton<ResultexLogger>(() => ResultexLogger());
+    }
   }
 }
