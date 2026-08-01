@@ -109,6 +109,7 @@ final result = Result.failure(Failure(message: "Network request timeout"));
       resultexLogger.info('Welcome back, ${value.name}!');
     case FailureResult<User>(failure: final fail):
       resultexLogger.debug('Error occurred: ${fail.message}');
+    case LoadingResult<User>();
   } 
 ```
 ## **ResultExecutor Architecture**  
@@ -170,6 +171,7 @@ error-boundary streams.
         result.when(
           onSuccess: (coords) => updateMapPin(coords),
           onFailure: (fail) => showNetworkAlert(fail.message),
+          onLoading:(){}
         );
       }); 
 ```
@@ -221,6 +223,7 @@ Future<void> loadDashboard() async {
   dashboardResult.fold(
     onSuccess: (view) => renderDashboard(view),
     onFailure: (failure) => showErrorSnackBar(failure.message),
+    onLoading:(){}
   );
 }
 ```
@@ -383,6 +386,7 @@ Widget build(BuildContext context) {
       errorText: emailController.validatedResult.when(
         onSuccess: (_) => null,
         onFailure: (fail) => fail.message,
+        onLoading:(){}
       ),
     ),
   );
@@ -409,6 +413,7 @@ predictable layout paths.
 Widget build(BuildContext context) {
   return ResultBuilder<User>(
     notifier: _userNotifier,
+    onInitial: (){},
     onLoading: (context) => const CircularProgressIndicator(),
     onFailure: (context, failure) => Text('Error: ${failure.message}'),
     onSuccess: (context, user) => Text('Hello, ${user.name}'),
@@ -428,6 +433,7 @@ Widget build(BuildContext context) {
   return userResult.when(
     onSuccess: (user) => Text('Hello, ${user.name}'),
     onFailure: (failure) => Text('Error: ${failure.message}'),
+    onLoading:(){}
   );
 }
 ```
@@ -457,6 +463,7 @@ void initState() {
         if (failure is CancellationFailure) return;
         showError(failure.message);
       },
+      onLoading:(){}
     );
   });
 }

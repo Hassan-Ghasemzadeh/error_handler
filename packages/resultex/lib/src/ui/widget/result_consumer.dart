@@ -11,6 +11,9 @@ import '../../../resultex.dart';
 /// ```dart
 /// ResultConsumer<User>(
 ///   notifier: _userNotifier,
+///   onInitial: (context) {
+///     // Perform initial side-effect, e.g., fetch data or log initial view
+///   },
 ///   onFailureListener: (context, failure) {
 ///     ScaffoldMessenger.of(context).showSnackBar(
 ///       SnackBar(content: Text(failure.message)),
@@ -50,6 +53,9 @@ class ResultConsumer<S> extends StatelessWidget {
   /// Side-effect callback invoked when the state becomes `null` (loading/idle).
   final void Function(BuildContext context)? onLoadingListener;
 
+  /// Side-effect callback invoked upon initial registration or setup of the consumer.
+  final void Function(BuildContext context)? onInitial;
+
   /// Optional predicate condition to control when side-effect callbacks should execute.
   final bool Function(Result<S>? previous, Result<S>? current)? listenWhen;
 
@@ -64,6 +70,7 @@ class ResultConsumer<S> extends StatelessWidget {
     this.onSuccessListener,
     this.onFailureListener,
     this.onLoadingListener,
+    this.onInitial,
     this.listenWhen,
   });
 
@@ -76,6 +83,7 @@ class ResultConsumer<S> extends StatelessWidget {
       onSuccess: onSuccessListener,
       onFailure: onFailureListener,
       onLoading: onLoadingListener,
+      onInitial: onInitial,
       listenWhen: listenWhen,
       child: ResultBuilder<S>(
         notifier: notifier,
