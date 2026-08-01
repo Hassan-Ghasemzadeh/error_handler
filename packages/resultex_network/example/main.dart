@@ -2,7 +2,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:resultex_network/resultex_network.dart';
-import 'package:resultex_network/src/interceptors/resultex_logger_interceptor.dart';
 
 void main() {
   runApp(const MyApp());
