@@ -70,7 +70,7 @@ Add `resultex` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-resultex: ^4.0.0
+resultex: ^4.1.2
 ```
 ### Easy to use
 You can access the `Resultex` instance throughout  

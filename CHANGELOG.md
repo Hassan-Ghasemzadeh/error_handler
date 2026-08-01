@@ -3,7 +3,7 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
-## [4.1.2] - 2026-08-02
+## [4.1.2] - 2026-08-01
 
 ### Refactored
 
@@ -15,6 +15,9 @@ adheres to Semantic Versioning.
   colors) defined in `main()`.
 - **`ResultExecutor` Cleanup**: Refactored `ResultExecutor` constructor and internal error routing
   logic to seamlessly delegate logging and error context packaging without config shadowing.
+
+* **Code Optimization & Refactoring:** Refactored core components (`ResultTextController`,
+  `ResultBuilder`, and `ResultSwitch`) to optimize visual rendering and overall performance.
 
 ### Fixed
 
