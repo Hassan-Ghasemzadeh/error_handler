@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
+import 'package:resultex_logger/core/utils/logger_service.dart';
 import 'package:resultex_logger/resultex_logger.dart'; // Assuming your custom logger package
 import '../failures/network_failures.dart';
 
@@ -10,12 +12,7 @@ import '../failures/network_failures.dart';
 class ResultexLoggerInterceptor extends Interceptor {
   // Initialize the concrete instance of AppLogger.
   final loggerBase = ResultexLoggerBase.init();
-  final logger = ResultexLogger(
-    settings: ResultexLoggerSettings(
-      maxLineWidth: 40, // Slimmer boxes
-      lineSymbol: '*', // Use hashes instead of solid lines
-    ),
-  );
+  final logger = GetIt.I.get<LoggerService>();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {

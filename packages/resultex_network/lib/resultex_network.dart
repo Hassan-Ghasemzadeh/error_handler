@@ -15,6 +15,9 @@ export 'src/mappers/http_status_mapper.dart';
 /// Exports the [ResultexDioInterceptor] which hooks into the Dio pipeline to
 /// intercept and map network issues automatically.
 export 'src/interceptors/resultex_dio_interceptor.dart';
+export 'src/interceptors/resultex_logger_interceptor.dart';
+export 'src/interceptors/resultex_retry_interceptor.dart';
+export 'src/interceptors/resultex_connectivity_interceptor.dart';
 
 /// Exports handy extensions on [Future] response objects to execute and map
 /// API calls safely via the `.guard()` method.
