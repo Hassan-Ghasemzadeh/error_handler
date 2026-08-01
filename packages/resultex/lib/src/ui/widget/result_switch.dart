@@ -74,23 +74,23 @@ class ResultSwitch<S> extends StatelessWidget {
     // Keys are strictly required by Flutter to detect widget tree changes and trigger animations.
     final Widget stateWidget = switch (result) {
       SuccessResult<S>(success: final success) => KeyedSubtree(
-        key: const ValueKey('resultex_state_success'),
-        child: onSuccess(context, success.value),
-      ),
+          key: const ValueKey('resultex_state_success'),
+          child: onSuccess(context, success.value),
+        ),
       FailureResult<S>(failure: final failure) => KeyedSubtree(
-        key: const ValueKey('resultex_state_failure'),
-        child: _buildFailure(context, failure),
-      ),
+          key: const ValueKey('resultex_state_failure'),
+          child: _buildFailure(context, failure),
+        ),
       LoadingResult<S>() => KeyedSubtree(
-        key: const ValueKey('resultex_state_loading'),
-        child: _buildLoading(context),
-      ),
+          key: const ValueKey('resultex_state_loading'),
+          child: _buildLoading(context),
+        ),
       null => KeyedSubtree(
-        key: const ValueKey('resultex_state_initial'),
-        child: onInitial != null
-            ? _buildInitial(context)
-            : _buildLoading(context),
-      ),
+          key: const ValueKey('resultex_state_initial'),
+          child: onInitial != null
+              ? _buildInitial(context)
+              : _buildLoading(context),
+        ),
     };
 
     // 2. Resolve animation duration (Local -> Global)
@@ -106,7 +106,7 @@ class ResultSwitch<S> extends StatelessWidget {
     return AnimatedSwitcher(
       duration: duration,
       switchInCurve:
-      switchInCurve ?? ResultexConfig.defaultSwitchInCurve ?? Curves.linear,
+          switchInCurve ?? ResultexConfig.defaultSwitchInCurve ?? Curves.linear,
       switchOutCurve: switchOutCurve ??
           ResultexConfig.defaultSwitchOutCurve ??
           Curves.linear,
@@ -116,6 +116,7 @@ class ResultSwitch<S> extends StatelessWidget {
       child: stateWidget,
     );
   }
+
   Widget _buildInitial(BuildContext context) {
     if (onInitial != null) return onInitial!(context);
     return _buildLoading(context);

@@ -26,9 +26,9 @@ extension ResultIterableMappingExtension<I> on Iterable<I> {
   /// );
   /// ```
   Result<List<O>> mapResult<O>(
-      Result<O> Function(I item) mapper, {
-        bool strict = true,
-      }) {
+    Result<O> Function(I item) mapper, {
+    bool strict = true,
+  }) {
     final List<O> successfulItems = [];
 
     // 'this' refers to the Iterable instance being extended
@@ -46,7 +46,7 @@ extension ResultIterableMappingExtension<I> on Iterable<I> {
           // In lenient mode, we just bypass the corrupted item and proceed
           continue;
         case LoadingResult<O>():
-        // Immediate short-circuit if any item evaluation is pending/loading
+          // Immediate short-circuit if any item evaluation is pending/loading
           return Result.loading();
       }
     }

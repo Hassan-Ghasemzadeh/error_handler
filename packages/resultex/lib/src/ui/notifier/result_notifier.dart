@@ -100,19 +100,22 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   /// Manually updates the state with a successful outcome containing [data].
   void emitSuccess(S data) {
     if (_isDisposed) return;
-    value = Result.success(data); // Dispatches state change to observer via centralized setter
+    value = Result.success(
+        data); // Dispatches state change to observer via centralized setter
   }
 
   /// Manually updates the state with a structured [failure].
   void emitFailure(Failure failure) {
     if (_isDisposed) return;
-    value = Result.failure(failure); // Dispatches state change to observer via centralized setter
+    value = Result.failure(
+        failure); // Dispatches state change to observer via centralized setter
   }
 
   /// Manually updates the state to an active loading state.
   void emitLoading() {
     if (_isDisposed) return;
-    value = Result.loading(); // Dispatches state change to observer via centralized setter
+    value = Result
+        .loading(); // Dispatches state change to observer via centralized setter
   }
 
   /// Automatically tracks and updates the state based on an asynchronous [operation].
@@ -131,7 +134,8 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
       // Ignore update if disposed or superseded by a newer operation
       if (_isDisposed || currentToken != _executionToken) return;
 
-      value = result; // Dispatches state change to observer via centralized setter
+      value =
+          result; // Dispatches state change to observer via centralized setter
     } catch (e, stackTrace) {
       if (_isDisposed || currentToken != _executionToken) return;
 
@@ -167,7 +171,8 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
         notifyListeners();
         ResultexObserverManager.notifyStateChange(identifier, newResult);
       } else {
-        value = newResult; // Dispatches state change to observer via centralized setter
+        value =
+            newResult; // Dispatches state change to observer via centralized setter
       }
 
       return newResult;

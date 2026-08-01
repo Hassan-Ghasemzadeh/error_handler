@@ -24,13 +24,13 @@ extension ResultFlutterX<T> on Result<T> {
     Widget Function()? onLoading,
   }) {
     return switch (this) {
-    // Destructures SuccessResult to extract the nested value inside the Success wrapper
+      // Destructures SuccessResult to extract the nested value inside the Success wrapper
       SuccessResult<T>(success: Success(:final value)) => onSuccess(value),
 
-    // Destructures FailureResult to extract the underlying Failure object
+      // Destructures FailureResult to extract the underlying Failure object
       FailureResult<T>(failure: final fail) => onFailure(fail),
 
-    // Handles the active loading/pending execution state
+      // Handles the active loading/pending execution state
       LoadingResult<T>() => onLoading != null
           ? onLoading()
           : const Center(child: CupertinoActivityIndicator()),

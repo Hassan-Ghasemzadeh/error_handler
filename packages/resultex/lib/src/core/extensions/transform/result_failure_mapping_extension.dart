@@ -20,7 +20,7 @@ extension ResultFailureMappingExtension<S> on Result<S> {
       SuccessResult<S>() => this,
       LoadingResult<S>() => this,
       FailureResult<S>(failure: final failure) =>
-          Result.failure(transform(failure)),
+        Result.failure(transform(failure)),
     };
   }
 }
@@ -38,15 +38,15 @@ extension AsyncResultFailureMappingExtension<S> on Future<Result<S>> {
   ///     .asyncMapFailure((networkFail) => Failure(message: 'Server unreachable.'));
   /// ```
   Future<Result<S>> asyncMapFailure(
-      FutureOr<Failure> Function(Failure failure) transform,
-      ) async {
+    FutureOr<Failure> Function(Failure failure) transform,
+  ) async {
     final result = await this;
 
     return switch (result) {
       SuccessResult<S>() => result,
       LoadingResult<S>() => result,
       FailureResult<S>(failure: final failure) =>
-          Result.failure(await transform(failure)),
+        Result.failure(await transform(failure)),
     };
   }
 }

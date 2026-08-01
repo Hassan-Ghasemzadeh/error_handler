@@ -24,7 +24,7 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
 
     return switch (result) {
       SuccessResult<S>(success: Success(:final value)) =>
-          Result.success(await transform(value)),
+        Result.success(await transform(value)),
       FailureResult<S>(failure: final failure) => Result.failure(failure),
       LoadingResult<S>() => Result.loading(),
     };
@@ -44,13 +44,13 @@ extension AdvancedAsyncResultExtension<S> on Future<Result<S>> {
   ///     .asyncFlatMap((user) => repository.getOrders(user.id));
   /// ```
   Future<Result<T>> asyncFlatMap<T>(
-      FutureOr<Result<T>> Function(S value) transform,
-      ) async {
+    FutureOr<Result<T>> Function(S value) transform,
+  ) async {
     final result = await this;
 
     return switch (result) {
       SuccessResult<S>(success: Success(:final value)) =>
-      await transform(value),
+        await transform(value),
       FailureResult<S>(failure: final failure) => Result.failure(failure),
       LoadingResult<S>() => Result.loading(),
     };

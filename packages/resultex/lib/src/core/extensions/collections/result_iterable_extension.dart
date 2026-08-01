@@ -28,15 +28,15 @@ extension ResultIterableExtension<T> on Iterable<Future<Result<T>>> {
     // Categorize outcomes using Dart 3 pattern matching
     for (final result in results) {
       switch (result) {
-      // Destructures SuccessResult to extract the unwrapped value
+        // Destructures SuccessResult to extract the unwrapped value
         case SuccessResult<T>(success: Success(:final value)):
           successes.add(value);
 
-      // Collects any encountered failure details
+        // Collects any encountered failure details
         case FailureResult<T>(failure: final fail):
           failures.add(fail);
 
-      // If any operation is still loading, the aggregate result reflects loading
+        // If any operation is still loading, the aggregate result reflects loading
         case LoadingResult<T>():
           return Result.loading();
       }
