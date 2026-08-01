@@ -7,7 +7,7 @@ extension ResultTransformationX<T> on Result<T> {
   /// otherwise returns `null` without throwing an exception.
   ///
   /// Useful for quick evaluations in the presentation layer (UI) or
-  /// initial state assignments where failures can be safely skipped.
+  /// initial/loading state assignments where failures or pending states can be safely skipped.
   ///
   /// ```dart
   /// final User? user = userResult.toNullable();
@@ -16,6 +16,7 @@ extension ResultTransformationX<T> on Result<T> {
     return switch (this) {
       SuccessResult<T>(success: Success(:final value)) => value,
       FailureResult<T>() => null,
+      LoadingResult<T>() => null,
     };
   }
 
@@ -24,7 +25,8 @@ extension ResultTransformationX<T> on Result<T> {
   /// Use this when integrating with legacy codebases, third-party libraries,
   /// or system methods that absolutely require native try-catch block architectures.
   ///
-  /// Throws a [ResultException] encapsulating the underlying [Failure] contract if it is a failure state.
+  /// Throws a [ResultException] encapsulating the underlying [Failure] contract if it is a failure state
+  /// or a loading state.
   ///
   /// ```dart
   /// try {
@@ -37,6 +39,9 @@ extension ResultTransformationX<T> on Result<T> {
     return switch (this) {
       SuccessResult<T>(success: Success(:final value)) => value,
       FailureResult<T>(failure: final fail) => throw ResultException(fail),
+      LoadingResult<T>() => throw ResultException(
+          Failure(message: 'Cannot unwrap value from a LoadingResult state.'),
+        ),
     };
   }
 
@@ -65,6 +70,20 @@ extension ResultTransformationX<T> on Result<T> {
   Result<T> inspectFailure(void Function(Failure failure) action) {
     if (this case FailureResult<T>(:final failure)) {
       action(failure);
+    }
+    return this;
+  }
+
+  /// Invokes a passive side-effect callback [action] if the result context is a loading state.
+  ///
+  /// Forwards the loading state untouched downstream for tracking purposes.
+  ///
+  /// ```dart
+  /// final result = apiResult.inspectLoading(() => logger.info('Loading data...'));
+  /// ```
+  Result<T> inspectLoading(void Function() action) {
+    if (this is LoadingResult<T>) {
+      action();
     }
     return this;
   }
