@@ -15,8 +15,16 @@ export 'src/mappers/http_status_mapper.dart';
 /// Exports the [ResultexDioInterceptor] which hooks into the Dio pipeline to
 /// intercept and map network issues automatically.
 export 'src/interceptors/resultex_dio_interceptor.dart';
+
+/// Exports the [ResultexLoggerInterceptor] which Logs on dio requests.
 export 'src/interceptors/resultex_logger_interceptor.dart';
+
+/// Exports the [ResultexRetryInterceptor] which automatically retries failed
+/// network requests using an exponential backoff strategy.
 export 'src/interceptors/resultex_retry_interceptor.dart';
+
+/// Exports the [ResultexConnectivityInterceptor] which intercepts requests
+/// before they are sent and aborts them if the device is offline.
 export 'src/interceptors/resultex_connectivity_interceptor.dart';
 
 /// Exports handy extensions on [Future] response objects to execute and map
@@ -27,11 +35,3 @@ export 'src/extensions/dio_result_extension.dart';
 /// This eliminates the need for developers to write duplicate imports for both
 /// the network layer and the core functional wrappers.
 export 'package:resultex/resultex.dart';
-
-/// Exports the [ResultexRetryInterceptor] which automatically retries failed
-/// network requests using an exponential backoff strategy.
-export 'src/interceptors/resultex_retry_interceptor.dart';
-
-/// Exports the [ResultexConnectivityInterceptor] which intercepts requests
-/// before they are sent and aborts them if the device is offline.
-export 'src/interceptors/resultex_connectivity_interceptor.dart';
