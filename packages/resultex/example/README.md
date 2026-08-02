@@ -7,7 +7,9 @@ familiar with the full capabilities, features, and ecosystem of **`resultex`** a
 sub-packages (such as `resultex_logger`).
 
 It demonstrates how to integrate functional error handling into a real-world Flutter project using *
-*Clean Architecture**, **BLoC state management**, and **reactive UI binding**.
+*Clean Architecture**, **BLoC state management**, and **reactive UI binding**.  
+🌐 **Live Demo & Output:** If you want to see the live results, UI implementation, and package output
+in action, please visit [resultex.codearastudio.ir](https://resultex.codearastudio.ir).
 
 ## Features
 
@@ -18,6 +20,5 @@ It demonstrates how to integrate functional error handling into a real-world Flu
 - **Smooth Flow Control:** Use the expressive `fold` pattern to gracefully handle execution flows.
 - **Ecosystem Support:** Works seamlessly with companion sub-packages for logging and advanced
   debugging.
-
 
 ### **Made with ❤️ for clean, maintainable Dart & Flutter code architectures.**
