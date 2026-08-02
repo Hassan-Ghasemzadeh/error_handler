@@ -28,7 +28,7 @@ Show some ❤️ and [star the repo](https://github.com/Hassan-Ghasemzadeh/error
 Web Demo</a> page</p>
 <p align="center">
 <a href="https://resultex.codearastudio.ir/">
-  <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/web.png" width="250px">
+  <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/web.png" width="450px">
 </a>
 </p>
 
