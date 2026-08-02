@@ -1,17 +1,23 @@
-# example
+# Example
 
-A new Flutter project.
+## About This Example / Resultex Live Demo
 
-## Getting Started
+This repository includes a comprehensive sample application designed to help you explore and get
+familiar with the full capabilities, features, and ecosystem of **`resultex`** and its companion
+sub-packages (such as `resultex_logger`).
 
-This project is a starting point for a Flutter application.
+It demonstrates how to integrate functional error handling into a real-world Flutter project using *
+*Clean Architecture**, **BLoC state management**, and **reactive UI binding**.
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **Robust Error Handling:** Wrap your API calls and data operations into clean `Result<T>` types (
+  `Result.success` and `Result.failure`).
+- **Reactive UI Builders:** Seamlessly integrate with Flutter using `ResultNotifier` and
+  `ResultBuilder` for zero-boilerplate loading, success, and error state transitions.
+- **Smooth Flow Control:** Use the expressive `fold` pattern to gracefully handle execution flows.
+- **Ecosystem Support:** Works seamlessly with companion sub-packages for logging and advanced
+  debugging.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+### **Made with ❤️ for clean, maintainable Dart & Flutter code architectures.**
