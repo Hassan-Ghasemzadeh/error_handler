@@ -3,6 +3,17 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
+## [4.2.2] - 2026-08-02
+
+* **Web Demo Deployment:** Built and successfully published the official Flutter Web demo (
+  `resultex.codearastudio.ir`) with optimized CDN routing.
+* **Documentation & README Revamp:** Enhanced `README.md` with polished descriptions, clear visual
+  layout, and direct access links to the live web demo.
+* **Examples & Usage Guides:** Added and structured comprehensive code examples demonstrating clean,
+  type-safe error handling.
+* **Branding & Assets:** Integrated custom project branding, including dedicated custom favicons and
+  UI assets.
+
 ## [4.1.2] - 2026-08-01
 
 ### Refactored
