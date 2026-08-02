@@ -6,6 +6,7 @@ import 'package:example/core/di/repository_module.dart';
 import 'package:example/core/di/resultex_logger_module.dart';
 import 'package:example/core/di/use_case_module.dart';
 import 'package:get_it/get_it.dart';
+
 /// Global Service Locator instance for managing dependency injection across the application.
 final getIt = GetIt.instance;
 

@@ -30,9 +30,7 @@ class StatusMonitorPanel extends StatelessWidget {
 }
 
 class _IdeSimulationWindow extends StatelessWidget {
-  const _IdeSimulationWindow({
-    super.key,
-  });
+  const _IdeSimulationWindow();
 
   @override
   Widget build(BuildContext context) {
@@ -253,9 +251,7 @@ class _IdeSimulationWindow extends StatelessWidget {
 }
 
 class _StatusMonitorCard extends StatelessWidget {
-  const _StatusMonitorCard({
-    super.key,
-  });
+  const _StatusMonitorCard();
 
   @override
   Widget build(BuildContext context) {

@@ -23,10 +23,6 @@ class UrlLauncherServiceImpl implements UrlLauncherService {
         }
         return false;
       },
-    ).catchError(
-      (error) {
-        return false;
-      },
     );
 
     return result.valueOrNull ?? false;

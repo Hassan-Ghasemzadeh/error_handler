@@ -14,7 +14,7 @@ class RepositoryModule extends DIModule {
     // Registered as a Lazy Singleton to decouple data access logic from the
     // domain layer, injecting the required remote data source dependency.
     injector.registerLazySingleton<CoffeeRepository>(
-          () => CoffeeRepositoryImpl(injector<CoffeeRemoteDataSource>()),
+      () => CoffeeRepositoryImpl(injector<CoffeeRemoteDataSource>()),
     );
   }
 }

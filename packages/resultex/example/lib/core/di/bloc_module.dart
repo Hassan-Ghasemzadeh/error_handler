@@ -12,7 +12,7 @@ class BlocModule extends DIModule {
     // -------------------------------------------------------------------------
     // Registered as a Factory so a new instance is created every time it's requested.
     injector.registerFactory(
-          () => CoffeeBloc(
+      () => CoffeeBloc(
         getHotCoffees: injector<GetHotCoffeesUseCase>(),
       ),
     );
