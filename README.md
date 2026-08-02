@@ -24,6 +24,14 @@ Show some ❤️ and [star the repo](https://github.com/Hassan-Ghasemzadeh/error
   <a href="https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex_logger"><img src="https://img.shields.io/badge/resultex__logger-passing-brightgreen" alt="resultex_logger"></a>
 </p>
 </div>
+<p align="center">For better understanding how it works check <a href="https://frezyx.github.io/talker">
+Web Demo</a> page</p>
+<p align="center">
+<a href="https://resultex.codearastudio.ir/">
+  <img src="https://raw.githubusercontent.com/Hassan-Ghasemzadeh/error_handler/main/docs/assets/web.png" width="250px">
+</a>
+</p>
+
 
 ## Overview
 
