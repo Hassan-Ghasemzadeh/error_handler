@@ -24,7 +24,7 @@ Show some ❤️ and [star the repo](https://github.com/Hassan-Ghasemzadeh/error
   <a href="https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex_logger"><img src="https://img.shields.io/badge/resultex__logger-passing-brightgreen" alt="resultex_logger"></a>
 </p>
 </div>
-<p align="center">For better understanding how it works check <a href="https://frezyx.github.io/talker">
+<p align="center">For better understanding how it works check <a href="https://resultex.codearastudio.ir/">
 Web Demo</a> page</p>
 <p align="center">
 <a href="https://resultex.codearastudio.ir/">
