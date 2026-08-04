@@ -101,7 +101,7 @@ Resultex provides a robust, type-safe, and boilerplate-free way to handle operat
 
 ## Get Started
 
-## Installation 
+### Installation 
 
 ### Prerequisites
 ```yaml
