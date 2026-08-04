@@ -61,6 +61,44 @@ Resultex provides a robust, type-safe, and boilerplate-free way to handle operat
 | [resultex_logger](https://pub.dev/packages/resultex_logger) | [![pub](https://img.shields.io/pub/v/resultex_logger.svg)](https://pub.dev/packages/resultex_logger) | Customizable logger for resultex |
 | [resultex_network](https://pub.dev/packages/resultex_network) | [![pub](https://img.shields.io/pub/v/resultex_network.svg)](https://pub.dev/packages/resultex_network) | Network error handling for Resultex |
 
+## Table of Contents
+
+- [Overview](#overview)
+    - [Why Resultex?](#why-resultex)
+- [Packages](#packages)
+- [Get Started](#get-started)
+    - [Installation](#installation)
+    - [Easy to use](#easy-to-use)
+    - [Core Concepts](#core-concepts)
+- [ResultExecutor Architecture](#resultexecutor-architecture)
+- [Logical Features](#logical-features)
+    - [Functional Side-Effect Interception (.inspect)](#functional-side-effect-interception-inspect)
+    - [Fluent Pipeline Constraints (.ensure)](#fluent-pipeline-constraints-ensure)
+    - [Crash-Proof Reactive Flows (.toResultStream())](#crash-proof-reactive-flows-toresultstream)
+    - [Zero-Data Expressive Closures (VoidResult)](#zero-data-expressive-closures-voidresult)
+    - [Type-Safe Record Zipping (Dart 3+)](#type-safe-record-zipping-dart-3)
+    - [Asynchronous Chaining (asyncMap & asyncFlatMap)](#asynchronous-chaining-asyncmap--asyncflatmap)
+    - [Adapting Errors downstream (mapFailure)](#adapting-errors-downstream-mapfailure)
+    - [Resilient Operation Retries (withRetry)](#resilient-operation-retries-withretry)
+    - [Fluid Usage Guide](#fluid-usage-guide)
+    - [Concurrent Parallel Execution (combineAll)](#concurrent-parallel-execution-combineall)
+    - [Operational Recovery Path (.recover())](#operational-recovery-path-recover)
+    - [Rate Limiting (debounce & throttle)](#rate-limiting-debounce--throttle)
+    - [Auto-Retry with Exponential Backoff](#auto-retry-with-exponential-backoff)
+    - [Global Error & Crash Reporting](#global-error--crash-reporting-sentry--firebase)
+- [UI Features](#ui-features)
+    - [Reactive UI Validation (ResultTextController)](#reactive-ui-validation-resulttextcontroller)
+    - [Reactive UI Layer](#reactive-ui-layer)
+    - [UI Layer Clean Mapping (.when())](#ui-layer-clean-mapping-when)
+    - [CancellableResult](#cancellableresult)
+    - [Handling Side-Effects (ResultListener)](#handling-side-effects-resultlistener)
+    - [Combined UI & Side-Effects (ResultConsumer)](#combined-ui--side-effects-resultconsumer)
+    - [Combining Multiple Notifiers (MultiResultBuilder)](#combining-multiple-notifiers-multiresultbuilder)
+    - [Global Configuration (ResultexConfig)](#global-configuration-resultexconfig)
+- [Unit Testing Matchers](#unit-testing-matchers)
+- [Best Practices](#best-practices)
+- [License](#license)
+
 ## Get Started
 
 ## Installation 
@@ -77,7 +115,7 @@ Add `resultex` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-resultex: ^4.2.2
+  resultex: ^4.2.2
 ```
 ### Easy to use
 You can access the `Resultex` instance throughout  
@@ -272,7 +310,7 @@ final networkResult = await
 ```
 
 ### **Fluid Usage Guide**  
-Safe Execution Closures (guard / guardAsync)
+### **Safe Execution Closures (guard / guardAsync)**
 Automatically intercept synchronous or asynchronous unexpected exceptions and encapsulate them into
 safe Result variants.
 
@@ -448,9 +486,7 @@ Widget build(BuildContext context) {
 
 Resultex is built to scale. For large, complex Flutter applications, the package offers advanced
 architectural tools to handle memory safety, concurrency, and global monitoring.
-
 1. Memory-Safe Operations (`CancellableResult`)
-
 Prevent memory leaks and the dreaded `setState() called after dispose()` error in Flutter. When a
 user navigates away from a screen, you can instantly abort any pending background operations.
 
@@ -492,8 +528,8 @@ ResultListener<User>(
     Navigator.of(context).pushNamed('/profile');
   },
     onFailureListener: (context, failure) {
-    ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(failure.message)),
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(failure.message)),
     );
   },
   child: const UserProfileBody(),
