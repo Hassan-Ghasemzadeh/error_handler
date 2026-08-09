@@ -115,7 +115,7 @@ Add `resultex` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  resultex: ^4.2.2
+  resultex: ^4.2.3
 ```
 ### Easy to use
 You can access the `Resultex` instance throughout  
