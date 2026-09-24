@@ -2,6 +2,21 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+## [4.3.0] - 2026-09-24
+
+### Added
+* **Active Cancellation Hooks**: Added an optional `onCancel` callback to `CancellableResult.run<T>()` and `ResultCancellationX` to enable active resource cleanup (e.g., aborting HTTP requests).
+* **Flexible Initialization**: Updated `Resultex.init()` to support custom `GetIt` injectors and user-defined `additionalModules`.
+* **Testing Utilities**: Added type-safe custom matchers (`isSuccess`, `isFailure`, `isFailureType`) using `Object?` for robust unit testing.
+
+### Changed
+* **CancellableResult Refactor**: Enforced a private constructor on `CancellableResult` to eliminate instantiation side-effects in favor of the `run<T>` static factory method.
+* **DI Container Isolation**: Updated `GetItConfiguration` to isolate internal dependencies and prevent collisions with the host application's `GetIt` instance.
+* **Explicit Constructor Injection**: Refactored `ResultExecutor` to require `LoggerService` and `FlutterErrorHandler` directly, removing implicit service locator fallbacks.
+* **Facade Idempotency**: Added an internal `isInitialized` state check to `Resultex` to prevent accidental double-initialization.
+
+### Fixed
+* Fixed dependency resolution in `ResultExecutorModule` by properly binding `LoggerService`.
 ## [4.2.3] - 2026-09-09
 * **Documentation:** Updated README.md with Table of Contents and improved installation guides.
 
