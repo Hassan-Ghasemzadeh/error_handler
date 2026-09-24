@@ -5,7 +5,7 @@ import 'package:resultex/resultex.dart';
 ///
 /// If [valueMatcher] is provided, it additionally evaluates whether the encapsulated
 /// success value satisfies the given matcher or exact value.
-Matcher isSuccess<T>([dynamic valueMatcher]) {
+Matcher isSuccess<T>([Object? valueMatcher]) {
   final typeMatcher = isA<SuccessResult<T>>();
 
   if (valueMatcher == null) {
@@ -13,7 +13,7 @@ Matcher isSuccess<T>([dynamic valueMatcher]) {
   }
 
   return typeMatcher.having(
-    (result) => result.success.value,
+        (result) => result.success.value,
     'value',
     valueMatcher,
   );
@@ -23,7 +23,9 @@ Matcher isSuccess<T>([dynamic valueMatcher]) {
 ///
 /// If [messageMatcher] is provided, it additionally evaluates whether the encapsulated
 /// failure message satisfies the given matcher or string.
-Matcher isFailure([dynamic messageMatcher]) {
+Matcher isFailure([Object? messageMatcher]) {
+  // NOTE: If FailureResult in your package requires a generic type parameter
+  // (e.g., FailureResult<T>), ensure you add <T> to this method and isA() accordingly.
   final typeMatcher = isA<FailureResult>();
 
   if (messageMatcher == null) {
@@ -31,16 +33,17 @@ Matcher isFailure([dynamic messageMatcher]) {
   }
 
   return typeMatcher.having(
-    (result) => result.failure.message,
+        (result) => result.failure.message,
     'failure message',
     messageMatcher,
   );
 }
 
-/// Asserts that the actual value is a [FailureResult] wrapping a specific subclass of [Failure] (e.g., NetworkFailure).
+/// Asserts that the actual value is a [FailureResult] wrapping a specific subclass
+/// of [Failure] (e.g., NetworkFailure).
 Matcher isFailureType<F extends Failure>() {
   return isA<FailureResult>().having(
-    (result) => result.failure,
+        (result) => result.failure,
     'failure type',
     isA<F>(),
   );
