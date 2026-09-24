@@ -1,7 +1,8 @@
 // lib/src/core/result_executor.dart
 import 'dart:async';
-import 'package:get_it/get_it.dart';
+
 import 'package:resultex_logger/core/utils/logger_service.dart';
+
 import '../error/flutter_error_handler.dart';
 import '../model/failure.dart';
 import '../model/result.dart';
@@ -12,19 +13,23 @@ class ResultExecutor {
   final LoggerService _logger;
   final FlutterErrorHandler _errorHandler;
 
-  /// Creates a [ResultExecutor] instance.
+  /// Creates a [ResultExecutor] instance with explicit dependency injection.
   ///
-  /// Uses the provided [logger] or falls back to resolving [LoggerService] from [GetIt]
-  /// if no explicit instance is supplied.
+  /// Avoids fallback to global service locators to ensure full testability
+  /// and isolation within custom [GetIt] containers.
   ResultExecutor({
-    LoggerService? logger,
+    required LoggerService logger,
     required FlutterErrorHandler errorHandler,
-  })  : _logger = logger ?? GetIt.I<LoggerService>(),
+  })  : _logger = logger,
         _errorHandler = errorHandler;
+
+  /// Constructs a standardized log tag based on the provided execution [context].
+  String _getTag(String? context) =>
+      context != null ? '[$context]' : '[ResultExecutor]';
 
   /// Executes a standard synchronous [operation] closure block securely.
   Result<T> execute<T>(T Function() operation, {String? context}) {
-    final tag = context != null ? '[$context]' : '[ResultExecutor]';
+    final tag = _getTag(context);
     try {
       _logger.debug('$tag Execution started.');
       final data = operation();
@@ -36,11 +41,14 @@ class ResultExecutor {
   }
 
   /// Executes an asynchronous [operation] block tracking a standard Dart [Future] pipeline.
+  ///
+  /// Automatically unwraps nested [Result] instances ([SuccessResult] or [FailureResult])
+  /// to prevent double-wrapping (flat-mapping).
   Future<Result<T>> executeAsync<T>(
-    FutureOr<dynamic> Function() operation, {
-    String? context,
-  }) async {
-    final tag = context != null ? '[$context]' : '[ResultExecutor]';
+      FutureOr<dynamic> Function() operation, {
+        String? context,
+      }) async {
+    final tag = _getTag(context);
     try {
       _logger.debug('$tag Async execution started.');
       final dynamicData = await operation();
@@ -48,11 +56,13 @@ class ResultExecutor {
       // Dart Pattern Matching for safer type casting and flat-mapping
       if (dynamicData is SuccessResult) {
         _logger.debug(
-            '$tag Async operation completed successfully with wrapped Result.');
+          '$tag Async operation completed successfully with wrapped Result.',
+        );
         return Result.success(dynamicData.success.value as T);
       } else if (dynamicData is FailureResult) {
         _logger.warning(
-            '$tag Async operation forwarded an internal Result Failure.');
+          '$tag Async operation forwarded an internal Result Failure.',
+        );
         return Result.failure(dynamicData.failure);
       }
 
@@ -65,10 +75,10 @@ class ResultExecutor {
 
   /// Evaluates and wraps a multi-event data [streamFactory] pipeline asynchronously.
   Stream<Result<T>> executeStream<T>(
-    Stream<T> Function() streamFactory, {
-    String? context,
-  }) async* {
-    final tag = context != null ? '[$context]' : '[ResultExecutor]';
+      Stream<T> Function() streamFactory, {
+        String? context,
+      }) async* {
+    final tag = _getTag(context);
     try {
       _logger.debug('$tag Stream pipeline subscription initialized.');
       final stream = streamFactory();
@@ -83,9 +93,9 @@ class ResultExecutor {
 
   /// Centralizes exception mapping, structural log routing, and error packaging processes.
   Result<T> _handleError<T>(Object e, StackTrace stackTrace, String? context) {
-    final tag = context != null ? '[$context]' : '[ResultExecutor]';
+    final tag = _getTag(context);
     final errorMessage =
-        context != null ? 'Error in $context: $e' : e.toString();
+    context != null ? 'Error in $context: $e' : e.toString();
 
     // Logs the error with full SymmetricBoxFormatter options
     _logger.error('$tag Intercepted critical crash: $errorMessage');
