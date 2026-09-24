@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get_it/get_it.dart';
 import 'package:resultex/src/error/flutter_error_handler.dart';
+import 'package:resultex_logger/core/utils/logger_service.dart';
 import '../../../resultex.dart';
 import 'di_module.dart';
 
@@ -21,6 +22,7 @@ class ResultExecutorModule extends DIModule {
     injector.registerLazySingleton<ResultExecutor>(
       () => ResultExecutor(
         errorHandler: injector.get<FlutterErrorHandler>(),
+        logger: injector.get<LoggerService>(),
       ),
     );
   }
