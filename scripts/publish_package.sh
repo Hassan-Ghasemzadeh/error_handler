@@ -15,7 +15,7 @@ log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 
-# ۱. بررسی ورود آدرس پوشه
+# 1. Reviewing the folder path entry
 if [ $# -eq 0 ]; then
     log_error "Please provide the package directory path."
     echo -e "Usage: $0 <package-directory>"
@@ -25,16 +25,16 @@ fi
 
 TARGET_DIR="$1"
 
-# ۲. بررسی وجود پوشه
+# 2. Checking for the existence of the folder
 if [ ! -d "$TARGET_DIR" ]; then
     log_error "Directory '$TARGET_DIR' does not exist."
     exit 1
 fi
 
-# ۳. ورود به پوشه هدف
+# 3. Entering the target folder
 cd "$TARGET_DIR"
 
-# ۴. بررسی وجود pubspec.yaml
+# 4. Checking for the existence of pubspec.yaml
 if [ ! -f "pubspec.yaml" ]; then
     log_error "No 'pubspec.yaml' found in '$TARGET_DIR'. Cannot publish."
     exit 1
@@ -47,7 +47,7 @@ echo -e "   CRITICAL: PREPARED TO PUBLISH TO PUB.DEV  "
 echo -e "   Target Package: $PACKAGE_NAME             "
 echo -e "=============================================${NC}\n"
 
-# مرحله دوم: گرفتن تاییدیه چشمی و فیزیکی از توسعه‌دهنده
+# Step 2: Obtaining visual and physical approval from the developer
 log_warning "🔥 WARNING: You are about to publish '$PACKAGE_NAME' LIVE to pub.dev."
 read -p "Are you absolutely sure you want to proceed? (yes/no): " CONFIRMATION
 
@@ -59,7 +59,7 @@ fi
 echo ""
 log_info "🚀 Launching final deployment chain..."
 
-# مرحله سوم: انتشار نهایی بدون پرسش مجدد فلاتر (چون قبلاً خودمان تاییدیه گرفتیم)
+# Step 3: Final release without further queries from Flutter (since we already obtained approval)
 if flutter pub publish --force; then
     echo ""
     log_success "🎉 SUCCESS! '$PACKAGE_NAME' has been successfully published to pub.dev!"
