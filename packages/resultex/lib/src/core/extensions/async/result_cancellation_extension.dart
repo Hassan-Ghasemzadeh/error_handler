@@ -10,10 +10,10 @@ extension ResultCancellationX on Result {
   /// * [computation]: The asynchronous task returning a [Result] to be executed.
   /// * [onCancel]: An optional callback triggered if the operation is manually cancelled.
   ///   Use this hook to clean up underlying resources (e.g., aborting HTTP requests).
-  static CancellableResult<T> cancellable<T>(
-      Future<Result<T>> Function() computation, {
-        void Function()? onCancel,
-      }) {
+  CancellableResult<T> cancellable<T>(
+    Future<Result<T>> Function() computation, {
+    void Function()? onCancel,
+  }) {
     // Delegate the execution to the static 'run' factory method
     // since the CancellableResult constructor is private.
     return CancellableResult.run<T>(
