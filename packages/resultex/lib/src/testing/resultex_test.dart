@@ -13,7 +13,7 @@ Matcher isSuccess<T>([Object? valueMatcher]) {
   }
 
   return typeMatcher.having(
-        (result) => result.success.value,
+    (result) => result.success.value,
     'value',
     valueMatcher,
   );
@@ -33,7 +33,7 @@ Matcher isFailure([Object? messageMatcher]) {
   }
 
   return typeMatcher.having(
-        (result) => result.failure.message,
+    (result) => result.failure.message,
     'failure message',
     messageMatcher,
   );
@@ -43,7 +43,7 @@ Matcher isFailure([Object? messageMatcher]) {
 /// of [Failure] (e.g., NetworkFailure).
 Matcher isFailureType<F extends Failure>() {
   return isA<FailureResult>().having(
-        (result) => result.failure,
+    (result) => result.failure,
     'failure type',
     isA<F>(),
   );
