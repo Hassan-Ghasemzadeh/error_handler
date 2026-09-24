@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get_it/get_it.dart';
 import 'package:resultex/src/error/flutter_error_handler.dart';
 import '../../../resultex.dart';
@@ -13,7 +15,7 @@ class ResultExecutorModule extends DIModule {
   /// It resolves the required [AppLogger] dependency from the service locator
   /// and injects it directly into the [ResultExecutor] constructor.
   @override
-  void register(GetIt injector) {
+  FutureOr<void> register(GetIt injector) {
     // Register ResultExecutor as a lazy singleton.
     // The dependency container provides the AppLogger instance at runtime.
     injector.registerLazySingleton<ResultExecutor>(

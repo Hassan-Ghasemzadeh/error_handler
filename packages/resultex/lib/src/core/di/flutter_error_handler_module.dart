@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get_it/get_it.dart';
 import '../../error/flutter_error_handler.dart';
 import 'di_module.dart';
@@ -12,7 +14,7 @@ class FlutterErrorHandlerModule extends DIModule {
   /// It resolves the required [AppLogger] dependency from the same [injector]
   /// instance to provide it to the error handler constructor.
   @override
-  void register(GetIt injector) {
+  FutureOr<void> register(GetIt injector) {
     // Register FlutterErrorHandler as a lazy singleton.
     // It retrieves the registered AppLogger instance dynamically using injector.get().
     injector.registerLazySingleton<FlutterErrorHandler>(
