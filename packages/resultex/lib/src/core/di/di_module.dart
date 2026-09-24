@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get_it/get_it.dart';
 
 /// An abstract base class that defines a contract for dependency injection modules.
@@ -12,5 +14,5 @@ abstract class DIModule {
   /// dependency registration logic.
   ///
   /// [injector] The instance of the [GetIt] service locator used for registration.
-  void register(GetIt injector);
+  FutureOr<void> register(GetIt injector);
 }
