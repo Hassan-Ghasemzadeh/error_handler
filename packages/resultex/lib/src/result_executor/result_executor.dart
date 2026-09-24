@@ -45,9 +45,9 @@ class ResultExecutor {
   /// Automatically unwraps nested [Result] instances ([SuccessResult] or [FailureResult])
   /// to prevent double-wrapping (flat-mapping).
   Future<Result<T>> executeAsync<T>(
-      FutureOr<dynamic> Function() operation, {
-        String? context,
-      }) async {
+    FutureOr<dynamic> Function() operation, {
+    String? context,
+  }) async {
     final tag = _getTag(context);
     try {
       _logger.debug('$tag Async execution started.');
@@ -75,9 +75,9 @@ class ResultExecutor {
 
   /// Evaluates and wraps a multi-event data [streamFactory] pipeline asynchronously.
   Stream<Result<T>> executeStream<T>(
-      Stream<T> Function() streamFactory, {
-        String? context,
-      }) async* {
+    Stream<T> Function() streamFactory, {
+    String? context,
+  }) async* {
     final tag = _getTag(context);
     try {
       _logger.debug('$tag Stream pipeline subscription initialized.');
@@ -95,7 +95,7 @@ class ResultExecutor {
   Result<T> _handleError<T>(Object e, StackTrace stackTrace, String? context) {
     final tag = _getTag(context);
     final errorMessage =
-    context != null ? 'Error in $context: $e' : e.toString();
+        context != null ? 'Error in $context: $e' : e.toString();
 
     // Logs the error with full SymmetricBoxFormatter options
     _logger.error('$tag Intercepted critical crash: $errorMessage');
