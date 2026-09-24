@@ -12,7 +12,7 @@ log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-# ۱. بررسی اینکه آیا کاربر مسیر پوشه را وارد کرده است یا خیر
+# 1. Checking whether the user has entered the folder path
 if [ $# -eq 0 ]; then
     log_error "Please provide the package directory path."
     echo -e "Usage: $0 <package-directory>"
@@ -22,16 +22,15 @@ fi
 
 TARGET_DIR="$1"
 
-# ۲. بررسی وجود داشتن پوشه معرفی شده
+# 2. Checking for the existence of the specified folder
 if [ ! -d "$TARGET_DIR" ]; then
     log_error "Directory '$TARGET_DIR' does not exist."
     exit 1
 fi
-
-# ۳. رفتن به پوشه هدف
+# 3. Navigating to the target folder
 cd "$TARGET_DIR"
 
-# ۴. بررسی اینکه آیا این پوشه واقعاً یک پروژه دارت/فلاتر است (بررسی وجود pubspec.yaml)
+# 4. Check if this folder is actually a Dart/Flutter project (check for the existence of pubspec.yaml)
 if [ ! -f "pubspec.yaml" ]; then
     log_error "No 'pubspec.yaml' found in '$TARGET_DIR'. This is not a Dart/Flutter package."
     exit 1
