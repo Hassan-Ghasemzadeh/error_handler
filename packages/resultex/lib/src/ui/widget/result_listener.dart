@@ -4,7 +4,7 @@ import '../../../resultex.dart';
 /// A reactive Flutter widget that executes side-effect callbacks in response to
 /// state changes emitted by a [ResultNotifier].
 ///
-/// Unlike [ResultBuilder], [ResultListener] does NOT trigger UI rebuilds when the state
+/// Unlike reactive UI builders, [ResultListener] does NOT trigger UI rebuilds when the state
 /// changes. It is purely designed for side-effects such as showing dialogs,
 /// displaying snackbars, triggering navigation, or logging analytics events.
 class ResultListener<S> extends StatefulWidget {
@@ -29,7 +29,7 @@ class ResultListener<S> extends StatefulWidget {
   /// Side-effect callback invoked when the state emits a [LoadingResult].
   final void Function(BuildContext context)? onLoading;
 
-  /// Side-effect callback invoked when the state becomes `null` (Initial state).
+  /// Side-effect callback invoked when the state becomes `null` (Initial/Idle state).
   final void Function(BuildContext context)? onInitial;
 
   /// Optional condition predicate to evaluate whether the listener callbacks should execute.
@@ -60,7 +60,7 @@ class _ResultListenerState<S> extends State<ResultListener<S>> {
   @override
   void initState() {
     super.initState();
-    // Capture the initial state to compare against upcoming state transitions.
+    // Capture initial state to compare against upcoming state transitions.
     _previousResult = widget.notifier.value;
     widget.notifier.addListener(_handleStateChange);
   }
@@ -84,6 +84,8 @@ class _ResultListenerState<S> extends State<ResultListener<S>> {
   }
 
   void _handleStateChange() {
+    if (!mounted) return;
+
     final currentResult = widget.notifier.value;
 
     // Evaluate condition predicate if provided by the consumer
@@ -91,23 +93,19 @@ class _ResultListenerState<S> extends State<ResultListener<S>> {
         widget.listenWhen?.call(_previousResult, currentResult) ?? true;
 
     if (shouldListen) {
-      // 1. Invoke the generic listener callback if available
+      // 1. Invoke generic listener callback if available
       widget.listener?.call(context, currentResult);
 
       // 2. Dispatch granular side-effect callbacks using Dart 3 pattern matching
       switch (currentResult) {
-        case null:
-          if (widget.onInitial != null) {
-            widget.onInitial?.call(context);
-          } else {
-            widget.onLoading?.call(context);
-          }
+        case SuccessResult<S>(:final success):
+          widget.onSuccess?.call(context, success.value);
+        case FailureResult(:final failure):
+          widget.onFailure?.call(context, failure);
         case LoadingResult<S>():
           widget.onLoading?.call(context);
-        case SuccessResult<S>(success: Success(:final value)):
-          widget.onSuccess?.call(context, value);
-        case FailureResult<S>(failure: final failure):
-          widget.onFailure?.call(context, failure);
+        case null:
+          widget.onInitial?.call(context);
       }
     }
 
