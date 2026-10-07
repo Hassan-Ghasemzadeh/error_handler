@@ -3,24 +3,22 @@ import '../../../resultex.dart';
 
 /// A hybrid reactive widget that seamlessly merges [ResultListener] and [ResultBuilder].
 ///
-/// It provides a unified API to reactively rebuild the UI subtree while simultaneously
+/// Provides a unified API to reactively rebuild the UI subtree while simultaneously
 /// executing side-effects (such as showing SnackBars or navigating) in response to
-/// [ResultNotifier] state changes.
+/// [ResultNotifier] state transitions.
 ///
 /// Example:
 /// ```dart
 /// ResultConsumer<User>(
 ///   notifier: _userNotifier,
-///   onInitial: (context) {
-///     // Perform initial side-effect, e.g., fetch data or log initial view
+///   onInitialListener: (context) {
+///     // Side-effect on initial state
 ///   },
 ///   onFailureListener: (context, failure) {
 ///     ScaffoldMessenger.of(context).showSnackBar(
 ///       SnackBar(content: Text(failure.message)),
 ///     );
 ///   },
-///   onLoading: (context) => const LoadingSpinner(),
-///   onFailure: (context, failure) => ErrorView(failure: failure),
 ///   onSuccess: (context, user) => UserProfileView(user: user),
 /// )
 /// ```
@@ -30,14 +28,21 @@ class ResultConsumer<S> extends StatelessWidget {
 
   // --- UI Builder Callbacks ---
 
-  /// Builder invoked when the state is `null` (loading/idle).
-  final Widget Function(BuildContext context) onLoading;
-
-  /// Builder invoked when the state resolves to a [SuccessResult].
+  /// A required builder invoked when the state resolves to a [SuccessResult].
   final Widget Function(BuildContext context, S data) onSuccess;
 
-  /// Builder invoked when the state resolves to a [FailureResult].
-  final Widget Function(BuildContext context, Failure failure) onFailure;
+  /// Optional builder invoked when the state is in a [LoadingResult] state.
+  ///
+  /// Falls back to [ResultexConfig.defaultLoadingBuilder] if omitted.
+  final Widget Function(BuildContext context)? onLoading;
+
+  /// Optional builder invoked when the state resolves to a [FailureResult].
+  ///
+  /// Falls back to [ResultexConfig.defaultFailureBuilder] if omitted.
+  final Widget Function(BuildContext context, Failure failure)? onFailure;
+
+  /// Optional builder invoked when the state is `null` (Initial/Idle state).
+  final Widget Function(BuildContext context)? onInitial;
 
   // --- Side-Effect Listener Callbacks ---
 
@@ -50,27 +55,28 @@ class ResultConsumer<S> extends StatelessWidget {
   /// Side-effect callback invoked when the state resolves to a [FailureResult].
   final void Function(BuildContext context, Failure failure)? onFailureListener;
 
-  /// Side-effect callback invoked when the state becomes `null` (loading/idle).
+  /// Side-effect callback invoked when the state emits a [LoadingResult].
   final void Function(BuildContext context)? onLoadingListener;
 
-  /// Side-effect callback invoked upon initial registration or setup of the consumer.
-  final void Function(BuildContext context)? onInitial;
+  /// Side-effect callback invoked when the state becomes `null` (Initial/Idle state).
+  final void Function(BuildContext context)? onInitialListener;
 
-  /// Optional predicate condition to control when side-effect callbacks should execute.
+  /// Optional predicate condition to control when side-effect callbacks execute.
   final bool Function(Result<S>? previous, Result<S>? current)? listenWhen;
 
   /// Creates a [ResultConsumer] bound to the provided [notifier].
   const ResultConsumer({
     super.key,
     required this.notifier,
-    required this.onLoading,
     required this.onSuccess,
-    required this.onFailure,
+    this.onLoading,
+    this.onFailure,
+    this.onInitial,
     this.listener,
     this.onSuccessListener,
     this.onFailureListener,
     this.onLoadingListener,
-    this.onInitial,
+    this.onInitialListener,
     this.listenWhen,
   });
 
@@ -83,13 +89,14 @@ class ResultConsumer<S> extends StatelessWidget {
       onSuccess: onSuccessListener,
       onFailure: onFailureListener,
       onLoading: onLoadingListener,
-      onInitial: onInitial,
+      onInitial: onInitialListener,
       listenWhen: listenWhen,
       child: ResultBuilder<S>(
         notifier: notifier,
-        onLoading: onLoading,
         onSuccess: onSuccess,
+        onLoading: onLoading,
         onFailure: onFailure,
+        onInitial: onInitial,
       ),
     );
   }
