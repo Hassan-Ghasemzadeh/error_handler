@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:resultex/src/ui/widget/result_config.dart';
+
 import '../../../resultex.dart';
 
 /// A pure presentation widget that maps a static [Result] state straight to the UI.
 ///
-/// Unlike [ResultBuilder], which is tied to a reactive source, this widget is
-/// "stateless" regarding data sources. It is ideal for:
+/// Unlike reactive builders, this widget is stateless regarding data sources.
+/// It is ideal for:
 /// - Mapping results from [FutureBuilder] or [StreamBuilder].
 /// - Rendering results passed down from parent widgets.
-/// - Building decoupled UI components that don't need to know about [ResultNotifier].
-///
-/// It strictly decouples rendering logic from active state-observation layers.
-///
-/// A declarative pattern-matching UI widget for [Result].
+/// - Building decoupled UI components without state-observation dependencies.
 ///
 /// Automatically handles UI transitions using [AnimatedSwitcher] if a duration is provided
 /// either locally or globally via [ResultexConfig].
@@ -25,7 +22,7 @@ class ResultSwitch<S> extends StatelessWidget {
   /// Extracts and provides the unpacked success payload of type [S] to the widget subtree.
   final Widget Function(BuildContext context, S data) onSuccess;
 
-  /// An optional builder function invoked when the state is in its initial, un-triggered phase.
+  /// An optional builder function invoked when the state is in its initial, un-triggered phase (`null`).
   ///
   /// If provided, this takes precedence over [onLoading] when [result] is `null`.
   final Widget Function(BuildContext context)? onInitial;
@@ -42,7 +39,7 @@ class ResultSwitch<S> extends StatelessWidget {
 
   // --- Animation Properties ---
 
-  /// Duration of the transition animation. Overrides global config.
+  /// Duration of the transition animation. Overrides global config if specified.
   final Duration? transitionDuration;
 
   /// The animation curve used when a new state widget is fading in.
@@ -71,33 +68,31 @@ class ResultSwitch<S> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1. Resolve the correct UI state and inject unique keys for AnimatedSwitcher.
-    // Keys are strictly required by Flutter to detect widget tree changes and trigger animations.
+    // Keys are strictly required by Flutter to detect widget tree changes and trigger transitions.
     final Widget stateWidget = switch (result) {
-      SuccessResult<S>(success: final success) => KeyedSubtree(
-          key: const ValueKey('resultex_state_success'),
-          child: onSuccess(context, success.value),
-        ),
-      FailureResult<S>(failure: final failure) => KeyedSubtree(
-          key: const ValueKey('resultex_state_failure'),
-          child: _buildFailure(context, failure),
-        ),
+      SuccessResult<S>(:final success) => KeyedSubtree(
+        key: const ValueKey('resultex_state_success'),
+        child: onSuccess(context, success.value),
+      ),
+      FailureResult(:final failure) => KeyedSubtree(
+        key: const ValueKey('resultex_state_failure'),
+        child: _buildFailure(context, failure),
+      ),
       LoadingResult<S>() => KeyedSubtree(
-          key: const ValueKey('resultex_state_loading'),
-          child: _buildLoading(context),
-        ),
+        key: const ValueKey('resultex_state_loading'),
+        child: _buildLoading(context),
+      ),
       null => KeyedSubtree(
-          key: const ValueKey('resultex_state_initial'),
-          child: onInitial != null
-              ? _buildInitial(context)
-              : _buildLoading(context),
-        ),
+        key: const ValueKey('resultex_state_initial'),
+        child: _buildInitial(context),
+      ),
     };
 
     // 2. Resolve animation duration (Local -> Global)
     final duration =
         transitionDuration ?? ResultexConfig.defaultTransitionDuration;
 
-    // 3. If no duration is configured, bypass the AnimatedSwitcher for maximum performance.
+    // 3. If no duration is configured, bypass AnimatedSwitcher for maximum performance.
     if (duration == null || duration == Duration.zero) {
       return stateWidget;
     }
@@ -106,10 +101,9 @@ class ResultSwitch<S> extends StatelessWidget {
     return AnimatedSwitcher(
       duration: duration,
       switchInCurve:
-          switchInCurve ?? ResultexConfig.defaultSwitchInCurve ?? Curves.linear,
-      switchOutCurve: switchOutCurve ??
-          ResultexConfig.defaultSwitchOutCurve ??
-          Curves.linear,
+      switchInCurve ?? ResultexConfig.defaultSwitchInCurve ?? Curves.linear,
+      switchOutCurve:
+      switchOutCurve ?? ResultexConfig.defaultSwitchOutCurve ?? Curves.linear,
       transitionBuilder: transitionBuilder ??
           ResultexConfig.defaultTransitionBuilder ??
           AnimatedSwitcher.defaultTransitionBuilder,
