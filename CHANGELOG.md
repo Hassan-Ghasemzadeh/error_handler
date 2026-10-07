@@ -2,6 +2,27 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+## 4.3.1
+
+### Added
+* **ResultTextController**: Added `revalidate()` method for explicit manual re-evaluation and `valueOrNull` getter for direct payload access.
+* **ResultConsumer**: Added optional `onInitial` UI builder parameter.
+
+### Changed
+* **ResultConsumer**: Renamed `onInitial` listener parameter to `onInitialListener` for 100% naming symmetry across all side-effect callbacks.
+* **ResultConsumer**: Made `onLoading` and `onFailure` UI builders optional to leverage global `ResultexConfig` fallbacks seamlessly.
+
+### Fixed
+* **ResultListener**: Fixed a logic bug where transitioning to a `null`/idle state without an `onInitial` listener would incorrectly trigger `onLoading`.
+* **ResultListener**: Added `mounted` lifecycle check prior to executing listener callbacks.
+* **ResultNotifier**: Fixed `FlutterError` on unmounted widgets during async `refresh()` execution.
+* **ResultNotifier**: Bound `refresh()` execution to `_executionToken` to prevent stale background refresh responses from overriding newer `track()` or `reset()` states.
+* **Example Application**: Resolved state handling bugs and updated usage syntax in the example directory.
+
+### Refactored
+* **ResultTextController**: Added text-change memoization (`_lastValidatedText`) to prevent redundant validation executions on cursor/selection moves.
+* **ResultSwitch**: Streamlined Dart 3 object pattern matching (`:final success`, `:final failure`) and eliminated redundant null checks.
+
 ## [4.3.0] - 2026-09-24
 
 ### Added
