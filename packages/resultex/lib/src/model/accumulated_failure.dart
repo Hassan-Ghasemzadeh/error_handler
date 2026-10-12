@@ -12,4 +12,10 @@ class AccumulatedFailure extends Failure {
     required this.errors,
     super.message = 'Multiple validation errors occurred.',
   });
+
+  @override
+  String toString() {
+    final errorMessages = errors.map((e) => e.message).join(', ');
+    return 'AccumulatedFailure: $message [Errors: $errorMessages]';
+  }
 }
