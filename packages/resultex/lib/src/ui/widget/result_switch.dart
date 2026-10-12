@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:resultex/resultex.dart';
 import 'package:resultex/src/ui/widget/result_config.dart';
-
-import '../../../resultex.dart';
 
 /// A pure presentation widget that maps a static [Result] state straight to the UI.
 ///
@@ -71,21 +70,21 @@ class ResultSwitch<S> extends StatelessWidget {
     // Keys are strictly required by Flutter to detect widget tree changes and trigger transitions.
     final Widget stateWidget = switch (result) {
       SuccessResult<S>(:final success) => KeyedSubtree(
-          key: const ValueKey('resultex_state_success'),
-          child: onSuccess(context, success.value),
-        ),
+        key: const ValueKey('resultex_state_success'),
+        child: onSuccess(context, success.value),
+      ),
       FailureResult(:final failure) => KeyedSubtree(
-          key: const ValueKey('resultex_state_failure'),
-          child: _buildFailure(context, failure),
-        ),
+        key: const ValueKey('resultex_state_failure'),
+        child: _buildFailure(context, failure),
+      ),
       LoadingResult<S>() => KeyedSubtree(
-          key: const ValueKey('resultex_state_loading'),
-          child: _buildLoading(context),
-        ),
+        key: const ValueKey('resultex_state_loading'),
+        child: _buildLoading(context),
+      ),
       null => KeyedSubtree(
-          key: const ValueKey('resultex_state_initial'),
-          child: _buildInitial(context),
-        ),
+        key: const ValueKey('resultex_state_initial'),
+        child: _buildInitial(context),
+      ),
     };
 
     // 2. Resolve animation duration (Local -> Global)
@@ -101,7 +100,7 @@ class ResultSwitch<S> extends StatelessWidget {
     return AnimatedSwitcher(
       duration: duration,
       switchInCurve:
-          switchInCurve ?? ResultexConfig.defaultSwitchInCurve ?? Curves.linear,
+      switchInCurve ?? ResultexConfig.defaultSwitchInCurve ?? Curves.linear,
       switchOutCurve: switchOutCurve ??
           ResultexConfig.defaultSwitchOutCurve ??
           Curves.linear,
@@ -114,6 +113,9 @@ class ResultSwitch<S> extends StatelessWidget {
 
   Widget _buildInitial(BuildContext context) {
     if (onInitial != null) return onInitial!(context);
+    if (ResultexConfig.defaultInitialBuilder != null) {
+      return ResultexConfig.defaultInitialBuilder!(context);
+    }
     return _buildLoading(context);
   }
 
