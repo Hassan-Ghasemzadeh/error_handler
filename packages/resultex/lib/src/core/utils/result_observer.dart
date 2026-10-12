@@ -1,4 +1,4 @@
-import '../../../resultex.dart';
+import 'package:resultex/resultex.dart';
 
 /// An interface for observing state changes and failures globally.
 ///
