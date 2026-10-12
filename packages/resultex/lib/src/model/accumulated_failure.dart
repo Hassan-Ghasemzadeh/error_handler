@@ -16,6 +16,6 @@ class AccumulatedFailure extends Failure {
   @override
   String toString() {
     final errorMessages = errors.map((e) => e.message).join(', ');
-    return 'AccumulatedFailure: $message [Errors: $errorMessages]';
+    return 'AccumulatedFailure : $message [Errors: $errorMessages]';
   }
 }
