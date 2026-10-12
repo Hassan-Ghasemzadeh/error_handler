@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import '../../../resultex.dart';
+import 'package:resultex/resultex.dart';
 
 /// A hybrid reactive widget that seamlessly merges [ResultListener] and [ResultBuilder].
 ///
