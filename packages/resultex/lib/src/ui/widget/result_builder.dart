@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:resultex/resultex.dart';
 import 'package:resultex/src/ui/widget/result_config.dart';
-import '../../../resultex.dart';
 
 /// A reactive, declarative Flutter widget that listens to a [ResultNotifier].
 ///
