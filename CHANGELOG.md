@@ -2,43 +2,103 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
-## 4.3.1
+
+## [4.4.0] - 2026-10-15
+
+* **Breaking Changes & Major Core Refactor**:
+    * **Core Result Monad**:
+        * Refactored existing `Result<T>` sealed hierarchy to support compile-time pattern matching
+          with updated functional operators (`map`, `mapFailure`, `flatMap`, `fold`, `match`).
+        * Updated static combinators and helpers (`guard`, `guardAsync`, `fromNullable`, `combine`,
+          `partition`).
+
+    * **Domain Models & Failure Handling**:
+        * Updated base `Failure` model with refined `Equatable` comparisons and multi-line detailed
+          diagnostics (`detailedMessage`).
+        * Refactored `Success<T>` entity to maintain strict immutability.
+        * Added specialized `CancellationFailure` and `AccumulatedFailure` classes for graceful
+          async aborts and batch error processing.
+        * Enhanced `RetryOptions` configuration for linear and exponential backoff retry policies.
+
+    * **State Management & UI Layer**:
+        * Refactored `ResultNotifier` state manager with execution tokens to eliminate race
+          conditions, alongside Stale-While-Revalidate (SWR) background refresh flags.
+        * Enhanced `ResultSwitch` presentation widget with optimized animated transitions and global
+          configuration overrides.
+
+    * **Infrastructure & Telemetry**:
+        * Updated `ResultExecutor` for automatic flat-mapping and improved DI isolation.
+        * Integrated `FlutterErrorHandler` for framework and platform-level uncaught exception
+          interception.
+        * Enhanced `ResultexObserverManager` with defensive error handling to protect UI thread
+          stability during telemetry dispatches.
+
+    * **Testing Utilities**:
+        * Updated custom matchers (`isSuccess`, `isFailure`, `isFailureType`) to align with the
+          refactored `Result` types.
+
+## [4.3.1]  - 2026-10-08
 
 ### Added
-* **ResultTextController**: Added `revalidate()` method for explicit manual re-evaluation and `valueOrNull` getter for direct payload access.
+
+* **ResultTextController**: Added `revalidate()` method for explicit manual re-evaluation and
+  `valueOrNull` getter for direct payload access.
 * **ResultConsumer**: Added optional `onInitial` UI builder parameter.
 
 ### Changed
-* **ResultConsumer**: Renamed `onInitial` listener parameter to `onInitialListener` for 100% naming symmetry across all side-effect callbacks.
-* **ResultConsumer**: Made `onLoading` and `onFailure` UI builders optional to leverage global `ResultexConfig` fallbacks seamlessly.
+
+* **ResultConsumer**: Renamed `onInitial` listener parameter to `onInitialListener` for 100% naming
+  symmetry across all side-effect callbacks.
+* **ResultConsumer**: Made `onLoading` and `onFailure` UI builders optional to leverage global
+  `ResultexConfig` fallbacks seamlessly.
 
 ### Fixed
-* **ResultListener**: Fixed a logic bug where transitioning to a `null`/idle state without an `onInitial` listener would incorrectly trigger `onLoading`.
+
+* **ResultListener**: Fixed a logic bug where transitioning to a `null`/idle state without an
+  `onInitial` listener would incorrectly trigger `onLoading`.
 * **ResultListener**: Added `mounted` lifecycle check prior to executing listener callbacks.
 * **ResultNotifier**: Fixed `FlutterError` on unmounted widgets during async `refresh()` execution.
-* **ResultNotifier**: Bound `refresh()` execution to `_executionToken` to prevent stale background refresh responses from overriding newer `track()` or `reset()` states.
-* **Example Application**: Resolved state handling bugs and updated usage syntax in the example directory.
+* **ResultNotifier**: Bound `refresh()` execution to `_executionToken` to prevent stale background
+  refresh responses from overriding newer `track()` or `reset()` states.
+* **Example Application**: Resolved state handling bugs and updated usage syntax in the example
+  directory.
 
 ### Refactored
-* **ResultTextController**: Added text-change memoization (`_lastValidatedText`) to prevent redundant validation executions on cursor/selection moves.
-* **ResultSwitch**: Streamlined Dart 3 object pattern matching (`:final success`, `:final failure`) and eliminated redundant null checks.
+
+* **ResultTextController**: Added text-change memoization (`_lastValidatedText`) to prevent
+  redundant validation executions on cursor/selection moves.
+* **ResultSwitch**: Streamlined Dart 3 object pattern matching (`:final success`, `:final failure`)
+  and eliminated redundant null checks.
 
 ## [4.3.0] - 2026-09-24
 
 ### Added
-* **Active Cancellation Hooks**: Added an optional `onCancel` callback to `CancellableResult.run<T>()` and `ResultCancellationX` to enable active resource cleanup (e.g., aborting HTTP requests).
-* **Flexible Initialization**: Updated `Resultex.init()` to support custom `GetIt` injectors and user-defined `additionalModules`.
-* **Testing Utilities**: Added type-safe custom matchers (`isSuccess`, `isFailure`, `isFailureType`) using `Object?` for robust unit testing.
+
+* **Active Cancellation Hooks**: Added an optional `onCancel` callback to
+  `CancellableResult.run<T>()` and `ResultCancellationX` to enable active resource cleanup (e.g.,
+  aborting HTTP requests).
+* **Flexible Initialization**: Updated `Resultex.init()` to support custom `GetIt` injectors and
+  user-defined `additionalModules`.
+* **Testing Utilities**: Added type-safe custom matchers (`isSuccess`, `isFailure`, `isFailureType`)
+  using `Object?` for robust unit testing.
 
 ### Changed
-* **CancellableResult Refactor**: Enforced a private constructor on `CancellableResult` to eliminate instantiation side-effects in favor of the `run<T>` static factory method.
-* **DI Container Isolation**: Updated `GetItConfiguration` to isolate internal dependencies and prevent collisions with the host application's `GetIt` instance.
-* **Explicit Constructor Injection**: Refactored `ResultExecutor` to require `LoggerService` and `FlutterErrorHandler` directly, removing implicit service locator fallbacks.
-* **Facade Idempotency**: Added an internal `isInitialized` state check to `Resultex` to prevent accidental double-initialization.
+
+* **CancellableResult Refactor**: Enforced a private constructor on `CancellableResult` to eliminate
+  instantiation side-effects in favor of the `run<T>` static factory method.
+* **DI Container Isolation**: Updated `GetItConfiguration` to isolate internal dependencies and
+  prevent collisions with the host application's `GetIt` instance.
+* **Explicit Constructor Injection**: Refactored `ResultExecutor` to require `LoggerService` and
+  `FlutterErrorHandler` directly, removing implicit service locator fallbacks.
+* **Facade Idempotency**: Added an internal `isInitialized` state check to `Resultex` to prevent
+  accidental double-initialization.
 
 ### Fixed
+
 * Fixed dependency resolution in `ResultExecutorModule` by properly binding `LoggerService`.
+
 ## [4.2.3] - 2026-09-09
+
 * **Documentation:** Updated README.md with Table of Contents and improved installation guides.
 
 ## [4.2.2] - 2026-08-02
@@ -369,8 +429,8 @@ adheres to Semantic Versioning.
 
 ### Fixed
 
-- **Pattern Matching Type Inference**: Resolved internal compiler mismatches during تو در تو (
-  nested) destructuring of the `Success<T>` wrapper inside concrete `SuccessResult` scopes.
+- **Pattern Matching Type Inference**: Resolved internal compiler mismatches during تو در تو
+  (nested) destructuring of the `Success<T>` wrapper inside concrete `SuccessResult` scopes.
 
 ## 2.1.0
 
