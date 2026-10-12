@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../core/utils/result_observer.dart';
 
 /// Represents a standardized base domain failure entity containing error information.
@@ -51,13 +50,15 @@ class Failure extends Equatable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Failure && message == other.message && error == other.error;
+          other is Failure && message == other.message && error == other.error;
 
   /// Generates a hash code compound from the distinct values of [message] and [error].
   @override
   int get hashCode => message.hashCode ^ error.hashCode;
 
   /// Defines the list of properties utilized by [Equatable] for object state validation.
+  ///
+  /// Excludes stackTrace to match the custom [operator ==] logic.
   @override
-  List<Object?> get props => [message, error, stackTrace];
+  List<Object?> get props => [message, error];
 }
