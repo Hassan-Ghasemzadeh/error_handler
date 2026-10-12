@@ -26,7 +26,7 @@ import '../../../resultex.dart';
 ///     if (results.any((r) => r == null)) {
 ///       return const LoadingSpinner();
 ///     }
-
+///
 ///     return DashboardContent(
 ///       user: (userResult as SuccessResult).data,
 ///       notifications: (notificationsResult as SuccessResult).data,
@@ -43,17 +43,17 @@ class MultiResultBuilder extends StatefulWidget {
   /// Receives an immutable [List] containing the latest [Result] objects in the same
   /// index order as provided in [notifiers].
   final Widget Function(
-    BuildContext context,
-    List<Result<dynamic>?> results,
-  ) builder;
+      BuildContext context,
+      List<Result<dynamic>?> results,
+      ) builder;
 
   /// Optional condition predicate to evaluate whether a state change should trigger a UI rebuild.
   ///
   /// Compares [previousResults] with [currentResults]. Returns `true` by default if omitted.
   final bool Function(
-    List<Result<dynamic>?> previousResults,
-    List<Result<dynamic>?> currentResults,
-  )? buildWhen;
+      List<Result<dynamic>?> previousResults,
+      List<Result<dynamic>?> currentResults,
+      )? buildWhen;
 
   /// Creates a [MultiResultBuilder] listening to a dynamic list of [notifiers].
   const MultiResultBuilder({
@@ -68,16 +68,20 @@ class MultiResultBuilder extends StatefulWidget {
 }
 
 class _MultiResultBuilderState extends State<MultiResultBuilder> {
-  /// Holds the snapshot of previous results to evaluate [MultiResultBuilder.buildWhen].
+  /// Cached snapshot of previous results used for [MultiResultBuilder.buildWhen] evaluation.
   late List<Result<dynamic>?> _previousResults;
+
+  /// Cached snapshot of current results to avoid redundant extractions during [build].
+  late List<Result<dynamic>?> _currentResults;
 
   @override
   void initState() {
     super.initState();
-    // 1. Capture initial values from all provided notifiers
-    _previousResults = _extractResults(widget.notifiers);
+    // 1. Initialize current and previous state snapshots.
+    _currentResults = _extractResults(widget.notifiers);
+    _previousResults = List<Result<dynamic>?>.from(_currentResults);
 
-    // 2. Register internal change listener across all notifiers
+    // 2. Register internal change listeners across all provided notifiers.
     _subscribe(widget.notifiers);
   }
 
@@ -85,17 +89,18 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
   void didUpdateWidget(covariant MultiResultBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Re-evaluate subscriptions only if the notifier list reference or its items changed
+    // Re-evaluate subscriptions and state snapshots only if the notifier list reference or items changed.
     if (!_isSameNotifierList(oldWidget.notifiers, widget.notifiers)) {
       _unsubscribe(oldWidget.notifiers);
       _subscribe(widget.notifiers);
-      _previousResults = _extractResults(widget.notifiers);
+      _currentResults = _extractResults(widget.notifiers);
+      _previousResults = List<Result<dynamic>?>.from(_currentResults);
     }
   }
 
   @override
   void dispose() {
-    // Prevent memory leaks when the widget is removed from the widget tree
+    // Prevent memory leaks by removing listeners when the widget is removed from the tree.
     _unsubscribe(widget.notifiers);
     super.dispose();
   }
@@ -114,10 +119,10 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
     }
   }
 
-  /// Extracts the current values of all notifiers into an unmodifiable immutable list.
+  /// Extracts the current values of all notifiers into an unmodifiable, immutable list.
   List<Result<dynamic>?> _extractResults(
-    List<ResultNotifier<dynamic>> notifiers,
-  ) {
+      List<ResultNotifier<dynamic>> notifiers,
+      ) {
     return List<Result<dynamic>?>.unmodifiable(
       notifiers.map((notifier) => notifier.value),
     );
@@ -125,19 +130,20 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
 
   /// Core listener callback triggered whenever any attached [ResultNotifier] changes state.
   void _onStateChange() {
-    final currentResults = _extractResults(widget.notifiers);
+    final nextResults = _extractResults(widget.notifiers);
 
-    // Evaluate build condition predicate if supplied by consumer
+    // Evaluate build condition predicate if supplied by consumer.
     final shouldRebuild = widget.buildWhen?.call(
-          _previousResults,
-          currentResults,
-        ) ??
+      _currentResults,
+      nextResults,
+    ) ??
         true;
 
-    // Ensure the State object is still active in the tree before invoking setState
+    // Ensure the State object is still active in the tree before invoking setState.
     if (shouldRebuild && mounted) {
       setState(() {
-        _previousResults = currentResults;
+        _previousResults = _currentResults;
+        _currentResults = nextResults;
       });
     }
   }
@@ -145,9 +151,9 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
   /// Helper utility to deeply compare two lists of [ResultNotifier] instances
   /// to avoid unnecessary re-subscription logic on parent rebuilds.
   bool _isSameNotifierList(
-    List<ResultNotifier<dynamic>> oldList,
-    List<ResultNotifier<dynamic>> newList,
-  ) {
+      List<ResultNotifier<dynamic>> oldList,
+      List<ResultNotifier<dynamic>> newList,
+      ) {
     if (identical(oldList, newList)) return true;
     if (oldList.length != newList.length) return false;
 
@@ -160,10 +166,7 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    // Pass fresh immutable snapshot of states to the consumer builder
-    return widget.builder(
-      context,
-      _extractResults(widget.notifiers),
-    );
+    // Render using the cached current results snapshot for optimal performance.
+    return widget.builder(context, _currentResults);
   }
 }
