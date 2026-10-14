@@ -3,7 +3,7 @@
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
 
-## [4.4.0] - 2026-10-15
+## [4.4.0] - 2026-10-14
 
 * **Breaking Changes & Major Core Refactor**:
     * **Core Result Monad**:
