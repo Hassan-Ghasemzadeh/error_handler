@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import '../../../resultex.dart';
 
@@ -141,7 +142,9 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
 
     // Ensure the State object is still active in the tree before invoking setState.
     if (shouldRebuild && mounted) {
-      print(_previousResults);
+      if (kDebugMode) {
+        print(_previousResults);
+      }
       setState(() {
         _previousResults = _currentResults;
         _currentResults = nextResults;
