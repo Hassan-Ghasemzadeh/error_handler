@@ -50,7 +50,7 @@ class Failure extends Equatable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Failure && message == other.message && error == other.error;
+      other is Failure && message == other.message && error == other.error;
 
   /// Generates a hash code compound from the distinct values of [message] and [error].
   @override

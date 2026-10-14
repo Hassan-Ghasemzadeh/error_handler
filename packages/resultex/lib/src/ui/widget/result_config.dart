@@ -14,7 +14,7 @@ class ResultexConfig {
 
   /// Global default builder for failure states.
   static Widget Function(BuildContext context, Failure failure)?
-  _defaultFailureBuilder;
+      _defaultFailureBuilder;
 
   /// Getters for accessing global default builders.
   static WidgetBuilder? get defaultInitialBuilder => _defaultInitialBuilder;
@@ -22,7 +22,7 @@ class ResultexConfig {
   static WidgetBuilder? get defaultLoadingBuilder => _defaultLoadingBuilder;
 
   static Widget Function(BuildContext context, Failure failure)?
-  get defaultFailureBuilder => _defaultFailureBuilder;
+      get defaultFailureBuilder => _defaultFailureBuilder;
 
   /// Global default duration for state transitions.
   /// If null or [Duration.zero], transitions will occur instantly without animation.

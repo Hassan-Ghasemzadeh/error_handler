@@ -43,17 +43,17 @@ class MultiResultBuilder extends StatefulWidget {
   /// Receives an immutable [List] containing the latest [Result] objects in the same
   /// index order as provided in [notifiers].
   final Widget Function(
-      BuildContext context,
-      List<Result<dynamic>?> results,
-      ) builder;
+    BuildContext context,
+    List<Result<dynamic>?> results,
+  ) builder;
 
   /// Optional condition predicate to evaluate whether a state change should trigger a UI rebuild.
   ///
   /// Compares [previousResults] with [currentResults]. Returns `true` by default if omitted.
   final bool Function(
-      List<Result<dynamic>?> previousResults,
-      List<Result<dynamic>?> currentResults,
-      )? buildWhen;
+    List<Result<dynamic>?> previousResults,
+    List<Result<dynamic>?> currentResults,
+  )? buildWhen;
 
   /// Creates a [MultiResultBuilder] listening to a dynamic list of [notifiers].
   const MultiResultBuilder({
@@ -121,8 +121,8 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
 
   /// Extracts the current values of all notifiers into an unmodifiable, immutable list.
   List<Result<dynamic>?> _extractResults(
-      List<ResultNotifier<dynamic>> notifiers,
-      ) {
+    List<ResultNotifier<dynamic>> notifiers,
+  ) {
     return List<Result<dynamic>?>.unmodifiable(
       notifiers.map((notifier) => notifier.value),
     );
@@ -134,9 +134,9 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
 
     // Evaluate build condition predicate if supplied by consumer.
     final shouldRebuild = widget.buildWhen?.call(
-      _currentResults,
-      nextResults,
-    ) ??
+          _currentResults,
+          nextResults,
+        ) ??
         true;
 
     // Ensure the State object is still active in the tree before invoking setState.
@@ -151,9 +151,9 @@ class _MultiResultBuilderState extends State<MultiResultBuilder> {
   /// Helper utility to deeply compare two lists of [ResultNotifier] instances
   /// to avoid unnecessary re-subscription logic on parent rebuilds.
   bool _isSameNotifierList(
-      List<ResultNotifier<dynamic>> oldList,
-      List<ResultNotifier<dynamic>> newList,
-      ) {
+    List<ResultNotifier<dynamic>> oldList,
+    List<ResultNotifier<dynamic>> newList,
+  ) {
     if (identical(oldList, newList)) return true;
     if (oldList.length != newList.length) return false;
 
