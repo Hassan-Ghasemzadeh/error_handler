@@ -2,6 +2,10 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+## [4.4.1] - 2026-10-29
+
+* **Dependencies**:
+  * Upgraded `equatable` dependency to a newer version for improved stability and compatibility.
 
 ## [4.4.0] - 2026-10-14
 
