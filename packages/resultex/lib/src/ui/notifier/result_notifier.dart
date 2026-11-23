@@ -35,6 +35,9 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   /// Creates a [ResultNotifier] with an optional [initialValue] and an optional debug [name].
   ResultNotifier([super.initialValue, this.name]);
 
+  /// Indicates whether the notifier has been disposed.
+  bool get isDisposed => _isDisposed;
+
   // ---------------------------------------------------------------------------
   // Centralized State Telemetry & Observer Dispatcher
   // ---------------------------------------------------------------------------
@@ -43,6 +46,7 @@ class ResultNotifier<S> extends ValueNotifier<Result<S>?> {
   /// for state transitions and telemetry dispatching.
   @override
   set value(Result<S>? newValue) {
+    if (_isDisposed) return;
     final previousValue = value;
     super.value = newValue;
 

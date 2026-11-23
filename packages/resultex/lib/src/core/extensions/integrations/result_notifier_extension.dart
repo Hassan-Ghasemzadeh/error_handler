@@ -30,14 +30,16 @@ extension ResultNotifierFpX<T> on ResultNotifier<T> {
     _debounceTimers[this]?.cancel();
 
     // 2. Optionally set loading state immediately
-    if (setLoadingOnTrigger) {
+    if (setLoadingOnTrigger && !isDisposed) {
       value = null;
     }
 
     // 3. Schedule execution after the delay period
     _debounceTimers[this] = Timer(duration, () async {
       final result = await action();
-      value = result;
+      if (!isDisposed) {
+        value = result;
+      }
     });
   }
 
@@ -67,11 +69,13 @@ extension ResultNotifierFpX<T> on ResultNotifier<T> {
     // Update execution timestamp
     _lastThrottleTimes[this] = now;
 
-    if (setLoadingOnExecution) {
+    if (setLoadingOnExecution && !isDisposed) {
       value = null;
     }
 
     final result = await action();
-    value = result;
+    if (!isDisposed) {
+      value = result;
+    }
   }
 }
