@@ -2,7 +2,7 @@ import '../../../../resultex.dart';
 import '../../../model/accumulated_failure.dart';
 
 /// Core architectural extensions for handling multiple [Result] collections.
-extension ResultAccumulatorX on Result {
+extension ResultAccumulatorX<T> on Result<T> {
   /// Validates a collection of lazy [Result] providers simultaneously.
   ///
   /// If all operations pass, it yields a [SuccessResult] wrapping a [List] of
@@ -16,20 +16,20 @@ extension ResultAccumulatorX on Result {
   ///   () => passwordController.validatedResult,
   /// ]);
   /// ```
-  Result<List<T>> accumulate<T>(List<Result<T> Function()> providers) {
-    final List<T> successPayloads = [];
+  Result<List<R>> accumulate<R>(List<Result<R> Function()> providers) {
+    final List<R> successPayloads = [];
     final List<Failure> gatheredFailures = [];
 
     for (final provider in providers) {
       final result = provider();
 
-      if (result is SuccessResult<T>) {
-        // Under Dart 3, custom matching might use direct getters depending on your package schema.
-        // Assuming your SuccessResult exposes `.data` or `.value`
-        successPayloads.add(result.success.value);
-      } else if (result is FailureResult<T>) {
-        // Assuming your FailureResult exposes `.failure`
-        gatheredFailures.add(result.failure);
+      switch (result) {
+        case SuccessResult<R>(:final success):
+          successPayloads.add(success.value);
+        case FailureResult<R>(:final failure):
+          gatheredFailures.add(failure);
+        case LoadingResult<R>():
+          return Result.loading();
       }
     }
 
