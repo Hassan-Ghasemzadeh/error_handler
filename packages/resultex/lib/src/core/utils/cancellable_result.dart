@@ -85,16 +85,20 @@ class CancellableResult<T> {
 
     _isCancelled = true;
 
-    // Trigger the external cancellation hook to free up resources if provided.
-    _onCancelHook?.call();
-
-    // Immediately resolve the future with a CancellationFailure to unblock the caller.
-    _completer.complete(
-      Result.failure(
-        CancellationFailure(
-          message: customMessage ?? 'Operation cancelled before completion.',
-        ),
-      ),
-    );
+    try {
+      // Trigger the external cancellation hook to free up resources if provided.
+      _onCancelHook?.call();
+    } finally {
+      // Immediately resolve the future with a CancellationFailure to unblock the caller.
+      if (!_completer.isCompleted) {
+        _completer.complete(
+          Result.failure(
+            CancellationFailure(
+              message: customMessage ?? 'Operation cancelled before completion.',
+            ),
+          ),
+        );
+      }
+    }
   }
 }
