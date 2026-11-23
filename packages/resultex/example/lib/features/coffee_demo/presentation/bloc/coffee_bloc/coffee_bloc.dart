@@ -40,10 +40,10 @@ class CoffeeBloc extends Bloc<CoffeeEvent, CoffeeState> {
         ));
       },
       onLoading: () {
-        state.copyWith(
+        emit(state.copyWith(
           status: CoffeeStatus.loading,
           coffees: [],
-        );
+        ));
       },
     );
   }
