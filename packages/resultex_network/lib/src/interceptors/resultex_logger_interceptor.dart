@@ -10,9 +10,18 @@ import '../failures/network_failures.dart';
 /// successful responses, and failures. It is particularly useful for tracking
 /// critical errors (like 500s) in production environments.
 class ResultexLoggerInterceptor extends Interceptor {
-  // Initialize the concrete instance of AppLogger.
-  final loggerBase = ResultexLoggerBase.init();
-  final logger = GetIt.I.get<LoggerService>();
+  final LoggerService? _customLogger;
+
+  ResultexLoggerInterceptor({LoggerService? logger}) : _customLogger = logger;
+
+  LoggerService get logger {
+    final customLogger = _customLogger;
+    if (customLogger != null) return customLogger;
+    if (GetIt.I.isRegistered<LoggerService>()) {
+      return GetIt.I.get<LoggerService>();
+    }
+    return ResultexLogger();
+  }
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
