@@ -9,7 +9,7 @@ class NetworkFailure extends Failure {
   final int? statusCode;
 
   /// Creates an immutable [NetworkFailure] instance.
-  NetworkFailure({
+  const NetworkFailure({
     required super.message,
     this.statusCode,
   });
@@ -19,7 +19,7 @@ class NetworkFailure extends Failure {
 ///
 /// Use this when the backend is down, undergoing maintenance, or threw an exception.
 class ServerFailure extends NetworkFailure {
-  ServerFailure({
+  const ServerFailure({
     required super.message,
     super.statusCode,
   });
@@ -29,7 +29,7 @@ class ServerFailure extends NetworkFailure {
 ///
 /// Use this to trigger session expirations or redirect users to the login screen.
 class UnauthorizedFailure extends NetworkFailure {
-  UnauthorizedFailure({
+  const UnauthorizedFailure({
     required super.message,
     super.statusCode,
   });
@@ -37,7 +37,7 @@ class UnauthorizedFailure extends NetworkFailure {
 
 /// Represents a requested resource that could not be found (HTTP 404).
 class NotFoundFailure extends NetworkFailure {
-  NotFoundFailure({
+  const NotFoundFailure({
     required super.message,
     super.statusCode = 404,
   });
@@ -60,7 +60,7 @@ class ValidationFailure extends NetworkFailure {
   final Map<String, List<String>> errors;
 
   /// Creates an immutable [ValidationFailure] with a pre-configured status code of 422.
-  ValidationFailure({
+  const ValidationFailure({
     required super.message,
     required this.errors,
     super.statusCode = 422,
@@ -73,7 +73,7 @@ class ValidationFailure extends NetworkFailure {
 /// to check their internet connectivity.
 class OfflineFailure extends NetworkFailure {
   /// Creates an immutable [OfflineFailure] with an integrated user-friendly default message.
-  OfflineFailure({
+  const OfflineFailure({
     super.message =
         'No internet connection detected. Please check your network and try again.',
     super.statusCode,
@@ -91,7 +91,7 @@ class RateLimitFailure extends NetworkFailure {
   final Duration? retryAfter;
 
   /// Creates an immutable [RateLimitFailure].
-  RateLimitFailure({
+  const RateLimitFailure({
     required super.message,
     super.statusCode = 429,
     this.retryAfter,
@@ -104,7 +104,7 @@ class RateLimitFailure extends NetworkFailure {
 /// connection, but the server took too long to respond, or the connection dropped mid-flight.
 class TimeoutFailure extends NetworkFailure {
   /// Creates an immutable [TimeoutFailure] with a user-friendly default message.
-  TimeoutFailure({
+  const TimeoutFailure({
     super.message = 'The connection timed out. Please try again later.',
     super.statusCode,
   });
