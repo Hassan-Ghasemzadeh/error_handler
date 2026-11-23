@@ -7,7 +7,7 @@ class MultiFailure extends Failure {
   final List<Failure> failures;
 
   /// Creates a [MultiFailure] container holding a list of intercepted [failures].
-  MultiFailure({
+  const MultiFailure({
     required this.failures,
     super.message = 'Multiple parallel operations failed.',
     super.error,
