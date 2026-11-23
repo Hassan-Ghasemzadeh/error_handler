@@ -4,7 +4,7 @@ import '../../../../resultex.dart';
 import '../../../model/accumulated_failure.dart';
 
 /// Advanced concurrency extensions for the [Result] monad.
-extension ResultConcurrencyX on Result {
+extension ResultConcurrencyX<T> on Result<T> {
   /// Races multiple asynchronous [Result] operations against each other.
   ///
   /// Unlike `Future.any`, this method resolves with the **first successful** [SuccessResult].
@@ -12,13 +12,13 @@ extension ResultConcurrencyX on Result {
   /// a [FailureResult], it resolves with an [AccumulatedFailure] containing all errors.
   ///
   /// Ideal for redundant network requests or high-availability resource loading.
-  Future<Result<T>> race<T>(Iterable<Future<Result<T>>> futures) async {
+  Future<Result<R>> race<R>(Iterable<Future<Result<R>>> futures) async {
     if (futures.isEmpty) {
       return Result.failure(
           Failure(message: 'No futures provided for racing.'));
     }
 
-    final completer = Completer<Result<T>>();
+    final completer = Completer<Result<R>>();
     final int totalOperations = futures.length;
     int failedCount = 0;
     final List<Failure> capturedErrors = [];
@@ -28,17 +28,24 @@ extension ResultConcurrencyX on Result {
         // If already resolved by a faster success, ignore subsequent completions.
         if (completer.isCompleted) return;
 
-        if (result is SuccessResult<T>) {
+        if (result is SuccessResult<R>) {
           completer.complete(result);
-        } else if (result is FailureResult<T>) {
-          capturedErrors.add(result.failure);
+        } else {
+          if (result is FailureResult<R>) {
+            capturedErrors.add(result.failure);
+          } else {
+            capturedErrors.add(
+              Failure(message: 'Operation evaluated to LoadingResult'),
+            );
+          }
           failedCount++;
 
           // If this was the last operation and it also failed, terminate the race.
           if (failedCount == totalOperations && !completer.isCompleted) {
             // Reusing the AccumulatedFailure we designed earlier
             completer.complete(
-                Result.failure(AccumulatedFailure(errors: capturedErrors)));
+              Result.failure(AccumulatedFailure(errors: capturedErrors)),
+            );
           }
         }
       }).catchError((error, stackTrace) {
@@ -50,7 +57,8 @@ extension ResultConcurrencyX on Result {
 
         if (failedCount == totalOperations && !completer.isCompleted) {
           completer.complete(
-              Result.failure(AccumulatedFailure(errors: capturedErrors)));
+            Result.failure(AccumulatedFailure(errors: capturedErrors)),
+          );
         }
       });
     }
