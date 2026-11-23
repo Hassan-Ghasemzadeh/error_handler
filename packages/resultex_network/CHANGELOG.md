@@ -1,7 +1,12 @@
 # Changelog
 
 All notable changes to the `resultex_network` package will be documented in this file.
+## [1.4.0] - 2026-11-23
 
+* **Fixes**:
+  * Updated `ResultexOfflineFirstHandler` to emit strongly-typed `Result<T>` states instead of raw string markers.
+  * Unwrapped `cacheProvider?.read(key)` (`Result<T?>`) via `.valueOrNull` across SWR, cache-first, and network-first flows so cache misses do not mask network failures.
+  
 ## [1.3.2] - 2026-08-01
 
 * **Dependency Injection & Logger Integration:**

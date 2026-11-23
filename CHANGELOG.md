@@ -2,10 +2,40 @@
 
 All notable changes to the `error_handler` package will be documented in this file. This project
 adheres to Semantic Versioning.
+
+## [5.0.0] - 2026-11-23
+
+* **Breaking Changes & Core Refactor**:
+    * Refactored `Result<T>` sealed hierarchy (`SuccessResult`, `FailureResult`, `LoadingResult`)
+      with pattern matching, functional operators (`map`, `mapFailure`, `flatMap`, `fold`, `match`),
+      and static helpers (`guard`, `guardAsync`, `fromNullable`, `combine`, `partition`).
+    * Updated `Failure`, `Success<T>`, `AccumulatedFailure`, `CancellationFailure`, and
+      `RetryOptions`, along with `ResultNotifier`, `ResultSwitch`, and test matchers.
+
+* **Fixes**:
+    * **Concurrency & `LoadingResult`**: Updated `ResultConcurrencyX.race` to handle `LoadingResult`
+      outcomes and avoid hanging `Completer`s.
+    * **Async Execution**: Updated `ResultExecutor.executeAsync` to pass through pre-wrapped
+      `Result` instances and map `LoadingResult` safely without `TypeError`s.
+    * **Dependency Injection**: Updated `GetItConfiguration` to resolve dependencies from
+      `_activeInjector` when a custom `GetIt` instance is provided.
+    * **Zip & Accumulate**: Updated `ResultZip2RecordX`–`ResultZip5RecordX.zip` and
+      `ResultAccumulatorX.accumulate` to handle `LoadingResult` without throwing `StateError` or
+      dropping pending states.
+    * **Telemetry Deduplication**: Removed duplicate `ResultexObserverManager.notifyFailure` trigger
+      from `Failure` so observers are notified once per failure event via `FailureResult`.
+    * **Obfuscation-Safe Unwrap**: Replaced `runtimeType.toString()` checks in
+      `ResultUnwrapX.getOrElseAsync` with Dart 3 pattern matching.
+    * **Cancellation Safety**: Wrapped `_onCancelHook` in `CancellableResult.cancel` with
+      `try-finally` so completion is guaranteed even if cleanup throws.
+    * **Lifecycle & Disposal Guards**: Added disposal checks in `ResultTextController.revalidate`,
+      `ResultNotifier`, and `debounce`/`throttle` extensions to prevent post-disposal state or
+      listener errors.
+
 ## [4.4.1] - 2026-10-29
 
 * **Dependencies**:
-  * Upgraded `equatable` dependency to a newer version for improved stability and compatibility.
+    * Upgraded `equatable` dependency to a newer version for improved stability and compatibility.
 
 ## [4.4.0] - 2026-10-14
 

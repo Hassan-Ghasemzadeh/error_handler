@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [1.4.0] - 2026-11-23
+
+* **Fixes**:
+  * Replaced eager `GetIt.I.get<LoggerService>()` property initialization in `ResultexLoggerInterceptor` with optional constructor injection (`LoggerService? logger`) and lazy fallback resolution to avoid `StateError` before DI setup or with custom containers.
 
 ## [1.3.5] - 2026-08-01
 

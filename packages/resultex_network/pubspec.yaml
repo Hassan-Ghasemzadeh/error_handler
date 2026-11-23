@@ -1,6 +1,6 @@
 name: resultex_network
 description: A robust network error mapping adapter for the Resultex ecosystem using Dio.
-version: 1.3.2
+version: 1.4.0
 
 homepage: 'https://github.com/Hassan-Ghasemzadeh/error_handler'
 repository: 'https://github.com/Hassan-Ghasemzadeh/error_handler/tree/main/packages/resultex_network'
@@ -13,11 +13,13 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^5.10.0
-  resultex: ^4.0.2
+  resultex:
+    path: ../resultex
   get_it: ^9.2.1
   connectivity_plus: ^7.3.0
   hive: ^2.2.3
-  resultex_logger: ^1.3.5
+  resultex_logger:
+    path: ../resultex_logger
 
 dev_dependencies:
   flutter_test:
