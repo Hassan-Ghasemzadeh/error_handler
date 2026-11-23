@@ -11,16 +11,19 @@ extension ResultZip2RecordX<T1, T2> on (Result<T1>, Result<T2>) {
   /// });
   /// ```
   Result<R> zip<R>(R Function(T1 v1, T2 v2) combiner) {
+    if (this.$1 is LoadingResult<T1> || this.$2 is LoadingResult<T2>) {
+      return Result.loading();
+    }
     if (this.$1 case FailureResult<T1> f) return Result.failure(f.failure);
     if (this.$2 case FailureResult<T2> f) return Result.failure(f.failure);
 
     final v1 = switch (this.$1) {
       SuccessResult<T1>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v2 = switch (this.$2) {
       SuccessResult<T2>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
 
     return Result.success(combiner(v1, v2));
@@ -42,21 +45,26 @@ extension ResultZip3RecordX<T1, T2, T3> on (
   /// });
   /// ```
   Result<R> zip<R>(R Function(T1 v1, T2 v2, T3 v3) combiner) {
+    if (this.$1 is LoadingResult<T1> ||
+        this.$2 is LoadingResult<T2> ||
+        this.$3 is LoadingResult<T3>) {
+      return Result.loading();
+    }
     if (this.$1 case FailureResult<T1> f) return Result.failure(f.failure);
     if (this.$2 case FailureResult<T2> f) return Result.failure(f.failure);
     if (this.$3 case FailureResult<T3> f) return Result.failure(f.failure);
 
     final v1 = switch (this.$1) {
       SuccessResult<T1>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v2 = switch (this.$2) {
       SuccessResult<T2>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v3 = switch (this.$3) {
       SuccessResult<T3>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
 
     return Result.success(combiner(v1, v2, v3));
@@ -73,6 +81,12 @@ extension ResultZip4RecordX<T1, T2, T3, T4> on (
 ) {
   /// Zips four disparate results into a single consolidated [Result].
   Result<R> zip<R>(R Function(T1 v1, T2 v2, T3 v3, T4 v4) combiner) {
+    if (this.$1 is LoadingResult<T1> ||
+        this.$2 is LoadingResult<T2> ||
+        this.$3 is LoadingResult<T3> ||
+        this.$4 is LoadingResult<T4>) {
+      return Result.loading();
+    }
     if (this.$1 case FailureResult<T1> f) return Result.failure(f.failure);
     if (this.$2 case FailureResult<T2> f) return Result.failure(f.failure);
     if (this.$3 case FailureResult<T3> f) return Result.failure(f.failure);
@@ -80,19 +94,19 @@ extension ResultZip4RecordX<T1, T2, T3, T4> on (
 
     final v1 = switch (this.$1) {
       SuccessResult<T1>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v2 = switch (this.$2) {
       SuccessResult<T2>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v3 = switch (this.$3) {
       SuccessResult<T3>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v4 = switch (this.$4) {
       SuccessResult<T4>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
 
     return Result.success(combiner(v1, v2, v3, v4));
@@ -110,6 +124,13 @@ extension ResultZip5RecordX<T1, T2, T3, T4, T5> on (
 ) {
   /// Zips five disparate results into a single consolidated [Result].
   Result<R> zip<R>(R Function(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5) combiner) {
+    if (this.$1 is LoadingResult<T1> ||
+        this.$2 is LoadingResult<T2> ||
+        this.$3 is LoadingResult<T3> ||
+        this.$4 is LoadingResult<T4> ||
+        this.$5 is LoadingResult<T5>) {
+      return Result.loading();
+    }
     if (this.$1 case FailureResult<T1> f) return Result.failure(f.failure);
     if (this.$2 case FailureResult<T2> f) return Result.failure(f.failure);
     if (this.$3 case FailureResult<T3> f) return Result.failure(f.failure);
@@ -118,23 +139,23 @@ extension ResultZip5RecordX<T1, T2, T3, T4, T5> on (
 
     final v1 = switch (this.$1) {
       SuccessResult<T1>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v2 = switch (this.$2) {
       SuccessResult<T2>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v3 = switch (this.$3) {
       SuccessResult<T3>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v4 = switch (this.$4) {
       SuccessResult<T4>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
     final v5 = switch (this.$5) {
       SuccessResult<T5>(success: Success(:final value)) => value,
-      _ => throw StateError('Invalid state')
+      _ => throw StateError('Invalid state'),
     };
 
     return Result.success(combiner(v1, v2, v3, v4, v5));
