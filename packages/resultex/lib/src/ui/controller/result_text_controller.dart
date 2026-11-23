@@ -47,11 +47,15 @@ class ResultTextController<T> extends TextEditingController {
     _currentResult = _validator(text);
   }
 
+  /// Internal flag to track if the controller has been disposed.
+  bool _isDisposed = false;
+
   /// Forces a manual re-evaluation of the validation logic.
   ///
   /// Useful when external validation constraints or dependent states update
   /// without an explicit change to the text string itself.
   Result<T> revalidate() {
+    if (_isDisposed) return _currentResult;
     _evaluateValidation(force: true);
     notifyListeners();
     return _currentResult;
@@ -83,6 +87,7 @@ class ResultTextController<T> extends TextEditingController {
 
   @override
   void dispose() {
+    _isDisposed = true;
     // Essential cleanup to prevent memory leaks by detaching the internal listener.
     removeListener(_onTextChanged);
     super.dispose();
