@@ -54,7 +54,12 @@ class ResultExecutor {
       final dynamicData = await operation();
 
       // Dart Pattern Matching for safer type casting and flat-mapping
-      if (dynamicData is SuccessResult) {
+      if (dynamicData is Result<T>) {
+        _logger.debug(
+          '$tag Async operation completed with matching Result.',
+        );
+        return dynamicData;
+      } else if (dynamicData is SuccessResult) {
         _logger.debug(
           '$tag Async operation completed successfully with wrapped Result.',
         );
@@ -64,6 +69,11 @@ class ResultExecutor {
           '$tag Async operation forwarded an internal Result Failure.',
         );
         return Result.failure(dynamicData.failure);
+      } else if (dynamicData is LoadingResult) {
+        _logger.info(
+          '$tag Async operation returned a LoadingResult.',
+        );
+        return Result.loading();
       }
 
       _logger.debug('$tag Async operation successful.');
