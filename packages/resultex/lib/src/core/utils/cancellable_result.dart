@@ -94,7 +94,8 @@ class CancellableResult<T> {
         _completer.complete(
           Result.failure(
             CancellationFailure(
-              message: customMessage ?? 'Operation cancelled before completion.',
+              message:
+                  customMessage ?? 'Operation cancelled before completion.',
             ),
           ),
         );
