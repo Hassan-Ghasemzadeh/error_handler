@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../core/utils/result_observer.dart';
 
 /// Represents a standardized base domain failure entity containing error information.
 ///
@@ -18,10 +17,7 @@ class Failure extends Equatable {
   /// Creates an immutable [Failure] instance.
   ///
   /// Requires a [message] and accepts optional [error] payloads or [stackTrace] details.
-  Failure({required this.message, this.error, this.stackTrace}) {
-    ResultexObserverManager.notifyFailure(
-        this, stackTrace ?? StackTrace.current);
-  }
+  const Failure({required this.message, this.error, this.stackTrace});
 
   /// Accumulates all available failure properties into a comprehensive, multiline diagnostic string.
   ///
