@@ -16,8 +16,7 @@ dependencies:
 
   equatable: ^3.0.0
   get_it: ^9.3.0
-  resultex_logger:
-    path: ../resultex_logger
+  resultex_logger: ^1.4.0
 
 dev_dependencies:
   flutter_lints: ^6.0.0

@@ -41,12 +41,9 @@ dependencies:
   get_it: ^9.2.1
   freezed_annotation: ^3.1.0
   json_annotation: ^4.11.0
-  resultex_network:
-    path: ../../resultex_network
-  resultex_logger:
-    path: ../../resultex_logger
-  resultex:
-    path: ..
+  resultex_network: ^1.3.2
+  resultex_logger: ^1.4.0
+  resultex: ^4.4.1
   url_launcher: ^6.3.2
 
 dev_dependencies:
