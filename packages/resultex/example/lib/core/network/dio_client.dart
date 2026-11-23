@@ -62,6 +62,4 @@ class DioClient implements ApiClient {
       },
     );
   }
-
-
 }
