@@ -13,13 +13,11 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^5.10.0
-  resultex:
-    path: ../resultex
+  resultex: ^5.0.0
   get_it: ^9.2.1
   connectivity_plus: ^7.3.0
   hive: ^2.2.3
-  resultex_logger:
-    path: ../resultex_logger
+  resultex_logger: ^1.4.0
 
 dev_dependencies:
   flutter_test:
