@@ -13,8 +13,9 @@ class GetItConfiguration {
   /// This is a pure utility class composed of static methods.
   GetItConfiguration._();
 
-  /// GetIt special instance for resultex package To prevent conflict with the main GetIt application
+  /// GetIt special instance for resultex package to prevent conflict with the main GetIt application
   static final GetIt _packageInjector = GetIt.asNewInstance();
+  static GetIt _activeInjector = _packageInjector;
 
   /// Initializes and registers all application dependencies asynchronously.
   ///
@@ -41,7 +42,7 @@ class GetItConfiguration {
         const [], // TIP: Replace 'dynamic' with your actual module interface (e.g., DIModule)
   }) async {
     // 1. Resolve the target injector (Custom instance for testing vs. Global instance).
-    final getIt = injector ?? _packageInjector;
+    _activeInjector = injector ?? _packageInjector;
 
     // 2. Combine the core package modules with any externally injected modules.
     final modules = [
@@ -54,12 +55,17 @@ class GetItConfiguration {
     // Using `await` ensures that asynchronous registrations (like shared_preferences)
     // are fully resolved before the application proceeds.
     for (final module in modules) {
-      await module.register(getIt);
+      await module.register(_activeInjector);
     }
   }
 
   /// Helper method to access internal dependencies of the package
   static T get<T extends Object>() {
-    return _packageInjector.get<T>();
+    return _activeInjector.get<T>();
+  }
+
+  /// Helper method to check if a dependency is registered
+  static bool isRegistered<T extends Object>() {
+    return _activeInjector.isRegistered<T>();
   }
 }
