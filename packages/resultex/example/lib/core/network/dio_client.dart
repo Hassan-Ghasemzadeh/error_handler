@@ -44,13 +44,11 @@ class DioClient implements ApiClient {
     Map<String, dynamic>? queryParameters,
   }) async {
     // Wraps the asynchronous HTTP GET request in the Resultex executor pipeline
-    return _executor.executeAsync<Response>(
+    return _executor.executeAsync<dynamic>(
       () async {
-        return await _dio.get(path, queryParameters: queryParameters);
-      },
-    ).catchError(
-      (error) {
-        throw _handleError(error);
+        return await _dio
+            .get(path, queryParameters: queryParameters)
+            .guard((data) => data);
       },
     );
   }
@@ -58,19 +56,12 @@ class DioClient implements ApiClient {
   @override
   Future<Result<dynamic>> post(String path, {dynamic data}) async {
     // Wraps the asynchronous HTTP POST request in the Resultex executor pipeline
-    return _executor.executeAsync<Response>(
+    return _executor.executeAsync<dynamic>(
       () async {
-        return await _dio.post(path, data: data);
-      },
-    ).catchError(
-      (error) {
-        throw _handleError(error);
+        return await _dio.post(path, data: data).guard((data) => data);
       },
     );
   }
 
-  /// Transforms internal [DioException] instances into standardized application exceptions.
-  Exception _handleError(DioException e) {
-    return Exception("Network Error: ${e.message}");
-  }
+
 }
